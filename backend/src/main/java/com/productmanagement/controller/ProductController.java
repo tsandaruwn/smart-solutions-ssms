@@ -20,14 +20,12 @@ public class ProductController {
     
     @GetMapping
     public ResponseEntity<List<ProductDTO>> getAllProducts() {
-        List<ProductDTO> products = productService.getAllProducts();
-        return ResponseEntity.ok(products);
+        return ResponseEntity.ok(productService.getAllProducts());
     }
     
     @GetMapping("/available")
     public ResponseEntity<List<ProductDTO>> getAvailableProducts() {
-        List<ProductDTO> products = productService.getAvailableProducts();
-        return ResponseEntity.ok(products);
+        return ResponseEntity.ok(productService.getAvailableProducts());
     }
     
     @GetMapping("/{id}")
@@ -42,8 +40,8 @@ public class ProductController {
     
     @PostMapping
     public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody ProductDTO productDTO) {
-        ProductDTO createdProduct = productService.createProduct(productDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
+        ProductDTO created = productService.createProduct(productDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
     
     @PutMapping("/{id}")
@@ -51,8 +49,8 @@ public class ProductController {
             @PathVariable Long id,
             @Valid @RequestBody ProductDTO productDTO) {
         try {
-            ProductDTO updatedProduct = productService.updateProduct(id, productDTO);
-            return ResponseEntity.ok(updatedProduct);
+            ProductDTO updated = productService.updateProduct(id, productDTO);
+            return ResponseEntity.ok(updated);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
@@ -71,11 +69,10 @@ public class ProductController {
     @PatchMapping("/{id}/discontinue")
     public ResponseEntity<ProductDTO> removeProduct(@PathVariable Long id) {
         try {
-            ProductDTO removedProduct = productService.removeProduct(id);
-            return ResponseEntity.ok(removedProduct);
+            ProductDTO removed = productService.removeProduct(id);
+            return ResponseEntity.ok(removed);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
     }
 }
-

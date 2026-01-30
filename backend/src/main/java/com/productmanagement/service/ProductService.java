@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -18,17 +18,21 @@ public class ProductService {
     private ProductRepository productRepository;
     
     public List<ProductDTO> getAllProducts() {
-        return productRepository.findAll()
-                .stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        List<Product> allProducts = productRepository.findAll();
+        List<ProductDTO> result = new ArrayList<>();
+        for (Product product : allProducts) {
+            result.add(convertToDTO(product));
+        }
+        return result;
     }
     
     public List<ProductDTO> getAvailableProducts() {
-        return productRepository.findByDiscontinuedFalse()
-                .stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        List<Product> available = productRepository.findByDiscontinuedFalse();
+        List<ProductDTO> result = new ArrayList<>();
+        for (Product product : available) {
+            result.add(convertToDTO(product));
+        }
+        return result;
     }
     
     public ProductDTO getProductById(Long id) {
@@ -40,8 +44,8 @@ public class ProductService {
     public ProductDTO createProduct(ProductDTO productDTO) {
         Product product = convertToEntity(productDTO);
         product.setDiscontinued(false);
-        Product savedProduct = productRepository.save(product);
-        return convertToDTO(savedProduct);
+        Product saved = productRepository.save(product);
+        return convertToDTO(saved);
     }
     
     public ProductDTO updateProduct(Long id, ProductDTO productDTO) {
@@ -52,26 +56,28 @@ public class ProductService {
         product.setCategory(productDTO.getCategory());
         product.setPrice(productDTO.getPrice());
         product.setDescription(productDTO.getDescription());
+        
         if (productDTO.getDiscontinued() != null) {
             product.setDiscontinued(productDTO.getDiscontinued());
         }
         
-        Product updatedProduct = productRepository.save(product);
-        return convertToDTO(updatedProduct);
+        Product updated = productRepository.save(product);
+        return convertToDTO(updated);
     }
     
     public void deleteProduct(Long id) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
-        productRepository.delete(product);
+        if (!productRepository.existsById(id)) {
+            throw new RuntimeException("Product not found with id: " + id);
+        }
+        productRepository.deleteById(id);
     }
     
     public ProductDTO removeProduct(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
         product.setDiscontinued(true);
-        Product updatedProduct = productRepository.save(product);
-        return convertToDTO(updatedProduct);
+        Product updated = productRepository.save(product);
+        return convertToDTO(updated);
     }
     
     private ProductDTO convertToDTO(Product product) {
@@ -94,4 +100,3 @@ public class ProductService {
         return product;
     }
 }
-

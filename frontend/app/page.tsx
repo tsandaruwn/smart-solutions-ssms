@@ -12,7 +12,7 @@ interface Product {
   discontinued: boolean
 }
 
-const API_BASE_URL = 'http://localhost:8080/api/products'
+const API_URL = 'http://localhost:8080/api/products'
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([])
@@ -30,19 +30,19 @@ export default function Home() {
   })
 
   useEffect(() => {
-    fetchProducts()
+    loadProducts()
   }, [showOnlyAvailable])
 
-  const fetchProducts = async () => {
+  const loadProducts = async () => {
     try {
       setLoading(true)
       setError(null)
-      const endpoint = showOnlyAvailable ? `${API_BASE_URL}/available` : API_BASE_URL
-      const response = await axios.get(endpoint)
-      setProducts(response.data)
+      const url = showOnlyAvailable ? `${API_URL}/available` : API_URL
+      const res = await axios.get(url)
+      setProducts(res.data)
     } catch (err: any) {
-      setError('Failed to fetch products. Make sure the backend is running.')
-      console.error('Error fetching products:', err)
+      setError('Failed to load products. Check if backend is running.')
+      console.error(err)
     } finally {
       setLoading(false)
     }
@@ -55,26 +55,26 @@ export default function Home() {
       setSuccess(null)
 
       if (editingProduct) {
-        await axios.put(`${API_BASE_URL}/${editingProduct.id}`, {
+        await axios.put(`${API_URL}/${editingProduct.id}`, {
           ...formData,
           price: parseFloat(formData.price),
           discontinued: editingProduct.discontinued
         })
-        setSuccess('Product updated successfully!')
+        setSuccess('Product updated!')
       } else {
-        await axios.post(API_BASE_URL, {
+        await axios.post(API_URL, {
           ...formData,
           price: parseFloat(formData.price)
         })
-        setSuccess('Product added successfully!')
+        setSuccess('Product added!')
       }
 
       setShowModal(false)
       resetForm()
-      fetchProducts()
+      loadProducts()
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to save product')
-      console.error('Error saving product:', err)
+      console.error(err)
     }
   }
 
@@ -90,30 +90,30 @@ export default function Home() {
   }
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to permanently delete this product?')) {
+    if (!confirm('Delete this product?')) {
       return
     }
 
     try {
       setError(null)
-      await axios.delete(`${API_BASE_URL}/${id}`)
-      setSuccess('Product deleted successfully!')
-      fetchProducts()
+      await axios.delete(`${API_URL}/${id}`)
+      setSuccess('Product deleted!')
+      loadProducts()
     } catch (err: any) {
-      setError('Failed to delete product')
-      console.error('Error deleting product:', err)
+      setError('Failed to delete')
+      console.error(err)
     }
   }
 
   const handleDiscontinue = async (id: number) => {
     try {
       setError(null)
-      await axios.patch(`${API_BASE_URL}/${id}/discontinue`)
-      setSuccess('Product marked as discontinued!')
-      fetchProducts()
+      await axios.patch(`${API_URL}/${id}/discontinue`)
+      setSuccess('Product discontinued!')
+      loadProducts()
     } catch (err: any) {
-      setError('Failed to discontinue product')
-      console.error('Error discontinuing product:', err)
+      setError('Failed to discontinue')
+      console.error(err)
     }
   }
 
@@ -279,4 +279,3 @@ export default function Home() {
     </div>
   )
 }
-
