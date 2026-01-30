@@ -1,4 +1,3 @@
--- Create database schema for products
 CREATE TABLE IF NOT EXISTS products (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -10,7 +9,5 @@ CREATE TABLE IF NOT EXISTS products (
     updated_at TIMESTAMP
 );
 
--- Create index on category for faster queries
 CREATE INDEX IF NOT EXISTS idx_products_category ON products(category);
 CREATE INDEX IF NOT EXISTS idx_products_discontinued ON products(discontinued);
-

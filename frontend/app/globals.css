@@ -492,7 +492,6 @@ a {
   font-weight: bold;
 }
 
-/* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 10px;
 }
@@ -511,7 +510,6 @@ a {
   background: linear-gradient(135deg, #5568d3 0%, #6a3fa0 100%);
 }
 
-/* Responsive design */
 @media (max-width: 768px) {
   .container {
     padding: 24px;
