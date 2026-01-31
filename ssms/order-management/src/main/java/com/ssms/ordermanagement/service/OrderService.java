@@ -162,6 +162,50 @@ public class OrderService {
     }
 
     /**
+     * Update order details
+     */
+    @Transactional
+    public Order updateOrderDetails(String orderId, Order updatedOrderDetails) {
+        Order existingOrder = getOrderByOrderId(orderId);
+        
+        // Validate that the order can be updated
+        if (existingOrder.getStatus() == Order.OrderStatus.DELIVERED) {
+            throw new RuntimeException("Cannot update a delivered order");
+        }
+        
+        if (existingOrder.getStatus() == Order.OrderStatus.CANCELLED) {
+            throw new RuntimeException("Cannot update a cancelled order");
+        }
+        
+        // Update allowed fields
+        if (updatedOrderDetails.getCustomerName() != null) {
+            existingOrder.setCustomerName(updatedOrderDetails.getCustomerName());
+        }
+        
+        if (updatedOrderDetails.getCustomerEmail() != null) {
+            existingOrder.setCustomerEmail(updatedOrderDetails.getCustomerEmail());
+        }
+        
+        if (updatedOrderDetails.getShippingAddress() != null) {
+            existingOrder.setShippingAddress(updatedOrderDetails.getShippingAddress());
+        }
+        
+        if (updatedOrderDetails.getItems() != null && !updatedOrderDetails.getItems().isEmpty()) {
+            existingOrder.setItems(updatedOrderDetails.getItems());
+        }
+        
+        if (updatedOrderDetails.getTotalAmount() != null) {
+            existingOrder.setTotalAmount(updatedOrderDetails.getTotalAmount());
+        }
+        
+        if (updatedOrderDetails.getNotes() != null) {
+            existingOrder.setNotes(updatedOrderDetails.getNotes());
+        }
+        
+        return orderRepository.save(existingOrder);
+    }
+
+    /**
      * Delete order (admin only)
      */
     @Transactional

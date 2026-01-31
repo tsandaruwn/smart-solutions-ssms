@@ -21,10 +21,7 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    /**
-     * Place a new order
-     * POST /api/orders
-     */
+
     @PostMapping
     public ResponseEntity<Map<String, Object>> placeOrder(@RequestBody Order order) {
         try {
@@ -92,6 +89,32 @@ public class OrderController {
     public ResponseEntity<List<Order>> getOrderHistory(@PathVariable Long customerId) {
         List<Order> orderHistory = orderService.getOrderHistory(customerId);
         return ResponseEntity.ok(orderHistory);
+    }
+
+    /**
+     * Update order details
+     * PUT /api/orders/{orderId}
+     */
+    @PutMapping("/{orderId}")
+    public ResponseEntity<Map<String, Object>> updateOrderDetails(
+            @PathVariable String orderId,
+            @RequestBody Order orderDetails) {
+        try {
+            Order updatedOrder = orderService.updateOrderDetails(orderId, orderDetails);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Order details updated successfully");
+            response.put("order", updatedOrder);
+            
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", e.getMessage());
+            
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
     }
 
     /**
