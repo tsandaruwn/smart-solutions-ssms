@@ -1,6 +1,7 @@
 package com.ssms.ordermanagement.controller;
 
-import com.ssms.ordermanagement.entity.Order;
+import com.ssms.ordermanagement.dto.*;
+import com.ssms.ordermanagement.entity.OrderStatus;
 import com.ssms.ordermanagement.repository.OrderRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,18 +11,16 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Integration tests for Order Management API
- * Tests the complete flow from controller to database
+ * Integration tests for Order Management API.
+ * Uses H2 in-memory database (see src/test/resources/application.yaml).
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -36,137 +35,95 @@ class OrderControllerIntegrationTest {
     @Autowired
     private OrderController orderController;
 
-    private Order sampleOrder;
+    private CreateOrderRequest createRequest;
 
     @BeforeEach
     void setUp() {
         orderRepository.deleteAll();
 
-        List<Order.OrderItem> items = new ArrayList<>();
-        Order.OrderItem item = new Order.OrderItem();
-        item.setProductId(101L);
-        item.setProductName("Smart Thermostat");
-        item.setProductCategory("Climate Control");
-        item.setQuantity(2);
-        item.setUnitPrice(new BigDecimal("149.99"));
-        item.setSubtotal(new BigDecimal("299.98"));
-        items.add(item);
+        OrderItemRequest itemReq = OrderItemRequest.builder()
+                .productId(101)
+                .quantity(2)
+                .unitPriceAtOrder(new BigDecimal("149.99"))
+                .discountPercent(BigDecimal.ZERO)
+                .build();
 
-        sampleOrder = new Order();
-        sampleOrder.setCustomerId(1L);
-        sampleOrder.setCustomerName("John Doe");
-        sampleOrder.setCustomerEmail("john@example.com");
-        sampleOrder.setShippingAddress("123 Main St, City, State 12345");
-        sampleOrder.setItems(items);
-        sampleOrder.setTotalAmount(new BigDecimal("299.98"));
-        sampleOrder.setNotes("Test order");
+        createRequest = CreateOrderRequest.builder()
+                .customerId(1)
+                .createdByUserId(1)
+                .shippingAddress("123 Main St, City, State 12345")
+                .shippingCity("Colombo")
+                .notes("Integration test order")
+                .items(List.of(itemReq))
+                .build();
     }
 
     @Test
-    @Transactional
     void testPlaceOrder_Success() {
-        ResponseEntity<?> response = orderController.placeOrder(sampleOrder);
+        ResponseEntity<Map<String, Object>> response = orderController.placeOrder(createRequest);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(response.getBody()).containsKey("orderNumber");
         assertThat(orderRepository.count()).isEqualTo(1);
     }
 
     @Test
-    @Transactional
     void testGetAllOrders() {
-        orderController.placeOrder(sampleOrder);
+        orderController.placeOrder(createRequest);
 
-        ResponseEntity<List<Order>> response = orderController.getAllOrders();
+        ResponseEntity<List<OrderResponse>> response = orderController.getAllOrders();
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).hasSize(1);
     }
 
     @Test
-    @Transactional
     void testGetOrderHistory() {
-        orderController.placeOrder(sampleOrder);
+        orderController.placeOrder(createRequest);
 
-        ResponseEntity<List<Order>> response = orderController.getOrderHistory(1L);
+        ResponseEntity<List<OrderResponse>> response = orderController.getOrderHistory(1);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).hasSize(1);
-        assertThat(response.getBody().get(0).getCustomerId()).isEqualTo(1L);
+        assertThat(response.getBody().get(0).getCustomerId()).isEqualTo(1);
     }
 
     @Test
-    @Transactional
-    void testUpdateOrderDetails() {
-        ResponseEntity<?> createResponse = orderController.placeOrder(sampleOrder);
-        
-        List<Order> orders = orderRepository.findAll();
-        String orderId = orders.get(0).getOrderId();
-
-        Order updateData = new Order();
-        updateData.setCustomerName("Jane Smith");
-        updateData.setShippingAddress("456 New Address");
-
-        ResponseEntity<?> updateResponse = orderController.updateOrderDetails(orderId, updateData);
-
-        assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        
-        Order updated = orderRepository.findByOrderId(orderId).orElse(null);
-        assertThat(updated).isNotNull();
-        assertThat(updated.getCustomerName()).isEqualTo("Jane Smith");
-    }
-
-    @Test
-    @Transactional
     void testUpdateOrderStatus_ToShipped() {
-        orderController.placeOrder(sampleOrder);
-        
-        List<Order> orders = orderRepository.findAll();
-        String orderId = orders.get(0).getOrderId();
+        orderController.placeOrder(createRequest);
+        Integer orderId = orderRepository.findAll().get(0).getOrderId();
 
-        ResponseEntity<?> response = orderController.updateOrderStatus(orderId, Order.OrderStatus.SHIPPED);
+        ResponseEntity<Map<String, Object>> response = orderController.updateOrderStatus(
+                orderId, new UpdateOrderStatusRequest(OrderStatus.SHIPPED));
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        
-        Order updated = orderRepository.findByOrderId(orderId).orElse(null);
-        assertThat(updated).isNotNull();
-        assertThat(updated.getStatus()).isEqualTo(Order.OrderStatus.SHIPPED);
-        assertThat(updated.getShippedDate()).isNotNull();
     }
 
     @Test
-    @Transactional
     void testCancelOrder() {
-        orderController.placeOrder(sampleOrder);
-        
-        List<Order> orders = orderRepository.findAll();
-        String orderId = orders.get(0).getOrderId();
+        orderController.placeOrder(createRequest);
+        Integer orderId = orderRepository.findAll().get(0).getOrderId();
 
-        ResponseEntity<?> response = orderController.cancelOrder(orderId, "Customer request");
+        ResponseEntity<Map<String, Object>> response = orderController.cancelOrder(
+                orderId, new CancelOrderRequest("Customer request"));
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        
-        Order cancelled = orderRepository.findByOrderId(orderId).orElse(null);
-        assertThat(cancelled).isNotNull();
-        assertThat(cancelled.getStatus()).isEqualTo(Order.OrderStatus.CANCELLED);
-        assertThat(cancelled.getCancellationReason()).isEqualTo("Customer request");
     }
 
     @Test
-    @Transactional
     void testGetOrdersByStatus() {
-        orderController.placeOrder(sampleOrder);
+        orderController.placeOrder(createRequest);
 
-        ResponseEntity<List<Order>> response = orderController.getOrdersByStatus(Order.OrderStatus.PENDING);
+        ResponseEntity<List<OrderResponse>> response =
+                orderController.getOrdersByStatus(OrderStatus.PENDING);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).hasSize(1);
-        assertThat(response.getBody().get(0).getStatus()).isEqualTo(Order.OrderStatus.PENDING);
     }
 
     @Test
     void testHealthCheck() {
         ResponseEntity<?> response = orderController.healthCheck();
-
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 }

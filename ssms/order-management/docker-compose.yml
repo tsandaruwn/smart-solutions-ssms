@@ -1,0 +1,33 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: ssms-postgres
+    environment:
+      POSTGRES_DB: ssms
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ssms"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  order-management:
+    build: .
+    container_name: ssms-order-management
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ssms
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pgdata:
