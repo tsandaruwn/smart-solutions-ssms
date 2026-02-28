@@ -76,7 +76,7 @@ export default function OrdersPage() {
         <div className="warning-banner mb-4">
           <span className="animate-pulse rounded-circle bg-amber d-inline-block flex-shrink-0" style={{ width: 8, height: 8 }} />
           <p className="mb-0 text-amber-dark" style={{ fontSize: ".875rem" }}>
-            <strong>Backend not connected</strong> — Start the Order Management service on port 8085 to see live data.
+            <strong>Backend not connected</strong> &mdash; Start the Order Management service on port 8085 to see live data.
           </p>
           <button onClick={fetchOrders} className="btn-ghost ms-auto" style={{ padding: "4px 12px", fontSize: ".75rem" }}>Retry</button>
         </div>
@@ -158,7 +158,7 @@ export default function OrdersPage() {
                       <span className="text-navy" style={{ fontSize: ".875rem" }}>Customer #{order.customerId}</span>
                     </td>
                     <td className="d-none d-lg-table-cell">
-                      <span className="text-muted-brand" style={{ fontSize: ".875rem" }}>{order.shippingCity || "—"}</span>
+                      <span className="text-muted-brand" style={{ fontSize: ".875rem" }}>{order.shippingCity || "ï¿½"}</span>
                     </td>
                     <td className="d-none d-sm-table-cell">
                       <span className="text-muted-brand" style={{ fontSize: ".875rem" }}>{formatDateTime(order.orderDate)}</span>
@@ -198,7 +198,7 @@ export default function OrdersPage() {
         {totalPages > 1 && (
           <div className="d-flex align-items-center justify-content-between px-4 py-3" style={{ borderTop: "1px solid var(--border-color)", background: "rgba(242,238,234,.3)" }}>
             <p className="mb-0 text-muted-brand" style={{ fontSize: ".875rem" }}>
-              Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(currentPage * ITEMS_PER_PAGE, filteredOrders.length)} of {filteredOrders.length}
+              Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1}ï¿½{Math.min(currentPage * ITEMS_PER_PAGE, filteredOrders.length)} of {filteredOrders.length}
             </p>
             <div className="d-flex align-items-center gap-1">
               <button onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1} className="page-btn">
