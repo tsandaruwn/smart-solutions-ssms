@@ -1,3 +1,21 @@
 spring:
   application:
     name: supplier-management
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ssms_supplier_db
+    username: postgres
+    password: admin123
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+server:
+  port: 8085
