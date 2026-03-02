@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Home System — Full ER Diagram</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap');
+
+:root {
+  --bg: #060a10;
+  --surface: #0d1420;
+  --surface2: #111827;
+  --border: #1e2d40;
+  --text: #e2eaf4;
+  --muted: #4a6080;
+  --accent: #00d4ff;
+
+  --user:    #7c6fff;
+  --customer:#22d3ee;
+  --product: #34d399;
+  --inventory:#fbbf24;
+  --order:   #fb923c;
+  --billing: #f472b6;
+  --payment: #a78bfa;
+  --marketing:#2dd4bf;
+  --supplier:#86efac;
+  --install: #f87171;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  font-family: 'Syne', sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Animated background grid */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── HEADER ─── */
+header {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 48px 20px 32px;
+}
+header h1 {
+  font-size: clamp(1.6rem, 3vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: -1px;
+  background: linear-gradient(135deg, var(--accent) 0%, #a78bfa 50%, #f472b6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+}
+header p {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 1px;
+}
+
+/* ─── LEGEND ─── */
+.legend {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 16px;
+  padding: 0 20px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.7rem;
+  color: #94a3b8;
+  font-family: 'JetBrains Mono', monospace;
+}
+.legend-dot {
+  width: 10px; height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* ─── DOMAIN SECTIONS ─── */
+.domain-grid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 20px;
+  padding: 0 24px 40px;
+  max-width: 1700px;
+  margin: 0 auto;
+}
+
+/* ─── ENTITY CARD ─── */
+.entity {
+  background: var(--surface);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+.entity::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--entity-color, #fff);
+  opacity: 0.8;
+}
+.entity:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px var(--entity-color, #fff);
+}
+
+.entity-header {
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid var(--border);
+}
+.entity-icon { font-size: 1rem; }
+.entity-name {
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--entity-color, #fff);
+}
+.entity-badge {
+  margin-left: auto;
+  font-size: 0.6rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--muted);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 6px;
+}
+
+/* ─── ATTRIBUTES ─── */
+.attr-row {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  font-size: 0.72rem;
+  transition: background 0.15s;
+}
+.attr-row:last-child { border-bottom: none; }
+.attr-row:hover { background: rgba(255,255,255,0.03); }
+
+.attr-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 2px 4px;
+  border-radius: 3px;
+  letter-spacing: 0.5px;
+}
+.tag-pk  { background: rgba(251,191,36,0.15);  color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+.tag-fk  { background: rgba(96,165,250,0.12);  color: #60a5fa; border: 1px solid rgba(96,165,250,0.25); }
+.tag-uk  { background: rgba(52,211,153,0.12);  color: #34d399; border: 1px solid rgba(52,211,153,0.25); }
+.tag-    { opacity: 0; }
+
+.attr-name {
+  color: #cbd5e1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.71rem;
+}
+.attr-name.is-pk { color: #fde68a; font-weight: 600; }
+.attr-name.is-fk { color: #93c5fd; font-style: italic; }
+
+.attr-type {
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
+
+/* ─── SECTION HEADER ─── */
+.section-label {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 28px 24px 12px;
+  max-width: 1700px;
+  margin: 0 auto;
+}
+.section-label span {
+  font-size: 0.7rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ─── RELATIONSHIPS TABLE ─── */
+.rel-section {
+  position: relative;
+  z-index: 2;
+  max-width: 1700px;
+  margin: 0 auto;
+  padding: 0 24px 60px;
+}
+.rel-section h2 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--text);
+  margin-bottom: 16px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.rel-section h2::before {
+  content: '';
+  width: 4px; height: 18px;
+  background: var(--accent);
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.rel-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.74rem;
+}
+.rel-table thead tr {
+  background: var(--surface2);
+  border-bottom: 2px solid var(--accent);
+}
+.rel-table thead th {
+  padding: 10px 14px;
+  text-align: left;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+}
+.rel-table tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+.rel-table tbody tr:hover { background: var(--surface2); }
+.rel-table td {
+  padding: 9px 14px;
+  vertical-align: middle;
+  color: #cbd5e1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.71rem;
+}
+.rel-table td:first-child { color: #f1f5f9; font-weight: 600; }
+.card-entity  { font-size: 0.68rem; color: var(--muted); }
+
+.cardinality {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.65rem;
+  white-space: nowrap;
+}
+.card-1m  { background: rgba(0,212,255,0.1);  color: #00d4ff;  border: 1px solid rgba(0,212,255,0.25); }
+.card-11  { background: rgba(52,211,153,0.1); color: #34d399;  border: 1px solid rgba(52,211,153,0.25); }
+.card-mm  { background: rgba(248,113,113,0.1);color: #f87171;  border: 1px solid rgba(248,113,113,0.25); }
+
+.dot-color {
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🏠 Smart Home System — ER Diagram</h1>
+  <p>// 10 MICROSERVICES · 22 ENTITIES · 21 RELATIONSHIPS · FULL ATTRIBUTE DETAIL //</p>
+</header>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#fbbf24"></div> PK — Primary Key</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#60a5fa"></div> FK — Foreign Key</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#34d399"></div> UK — Unique / Natural Key</div>
+  <div class="legend-item" style="margin-left:16px"><div class="legend-dot" style="background:var(--user)"></div> User Mgmt</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--customer)"></div> Customer</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--product)"></div> Product</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--inventory)"></div> Inventory</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--order)"></div> Order</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--billing)"></div> Billing</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--payment)"></div> Payment</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--marketing)"></div> Marketing</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--supplier)"></div> Supplier</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--install)"></div> Installation</div>
+</div>
+
+<!-- ════════════════════════════════ USER MANAGEMENT ════════════════════════════════ -->
+<div class="section-label">
+  <span style="color:var(--user); border-color:var(--user); background:rgba(124,111,255,0.08)">1.1 USER MANAGEMENT</span>
+</div>
+<div class="domain-grid">
+
+  <!-- USER -->
+  <div class="entity" style="--entity-color: var(--user)">
+    <div class="entity-header">
+      <span class="entity-icon">👤</span>
+      <span class="entity-name">USER</span>
+      <span class="entity-badge">Core Auth Entity</span>
+    </div>
+    <div class="attr-row"><span class="attr-tag tag-pk">PK</span><span class="attr-name is-pk">user_id</span><span class="attr-type">INT (AUTO_INCREMENT)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-fk">FK</span><span class="attr-name is-fk">role_id</span><span class="attr-type">INT → ROLE</span></div>
+    <div class="attr-row"><span class="attr-tag tag-uk">UK</span><span class="attr-name">email</span><span class="attr-type">VARCHAR(150)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-uk">UK</span><span class="attr-name">username</span><span class="attr-type">VARCHAR(80)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">password_hash</span><span class="attr-type">VARCHAR(255)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">first_name</span><span class="attr-type">VARCHAR(80)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">last_name</span><span class="attr-type">VARCHAR(80)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">phone</span><span class="attr-type">VARCHAR(20)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">is_active</span><span class="attr-type">BOOLEAN DEFAULT TRUE</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">last_login</span><span class="attr-type">TIMESTAMP</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">created_at</span><span class="attr-type">TIMESTAMP</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">updated_at</span><span class="attr-type">TIMESTAMP</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">deleted_at</span><span class="attr-type">TIMESTAMP (soft delete)</span></div>
+  </div>
+
+  <!-- ROLE -->
+  <div class="entity" style="--entity-color: var(--user)">
+    <div class="entity-header">
+      <span class="entity-icon">🔑</span>
+      <span class="entity-name">ROLE</span>
+      <span class="entity-badge">RBAC</span>
+    </div>
+    <div class="attr-row"><span class="attr-tag tag-pk">PK</span><span class="attr-name is-pk">role_id</span><span class="attr-type">INT</span></div>
+    <div class="attr-row"><span class="attr-tag tag-uk">UK</span><span class="attr-name">role_name</span><span class="attr-type">ENUM(Admin, Manager, Employee)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">description</span><span class="attr-type">TEXT</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">created_at</span><span class="attr-type">TIMESTAMP</span></div>
+  </div>
+
+  <!-- PERMISSION -->
+  <div class="entity" style="--entity-color: var(--user)">
+    <div class="entity-header">
+      <span class="entity-icon">🛡️</span>
+      <span class="entity-name">PERMISSION</span>
+      <span class="entity-badge">RBAC</span>
+    </div>
+    <div class="attr-row"><span class="attr-tag tag-pk">PK</span><span class="attr-name is-pk">permission_id</span><span class="attr-type">INT</span></div>
+    <div class="attr-row"><span class="attr-tag tag-uk">UK</span><span class="attr-name">permission_name</span><span class="attr-type">VARCHAR(100)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">module</span><span class="attr-type">VARCHAR(60)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">action</span><span class="attr-type">ENUM(CREATE, READ, UPDATE, DELETE)</span></div>
+  </div>
+
+  <!-- ROLE_PERMISSION -->
+  <div class="entity" style="--entity-color: var(--user)">
+    <div class="entity-header">
+      <span class="entity-icon">🔗</span>
+      <span class="entity-name">ROLE_PERMISSION</span>
+      <span class="entity-badge">Junction</span>
+    </div>
+    <div class="attr-row"><span class="attr-tag tag-fk">FK</span><span class="attr-name is-fk">role_id</span><span class="attr-type">INT → ROLE</span></div>
+    <div class="attr-row"><span class="attr-tag tag-fk">FK</span><span class="attr-name is-fk">permission_id</span><span class="attr-type">INT → PERMISSION</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">granted_at</span><span class="attr-type">TIMESTAMP</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">granted_by</span><span class="attr-type">INT → USER</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name" style="color:var(--muted); font-size:0.65rem">PK = (role_id, permission_id)</span><span class="attr-type"></span></div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════ CUSTOMER ════════════════════════════════ -->
+<div class="section-label">
+  <span style="color:var(--customer); border-color:var(--customer); background:rgba(34,211,238,0.08)">1.2 CUSTOMER MANAGEMENT</span>
+</div>
+<div class="domain-grid">
+  <div class="entity" style="--entity-color: var(--customer)">
+    <div class="entity-header">
+      <span class="entity-icon">🧑‍💼</span>
+      <span class="entity-name">CUSTOMER</span>
+      <span class="entity-badge">Profile + Contact</span>
+    </div>
+    <div class="attr-row"><span class="attr-tag tag-pk">PK</span><span class="attr-name is-pk">customer_id</span><span class="attr-type">INT (AUTO_INCREMENT)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-uk">UK</span><span class="attr-name">email</span><span class="attr-type">VARCHAR(150)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">first_name</span><span class="attr-type">VARCHAR(80)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">last_name</span><span class="attr-type">VARCHAR(80)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">phone</span><span class="attr-type">VARCHAR(20)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">address_line1</span><span class="attr-type">VARCHAR(200)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">address_line2</span><span class="attr-type">VARCHAR(200)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">city</span><span class="attr-type">VARCHAR(80)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">state</span><span class="attr-type">VARCHAR(80)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">country</span><span class="attr-type">VARCHAR(80)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">postal_code</span><span class="attr-type">VARCHAR(20)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">date_of_birth</span><span class="attr-type">DATE</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">registration_date</span><span class="attr-type">TIMESTAMP DEFAULT NOW()</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">is_deleted</span><span class="attr-type">BOOLEAN DEFAULT FALSE</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">deleted_at</span><span class="attr-type">TIMESTAMP</span></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════ PRODUCT ════════════════════════════════ -->
+<div class="section-label">
+  <span style="color:var(--product); border-color:var(--product); background:rgba(52,211,153,0.08)">1.3 PRODUCT MANAGEMENT</span>
+</div>
+<div class="domain-grid">
+
+  <div class="entity" style="--entity-color: var(--product)">
+    <div class="entity-header">
+      <span class="entity-icon">📦</span>
+      <span class="entity-name">PRODUCT</span>
+      <span class="entity-badge">Smart Home Goods</span>
+    </div>
+    <div class="attr-row"><span class="attr-tag tag-pk">PK</span><span class="attr-name is-pk">product_id</span><span class="attr-type">INT (AUTO_INCREMENT)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-fk">FK</span><span class="attr-name is-fk">category_id</span><span class="attr-type">INT → CATEGORY</span></div>
+    <div class="attr-row"><span class="attr-tag tag-fk">FK</span><span class="attr-name is-fk">supplier_id</span><span class="attr-type">INT → SUPPLIER</span></div>
+    <div class="attr-row"><span class="attr-tag tag-uk">UK</span><span class="attr-name">sku</span><span class="attr-type">VARCHAR(60)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">name</span><span class="attr-type">VARCHAR(150)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">description</span><span class="attr-type">TEXT</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">price</span><span class="attr-type">DECIMAL(10,2)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">image_url</span><span class="attr-type">VARCHAR(255)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">is_active</span><span class="attr-type">BOOLEAN DEFAULT TRUE</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">created_at</span><span class="attr-type">TIMESTAMP</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">updated_at</span><span class="attr-type">TIMESTAMP</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">discontinued_at</span><span class="attr-type">TIMESTAMP</span></div>
+  </div>
+
+  <div class="entity" style="--entity-color: var(--product)">
+    <div class="entity-header">
+      <span class="entity-icon">🗂️</span>
+      <span class="entity-name">CATEGORY</span>
+      <span class="entity-badge">Product Classification</span>
+    </div>
+    <div class="attr-row"><span class="attr-tag tag-pk">PK</span><span class="attr-name is-pk">category_id</span><span class="attr-type">INT</span></div>
+    <div class="attr-row"><span class="attr-tag tag-uk">UK</span><span class="attr-name">category_name</span><span class="attr-type">VARCHAR(100)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">description</span><span class="attr-type">TEXT</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">created_at</span><span class="attr-type">TIMESTAMP</span></div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════ INVENTORY ════════════════════════════════ -->
+<div class="section-label">
+  <span style="color:var(--inventory); border-color:var(--inventory); background:rgba(251,191,36,0.08)">1.4 INVENTORY MANAGEMENT</span>
+</div>
+<div class="domain-grid">
+
+  <div class="entity" style="--entity-color: var(--inventory)">
+    <div class="entity-header">
+      <span class="entity-icon">📊</span>
+      <span class="entity-name">INVENTORY</span>
+      <span class="entity-badge">Stock Tracker</span>
+    </div>
+    <div class="attr-row"><span class="attr-tag tag-pk">PK</span><span class="attr-name is-pk">inventory_id</span><span class="attr-type">INT</span></div>
+    <div class="attr-row"><span class="attr-tag tag-fk">FK</span><span class="attr-name is-fk">product_id</span><span class="attr-type">INT → PRODUCT</span></div>
+    <div class="attr-row"><span class="attr-tag tag-fk">FK</span><span class="attr-name is-fk">warehouse_id</span><span class="attr-type">INT → WAREHOUSE</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">quantity_on_hand</span><span class="attr-type">INT NOT NULL</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">reorder_level</span><span class="attr-type">INT</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">reorder_quantity</span><span class="attr-type">INT</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">low_stock_alert_sent</span><span class="attr-type">BOOLEAN DEFAULT FALSE</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">last_restocked_at</span><span class="attr-type">TIMESTAMP</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">updated_at</span><span class="attr-type">TIMESTAMP</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">is_deleted</span><span class="attr-type">BOOLEAN DEFAULT FALSE</span></div>
+    <div class="attr-row"><span class="attr-tag tag-uk">UK</span><span class="attr-name" style="color:var(--muted); font-size:0.64rem">UNIQUE(product_id, warehouse_id)</span><span class="attr-type"></span></div>
+  </div>
+
+  <div class="entity" style="--entity-color: var(--inventory)">
+    <div class="entity-header">
+      <span class="entity-icon">🏢</span>
+      <span class="entity-name">WAREHOUSE</span>
+      <span class="entity-badge">Storage Location</span>
+    </div>
+    <div class="attr-row"><span class="attr-tag tag-pk">PK</span><span class="attr-name is-pk">warehouse_id</span><span class="attr-type">INT</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">name</span><span class="attr-type">VARCHAR(100)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">address</span><span class="attr-type">TEXT</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">city</span><span class="attr-type">VARCHAR(80)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">country</span><span class="attr-type">VARCHAR(80)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-fk">FK</span><span class="attr-name is-fk">manager_user_id</span><span class="attr-type">INT → USER</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">contact_phone</span><span class="attr-type">VARCHAR(20)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">capacity</span><span class="attr-type">INT</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">is_active</span><span class="attr-type">BOOLEAN DEFAULT TRUE</span></div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════ ORDER ════════════════════════════════ -->
+<div class="section-label">
+  <span style="color:var(--order); border-color:var(--order); background:rgba(251,146,60,0.08)">1.5 ORDER MANAGEMENT</span>
+</div>
+<div class="domain-grid">
+
+  <div class="entity" style="--entity-color: var(--order)">
+    <div class="entity-header">
+      <span class="entity-icon">🛒</span>
+      <span class="entity-name">ORDER</span>
+      <span class="entity-badge">Purchase Record</span>
+    </div>
+    <div class="attr-row"><span class="attr-tag tag-pk">PK</span><span class="attr-name is-pk">order_id</span><span class="attr-type">INT (AUTO_INCREMENT)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-uk">UK</span><span class="attr-name">order_number</span><span class="attr-type">VARCHAR(30) AUTO-GENERATED</span></div>
+    <div class="attr-row"><span class="attr-tag tag-fk">FK</span><span class="attr-name is-fk">customer_id</span><span class="attr-type">INT → CUSTOMER</span></div>
+    <div class="attr-row"><span class="attr-tag tag-fk">FK</span><span class="attr-name is-fk">created_by_user_id</span><span class="attr-type">INT → USER</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">order_date</span><span class="attr-type">TIMESTAMP DEFAULT NOW()</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">status</span><span class="attr-type">ENUM(Pending, Shipped, Delivered, Cancelled)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">shipping_address</span><span class="attr-type">TEXT</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">shipping_city</span><span class="attr-type">VARCHAR(80)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">total_amount</span><span class="attr-type">DECIMAL(12,2)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">notes</span><span class="attr-type">TEXT</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">cancelled_at</span><span class="attr-type">TIMESTAMP</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">cancellation_reason</span><span class="attr-type">TEXT</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">updated_at</span><span class="attr-type">TIMESTAMP</span></div>
+  </div>
+
+  <div class="entity" style="--entity-color: var(--order)">
+    <div class="entity-header">
+      <span class="entity-icon">📋</span>
+      <span class="entity-name">ORDER_ITEM</span>
+      <span class="entity-badge">Line Item</span>
+    </div>
+    <div class="attr-row"><span class="attr-tag tag-pk">PK</span><span class="attr-name is-pk">order_item_id</span><span class="attr-type">INT</span></div>
+    <div class="attr-row"><span class="attr-tag tag-fk">FK</span><span class="attr-name is-fk">order_id</span><span class="attr-type">INT → ORDER</span></div>
+    <div class="attr-row"><span class="attr-tag tag-fk">FK</span><span class="attr-name is-fk">product_id</span><span class="attr-type">INT → PRODUCT</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">quantity</span><span class="attr-type">INT NOT NULL</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">unit_price_at_order</span><span class="attr-type">DECIMAL(10,2)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">discount_percent</span><span class="attr-type">DECIMAL(5,2) DEFAULT 0</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">line_total</span><span class="attr-type">DECIMAL(12,2) COMPUTED</span></div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════ BILLING ════════════════════════════════ -->
+<div class="section-label">
+  <span style="color:var(--billing); border-color:var(--billing); background:rgba(244,114,182,0.08)">1.6 BILLING & INVOICE</span>
+</div>
+<div class="domain-grid">
+
+  <div class="entity" style="--entity-color: var(--billing)">
+    <div class="entity-header">
+      <span class="entity-icon">🧾</span>
+      <span class="entity-name">INVOICE</span>
+      <span class="entity-badge">Auto-Generated</span>
+    </div>
+    <div class="attr-row"><span class="attr-tag tag-pk">PK</span><span class="attr-name is-pk">invoice_id</span><span class="attr-type">INT (AUTO_INCREMENT)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-uk">UK</span><span class="attr-name">invoice_number</span><span class="attr-type">VARCHAR(30)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-fk">FK</span><span class="attr-name is-fk">order_id</span><span class="attr-type">INT → ORDER (unique)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-fk">FK</span><span class="attr-name is-fk">customer_id</span><span class="attr-type">INT → CUSTOMER</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">issue_date</span><span class="attr-type">DATE NOT NULL</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">due_date</span><span class="attr-type">DATE</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">subtotal</span><span class="attr-type">DECIMAL(12,2)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">tax_rate</span><span class="attr-type">DECIMAL(5,2)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">tax_amount</span><span class="attr-type">DECIMAL(10,2)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">discount_amount</span><span class="attr-type">DECIMAL(10,2) DEFAULT 0</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">total_amount</span><span class="attr-type">DECIMAL(12,2)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">payment_status</span><span class="attr-type">ENUM(Unpaid, Paid, Partial, Cancelled)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">notes</span><span class="attr-type">TEXT</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">deleted_at</span><span class="attr-type">TIMESTAMP (admin soft delete)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-fk">FK</span><span class="attr-name is-fk">deleted_by_user_id</span><span class="attr-type">INT → USER</span></div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════ PAYMENT ════════════════════════════════ -->
+<div class="section-label">
+  <span style="color:var(--payment); border-color:var(--payment); background:rgba(167,139,250,0.08)">1.7 PAYMENT MANAGEMENT</span>
+</div>
+<div class="domain-grid">
+
+  <div class="entity" style="--entity-color: var(--payment)">
+    <div class="entity-header">
+      <span class="entity-icon">💳</span>
+      <span class="entity-name">PAYMENT</span>
+      <span class="entity-badge">Transaction Record</span>
+    </div>
+    <div class="attr-row"><span class="attr-tag tag-pk">PK</span><span class="attr-name is-pk">payment_id</span><span class="attr-type">INT (AUTO_INCREMENT)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-uk">UK</span><span class="attr-name">transaction_reference</span><span class="attr-type">VARCHAR(100)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-fk">FK</span><span class="attr-name is-fk">invoice_id</span><span class="attr-type">INT → INVOICE</span></div>
+    <div class="attr-row"><span class="attr-tag tag-fk">FK</span><span class="attr-name is-fk">customer_id</span><span class="attr-type">INT → CUSTOMER</span></div>
+    <div class="attr-row"><span class="attr-tag tag-fk">FK</span><span class="attr-name is-fk">payment_method_id</span><span class="attr-type">INT → PAYMENT_METHOD</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">amount</span><span class="attr-type">DECIMAL(12,2)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">payment_date</span><span class="attr-type">TIMESTAMP</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">status</span><span class="attr-type">ENUM(Pending, Success, Failed, Refunded)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">gateway_response</span><span class="attr-type">TEXT</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">refund_amount</span><span class="attr-type">DECIMAL(12,2)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">refund_date</span><span class="attr-type">TIMESTAMP</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">refund_reason</span><span class="attr-type">TEXT</span></div>
+  </div>
+
+  <div class="entity" style="--entity-color: var(--payment)">
+    <div class="entity-header">
+      <span class="entity-icon">💰</span>
+      <span class="entity-name">PAYMENT_METHOD</span>
+      <span class="entity-badge">Method Registry</span>
+    </div>
+    <div class="attr-row"><span class="attr-tag tag-pk">PK</span><span class="attr-name is-pk">payment_method_id</span><span class="attr-type">INT</span></div>
+    <div class="attr-row"><span class="attr-tag tag-uk">UK</span><span class="attr-name">method_name</span><span class="attr-type">VARCHAR(60)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">type</span><span class="attr-type">ENUM(Card, Bank Transfer, Cash, Mobile Pay)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">description</span><span class="attr-type">VARCHAR(200)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">is_active</span><span class="attr-type">BOOLEAN DEFAULT TRUE</span></div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════ MARKETING ════════════════════════════════ -->
+<div class="section-label">
+  <span style="color:var(--marketing); border-color:var(--marketing); background:rgba(45,212,191,0.08)">1.8 DIGITAL MARKETING</span>
+</div>
+<div class="domain-grid">
+
+  <div class="entity" style="--entity-color: var(--marketing)">
+    <div class="entity-header">
+      <span class="entity-icon">📣</span>
+      <span class="entity-name">CAMPAIGN</span>
+      <span class="entity-badge">Marketing Campaign</span>
+    </div>
+    <div class="attr-row"><span class="attr-tag tag-pk">PK</span><span class="attr-name is-pk">campaign_id</span><span class="attr-type">INT (AUTO_INCREMENT)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-fk">FK</span><span class="attr-name is-fk">created_by_user_id</span><span class="attr-type">INT → USER</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">name</span><span class="attr-type">VARCHAR(150)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">type</span><span class="attr-type">ENUM(Email, Social Media, Promotion)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">description</span><span class="attr-type">TEXT</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">target_audience</span><span class="attr-type">TEXT</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">start_date</span><span class="attr-type">DATE NOT NULL</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">end_date</span><span class="attr-type">DATE NOT NULL</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">budget</span><span class="attr-type">DECIMAL(12,2)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">status</span><span class="attr-type">ENUM(Draft, Active, Paused, Completed, Deleted)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">created_at</span><span class="attr-type">TIMESTAMP</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">updated_at</span><span class="attr-type">TIMESTAMP</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">deleted_at</span><span class="attr-type">TIMESTAMP</span></div>
+  </div>
+
+  <div class="entity" style="--entity-color: var(--marketing)">
+    <div class="entity-header">
+      <span class="entity-icon">📈</span>
+      <span class="entity-name">CAMPAIGN_PERFORMANCE</span>
+      <span class="entity-badge">Metrics Snapshot</span>
+    </div>
+    <div class="attr-row"><span class="attr-tag tag-pk">PK</span><span class="attr-name is-pk">perf_id</span><span class="attr-type">INT</span></div>
+    <div class="attr-row"><span class="attr-tag tag-fk">FK</span><span class="attr-name is-fk">campaign_id</span><span class="attr-type">INT → CAMPAIGN</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">recorded_date</span><span class="attr-type">DATE</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">impressions</span><span class="attr-type">INT DEFAULT 0</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">clicks</span><span class="attr-type">INT DEFAULT 0</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">conversions</span><span class="attr-type">INT DEFAULT 0</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">revenue_generated</span><span class="attr-type">DECIMAL(12,2)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">cost_incurred</span><span class="attr-type">DECIMAL(12,2)</span></div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════ SUPPLIER ════════════════════════════════ -->
+<div class="section-label">
+  <span style="color:var(--supplier); border-color:var(--supplier); background:rgba(134,239,172,0.08)">1.9 SUPPLIER MANAGEMENT</span>
+</div>
+<div class="domain-grid">
+
+  <div class="entity" style="--entity-color: var(--supplier)">
+    <div class="entity-header">
+      <span class="entity-icon">🚚</span>
+      <span class="entity-name">SUPPLIER</span>
+      <span class="entity-badge">Vendor Profile</span>
+    </div>
+    <div class="attr-row"><span class="attr-tag tag-pk">PK</span><span class="attr-name is-pk">supplier_id</span><span class="attr-type">INT (AUTO_INCREMENT)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-uk">UK</span><span class="attr-name">email</span><span class="attr-type">VARCHAR(150)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">company_name</span><span class="attr-type">VARCHAR(150)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">contact_person</span><span class="attr-type">VARCHAR(100)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">phone</span><span class="attr-type">VARCHAR(20)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">address</span><span class="attr-type">TEXT</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">city</span><span class="attr-type">VARCHAR(80)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">country</span><span class="attr-type">VARCHAR(80)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">contract_start_date</span><span class="attr-type">DATE</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">contract_end_date</span><span class="attr-type">DATE</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">is_active</span><span class="attr-type">BOOLEAN DEFAULT TRUE</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">created_at</span><span class="attr-type">TIMESTAMP</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">deleted_at</span><span class="attr-type">TIMESTAMP</span></div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════ INSTALLATION ════════════════════════════════ -->
+<div class="section-label">
+  <span style="color:var(--install); border-color:var(--install); background:rgba(248,113,113,0.08)">1.10 INSTALLATION MANAGEMENT</span>
+</div>
+<div class="domain-grid">
+
+  <div class="entity" style="--entity-color: var(--install)">
+    <div class="entity-header">
+      <span class="entity-icon">👷</span>
+      <span class="entity-name">TECHNICIAN</span>
+      <span class="entity-badge">Extends USER</span>
+    </div>
+    <div class="attr-row"><span class="attr-tag tag-pk">PK</span><span class="attr-name is-pk">technician_id</span><span class="attr-type">INT</span></div>
+    <div class="attr-row"><span class="attr-tag tag-fk">FK</span><span class="attr-name is-fk">user_id</span><span class="attr-type">INT → USER (unique)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">specialization</span><span class="attr-type">VARCHAR(100)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">certification_number</span><span class="attr-type">VARCHAR(60)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">availability_status</span><span class="attr-type">ENUM(Available, Busy, Off Duty)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">phone</span><span class="attr-type">VARCHAR(20)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">hired_date</span><span class="attr-type">DATE</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">is_active</span><span class="attr-type">BOOLEAN DEFAULT TRUE</span></div>
+  </div>
+
+  <div class="entity" style="--entity-color: var(--install)">
+    <div class="entity-header">
+      <span class="entity-icon">🔧</span>
+      <span class="entity-name">INSTALLATION</span>
+      <span class="entity-badge">Field Job</span>
+    </div>
+    <div class="attr-row"><span class="attr-tag tag-pk">PK</span><span class="attr-name is-pk">installation_id</span><span class="attr-type">INT (AUTO_INCREMENT)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-uk">UK</span><span class="attr-name">job_reference</span><span class="attr-type">VARCHAR(30)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-fk">FK</span><span class="attr-name is-fk">order_id</span><span class="attr-type">INT → ORDER</span></div>
+    <div class="attr-row"><span class="attr-tag tag-fk">FK</span><span class="attr-name is-fk">customer_id</span><span class="attr-type">INT → CUSTOMER</span></div>
+    <div class="attr-row"><span class="attr-tag tag-fk">FK</span><span class="attr-name is-fk">technician_id</span><span class="attr-type">INT → TECHNICIAN</span></div>
+    <div class="attr-row"><span class="attr-tag tag-fk">FK</span><span class="attr-name is-fk">scheduled_by_user_id</span><span class="attr-type">INT → USER</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">scheduled_date</span><span class="attr-type">DATETIME NOT NULL</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">completed_date</span><span class="attr-type">DATETIME</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">installation_address</span><span class="attr-type">TEXT</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">status</span><span class="attr-type">ENUM(Scheduled, In Progress, Completed, Cancelled)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">technician_notes</span><span class="attr-type">TEXT</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">cancellation_reason</span><span class="attr-type">TEXT</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">is_deleted</span><span class="attr-type">BOOLEAN DEFAULT FALSE</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">deleted_at</span><span class="attr-type">TIMESTAMP (completed/invalid)</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">created_at</span><span class="attr-type">TIMESTAMP</span></div>
+    <div class="attr-row"><span class="attr-tag tag-"></span><span class="attr-name">updated_at</span><span class="attr-type">TIMESTAMP</span></div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════ RELATIONSHIPS TABLE ════════════════════════════════ -->
+<div class="rel-section">
+  <h2>Entity Relationships — Complete Reference</h2>
+  <table class="rel-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Entity A</th>
+        <th>Cardinality</th>
+        <th>Entity B</th>
+        <th>FK / Join</th>
+        <th>Business Rule</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><span class="dot-color" style="background:var(--user)"></span>ROLE</td>
+        <td><span class="cardinality card-1m">1 → MANY</span></td>
+        <td><span class="dot-color" style="background:var(--user)"></span>USER</td>
+        <td><code>USER.role_id → ROLE.role_id</code></td>
+        <td>Each user is assigned exactly one role; one role can be assigned to many users</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><span class="dot-color" style="background:var(--user)"></span>ROLE</td>
+        <td><span class="cardinality card-mm">M ↔ N</span></td>
+        <td><span class="dot-color" style="background:var(--user)"></span>PERMISSION</td>
+        <td><code>ROLE_PERMISSION (role_id, permission_id)</code></td>
+        <td>A role holds many permissions; a permission can belong to many roles</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><span class="dot-color" style="background:var(--user)"></span>USER</td>
+        <td><span class="cardinality card-11">1 → 0..1</span></td>
+        <td><span class="dot-color" style="background:var(--install)"></span>TECHNICIAN</td>
+        <td><code>TECHNICIAN.user_id → USER.user_id</code></td>
+        <td>A technician IS-A user (specialisation); a user may optionally be a technician</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><span class="dot-color" style="background:var(--user)"></span>USER</td>
+        <td><span class="cardinality card-1m">1 → MANY</span></td>
+        <td><span class="dot-color" style="background:var(--inventory)"></span>WAREHOUSE</td>
+        <td><code>WAREHOUSE.manager_user_id → USER.user_id</code></td>
+        <td>A manager (user) can manage multiple warehouses</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><span class="dot-color" style="background:var(--customer)"></span>CUSTOMER</td>
+        <td><span class="cardinality card-1m">1 → MANY</span></td>
+        <td><span class="dot-color" style="background:var(--order)"></span>ORDER</td>
+        <td><code>ORDER.customer_id → CUSTOMER.customer_id</code></td>
+        <td>A customer can place many orders; each order belongs to one customer</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td><span class="dot-color" style="background:var(--user)"></span>USER</td>
+        <td><span class="cardinality card-1m">1 → MANY</span></td>
+        <td><span class="dot-color" style="background:var(--order)"></span>ORDER</td>
+        <td><code>ORDER.created_by_user_id → USER.user_id</code></td>
+        <td>Orders may be entered by an employee or manager on a customer's behalf</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td><span class="dot-color" style="background:var(--order)"></span>ORDER</td>
+        <td><span class="cardinality card-1m">1 → MANY</span></td>
+        <td><span class="dot-color" style="background:var(--order)"></span>ORDER_ITEM</td>
+        <td><code>ORDER_ITEM.order_id → ORDER.order_id</code></td>
+        <td>Each order has one or more line items (products ordered)</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td><span class="dot-color" style="background:var(--product)"></span>PRODUCT</td>
+        <td><span class="cardinality card-1m">1 → MANY</span></td>
+        <td><span class="dot-color" style="background:var(--order)"></span>ORDER_ITEM</td>
+        <td><code>ORDER_ITEM.product_id → PRODUCT.product_id</code></td>
+        <td>A product can appear in many order items; each line item references one product</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td><span class="dot-color" style="background:var(--product)"></span>CATEGORY</td>
+        <td><span class="cardinality card-1m">1 → MANY</span></td>
+        <td><span class="dot-color" style="background:var(--product)"></span>PRODUCT</td>
+        <td><code>PRODUCT.category_id → CATEGORY.category_id</code></td>
+        <td>Each product belongs to one category; a category can group many products</td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td><span class="dot-color" style="background:var(--supplier)"></span>SUPPLIER</td>
+        <td><span class="cardinality card-1m">1 → MANY</span></td>
+        <td><span class="dot-color" style="background:var(--product)"></span>PRODUCT</td>
+        <td><code>PRODUCT.supplier_id → SUPPLIER.supplier_id</code></td>
+        <td>A supplier can supply many products; each product has one primary supplier</td>
+      </tr>
+      <tr>
+        <td>11</td>
+        <td><span class="dot-color" style="background:var(--product)"></span>PRODUCT</td>
+        <td><span class="cardinality card-1m">1 → MANY</span></td>
+        <td><span class="dot-color" style="background:var(--inventory)"></span>INVENTORY</td>
+        <td><code>INVENTORY.product_id → PRODUCT.product_id</code></td>
+        <td>A product can have inventory records in multiple warehouses</td>
+      </tr>
+      <tr>
+        <td>12</td>
+        <td><span class="dot-color" style="background:var(--inventory)"></span>WAREHOUSE</td>
+        <td><span class="cardinality card-1m">1 → MANY</span></td>
+        <td><span class="dot-color" style="background:var(--inventory)"></span>INVENTORY</td>
+        <td><code>INVENTORY.warehouse_id → WAREHOUSE.warehouse_id</code></td>
+        <td>A warehouse stores many products; each inventory record is for one warehouse</td>
+      </tr>
+      <tr>
+        <td>13</td>
+        <td><span class="dot-color" style="background:var(--order)"></span>ORDER</td>
+        <td><span class="cardinality card-11">1 → 1</span></td>
+        <td><span class="dot-color" style="background:var(--billing)"></span>INVOICE</td>
+        <td><code>INVOICE.order_id → ORDER.order_id (UNIQUE)</code></td>
+        <td>Each placed order automatically generates exactly one invoice</td>
+      </tr>
+      <tr>
+        <td>14</td>
+        <td><span class="dot-color" style="background:var(--customer)"></span>CUSTOMER</td>
+        <td><span class="cardinality card-1m">1 → MANY</span></td>
+        <td><span class="dot-color" style="background:var(--billing)"></span>INVOICE</td>
+        <td><code>INVOICE.customer_id → CUSTOMER.customer_id</code></td>
+        <td>A customer accumulates many invoices (one per order) over their lifetime</td>
+      </tr>
+      <tr>
+        <td>15</td>
+        <td><span class="dot-color" style="background:var(--billing)"></span>INVOICE</td>
+        <td><span class="cardinality card-1m">1 → MANY</span></td>
+        <td><span class="dot-color" style="background:var(--payment)"></span>PAYMENT</td>
+        <td><code>PAYMENT.invoice_id → INVOICE.invoice_id</code></td>
+        <td>An invoice can be paid in multiple transactions (partial payments, retries, refunds)</td>
+      </tr>
+      <tr>
+        <td>16</td>
+        <td><span class="dot-color" style="background:var(--customer)"></span>CUSTOMER</td>
+        <td><span class="cardinality card-1m">1 → MANY</span></td>
+        <td><span class="dot-color" style="background:var(--payment)"></span>PAYMENT</td>
+        <td><code>PAYMENT.customer_id → CUSTOMER.customer_id</code></td>
+        <td>Allows full payment history retrieval per customer independently of invoice lookup</td>
+      </tr>
+      <tr>
+        <td>17</td>
+        <td><span class="dot-color" style="background:var(--payment)"></span>PAYMENT_METHOD</td>
+        <td><span class="cardinality card-1m">1 → MANY</span></td>
+        <td><span class="dot-color" style="background:var(--payment)"></span>PAYMENT</td>
+        <td><code>PAYMENT.payment_method_id → PAYMENT_METHOD.payment_method_id</code></td>
+        <td>Tracks which payment method was used per transaction; supports multiple methods</td>
+      </tr>
+      <tr>
+        <td>18</td>
+        <td><span class="dot-color" style="background:var(--user)"></span>USER</td>
+        <td><span class="cardinality card-1m">1 → MANY</span></td>
+        <td><span class="dot-color" style="background:var(--marketing)"></span>CAMPAIGN</td>
+        <td><code>CAMPAIGN.created_by_user_id → USER.user_id</code></td>
+        <td>A user (marketing manager) can create and manage many campaigns</td>
+      </tr>
+      <tr>
+        <td>19</td>
+        <td><span class="dot-color" style="background:var(--marketing)"></span>CAMPAIGN</td>
+        <td><span class="cardinality card-1m">1 → MANY</span></td>
+        <td><span class="dot-color" style="background:var(--marketing)"></span>CAMPAIGN_PERFORMANCE</td>
+        <td><code>CAMPAIGN_PERFORMANCE.campaign_id → CAMPAIGN.campaign_id</code></td>
+        <td>Performance metrics are captured as time-series snapshots per campaign day</td>
+      </tr>
+      <tr>
+        <td>20</td>
+        <td><span class="dot-color" style="background:var(--order)"></span>ORDER</td>
+        <td><span class="cardinality card-1m">1 → MANY</span></td>
+        <td><span class="dot-color" style="background:var(--install)"></span>INSTALLATION</td>
+        <td><code>INSTALLATION.order_id → ORDER.order_id</code></td>
+        <td>An order for smart home products may require one or more installation jobs</td>
+      </tr>
+      <tr>
+        <td>21</td>
+        <td><span class="dot-color" style="background:var(--customer)"></span>CUSTOMER</td>
+        <td><span class="cardinality card-1m">1 → MANY</span></td>
+        <td><span class="dot-color" style="background:var(--install)"></span>INSTALLATION</td>
+        <td><code>INSTALLATION.customer_id → CUSTOMER.customer_id</code></td>
+        <td>A customer can have multiple installations at different times or addresses</td>
+      </tr>
+      <tr>
+        <td>22</td>
+        <td><span class="dot-color" style="background:var(--install)"></span>TECHNICIAN</td>
+        <td><span class="cardinality card-1m">1 → MANY</span></td>
+        <td><span class="dot-color" style="background:var(--install)"></span>INSTALLATION</td>
+        <td><code>INSTALLATION.technician_id → TECHNICIAN.technician_id</code></td>
+        <td>A technician is assigned to many installations; each job has one assigned technician</td>
+      </tr>
+      <tr>
+        <td>23</td>
+        <td><span class="dot-color" style="background:var(--user)"></span>USER</td>
+        <td><span class="cardinality card-1m">1 → MANY</span></td>
+        <td><span class="dot-color" style="background:var(--install)"></span>INSTALLATION</td>
+        <td><code>INSTALLATION.scheduled_by_user_id → USER.user_id</code></td>
+        <td>An admin or employee schedules installations on behalf of customers</td>
+      </tr>
+      <tr>
+        <td>24</td>
+        <td><span class="dot-color" style="background:var(--user)"></span>USER</td>
+        <td><span class="cardinality card-1m">1 → MANY</span></td>
+        <td><span class="dot-color" style="background:var(--billing)"></span>INVOICE</td>
+        <td><code>INVOICE.deleted_by_user_id → USER.user_id</code></td>
+        <td>Invoice soft-delete is admin-only; the deleting admin is audited</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>

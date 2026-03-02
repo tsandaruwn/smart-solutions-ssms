@@ -1,7 +1,9 @@
 package com.ssms.ordermanagement.controller;
 
-import com.ssms.ordermanagement.entity.Order;
+import com.ssms.ordermanagement.dto.*;
+import com.ssms.ordermanagement.entity.OrderStatus;
 import com.ssms.ordermanagement.service.OrderService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -13,6 +15,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * REST controller for Order Management operations.
+ *
+ * Base path: /api/orders
+ */
 @RestController
 @RequestMapping("/api/orders")
 @RequiredArgsConstructor
@@ -21,221 +28,164 @@ public class OrderController {
 
     private final OrderService orderService;
 
-
-    @PostMapping
-    public ResponseEntity<Map<String, Object>> placeOrder(@RequestBody Order order) {
-        try {
-            Order createdOrder = orderService.placeOrder(order);
-            
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            response.put("message", "Order placed successfully");
-            response.put("orderId", createdOrder.getOrderId());
-            response.put("order", createdOrder);
-            
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (Exception e) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("success", false);
-            errorResponse.put("message", "Failed to place order: " + e.getMessage());
-            
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-        }
-    }
+    // ─── CREATE ─────────────────────────────────────────────────
 
     /**
-     * Get all orders
+     * Place a new order.
+     * POST /api/orders
+     */
+    @PostMapping
+    public ResponseEntity<Map<String, Object>> placeOrder(@Valid @RequestBody CreateOrderRequest request) {
+        OrderResponse order = orderService.placeOrder(request);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "Order placed successfully");
+        response.put("orderNumber", order.getOrderNumber());
+        response.put("order", order);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    // ─── READ ───────────────────────────────────────────────────
+
+    /**
+     * Get all orders.
      * GET /api/orders
      */
     @GetMapping
-    public ResponseEntity<List<Order>> getAllOrders() {
-        List<Order> orders = orderService.getAllOrders();
-        return ResponseEntity.ok(orders);
+    public ResponseEntity<List<OrderResponse>> getAllOrders() {
+        return ResponseEntity.ok(orderService.getAllOrders());
     }
 
     /**
-     * Get order by ID
-     * GET /api/orders/{id}
+     * Get order by primary key (order_id).
+     * GET /api/orders/{orderId}
      */
-    @GetMapping("/{id}")
-    public ResponseEntity<Order> getOrderById(@PathVariable Long id) {
-        try {
-            Order order = orderService.getOrderById(id);
-            return ResponseEntity.ok(order);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderResponse> getOrderById(@PathVariable Integer orderId) {
+        return ResponseEntity.ok(orderService.getOrderById(orderId));
     }
 
     /**
-     * Get order by order ID
-     * GET /api/orders/order/{orderId}
+     * Get order by order_number.
+     * GET /api/orders/number/{orderNumber}
      */
-    @GetMapping("/order/{orderId}")
-    public ResponseEntity<Order> getOrderByOrderId(@PathVariable String orderId) {
-        try {
-            Order order = orderService.getOrderByOrderId(orderId);
-            return ResponseEntity.ok(order);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping("/number/{orderNumber}")
+    public ResponseEntity<OrderResponse> getOrderByOrderNumber(@PathVariable String orderNumber) {
+        return ResponseEntity.ok(orderService.getOrderByOrderNumber(orderNumber));
     }
 
     /**
-     * Get order history for a customer
+     * Get order history for a customer.
      * GET /api/orders/customer/{customerId}/history
      */
     @GetMapping("/customer/{customerId}/history")
-    public ResponseEntity<List<Order>> getOrderHistory(@PathVariable Long customerId) {
-        List<Order> orderHistory = orderService.getOrderHistory(customerId);
-        return ResponseEntity.ok(orderHistory);
+    public ResponseEntity<List<OrderResponse>> getOrderHistory(@PathVariable Integer customerId) {
+        return ResponseEntity.ok(orderService.getOrderHistory(customerId));
     }
 
     /**
-     * Update order details
-     * PUT /api/orders/{orderId}
+     * Get orders by status.
+     * GET /api/orders/status/{status}
      */
-    @PutMapping("/{orderId}")
-    public ResponseEntity<Map<String, Object>> updateOrderDetails(
-            @PathVariable String orderId,
-            @RequestBody Order orderDetails) {
-        try {
-            Order updatedOrder = orderService.updateOrderDetails(orderId, orderDetails);
-            
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            response.put("message", "Order details updated successfully");
-            response.put("order", updatedOrder);
-            
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("success", false);
-            errorResponse.put("message", e.getMessage());
-            
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-        }
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<OrderResponse>> getOrdersByStatus(@PathVariable OrderStatus status) {
+        return ResponseEntity.ok(orderService.getOrdersByStatus(status));
     }
 
     /**
-     * Update order status
+     * Get orders by date range.
+     * GET /api/orders/date-range?startDate=...&endDate=...
+     */
+    @GetMapping("/date-range")
+    public ResponseEntity<List<OrderResponse>> getOrdersByDateRange(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+        return ResponseEntity.ok(orderService.getOrdersByDateRange(startDate, endDate));
+    }
+
+    /**
+     * Get recent orders (last 30 days).
+     * GET /api/orders/recent
+     */
+    @GetMapping("/recent")
+    public ResponseEntity<List<OrderResponse>> getRecentOrders() {
+        return ResponseEntity.ok(orderService.getRecentOrders());
+    }
+
+    // ─── UPDATE ─────────────────────────────────────────────────
+
+    /**
+     * Update order status (Pending → Shipped → Delivered).
      * PUT /api/orders/{orderId}/status
      */
     @PutMapping("/{orderId}/status")
     public ResponseEntity<Map<String, Object>> updateOrderStatus(
-            @PathVariable String orderId,
-            @RequestParam Order.OrderStatus status) {
-        try {
-            Order updatedOrder = orderService.updateOrderStatus(orderId, status);
-            
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            response.put("message", "Order status updated successfully");
-            response.put("order", updatedOrder);
-            
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("success", false);
-            errorResponse.put("message", e.getMessage());
-            
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-        }
+            @PathVariable Integer orderId,
+            @Valid @RequestBody UpdateOrderStatusRequest request) {
+        OrderResponse order = orderService.updateOrderStatus(orderId, request);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "Order status updated to " + order.getStatus());
+        response.put("order", order);
+
+        return ResponseEntity.ok(response);
     }
 
+    // ─── CANCEL ─────────────────────────────────────────────────
+
     /**
-     * Cancel an order
+     * Cancel an order.
      * POST /api/orders/{orderId}/cancel
      */
     @PostMapping("/{orderId}/cancel")
     public ResponseEntity<Map<String, Object>> cancelOrder(
-            @PathVariable String orderId,
-            @RequestParam(required = false) String reason) {
-        try {
-            String cancellationReason = reason != null ? reason : "Customer requested cancellation";
-            Order cancelledOrder = orderService.cancelOrder(orderId, cancellationReason);
-            
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            response.put("message", "Order cancelled successfully");
-            response.put("order", cancelledOrder);
-            
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("success", false);
-            errorResponse.put("message", e.getMessage());
-            
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+            @PathVariable Integer orderId,
+            @RequestBody(required = false) CancelOrderRequest request) {
+        if (request == null) {
+            request = new CancelOrderRequest();
         }
+        OrderResponse order = orderService.cancelOrder(orderId, request);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "Order cancelled successfully");
+        response.put("order", order);
+
+        return ResponseEntity.ok(response);
     }
 
+    // ─── DELETE ─────────────────────────────────────────────────
+
     /**
-     * Get orders by status
-     * GET /api/orders/status/{status}
+     * Delete an order (admin).
+     * DELETE /api/orders/{orderId}
      */
-    @GetMapping("/status/{status}")
-    public ResponseEntity<List<Order>> getOrdersByStatus(@PathVariable Order.OrderStatus status) {
-        List<Order> orders = orderService.getOrdersByStatus(status);
-        return ResponseEntity.ok(orders);
+    @DeleteMapping("/{orderId}")
+    public ResponseEntity<Map<String, Object>> deleteOrder(@PathVariable Integer orderId) {
+        orderService.deleteOrder(orderId);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "Order deleted successfully");
+
+        return ResponseEntity.ok(response);
     }
 
-    /**
-     * Get orders by date range
-     * GET /api/orders/date-range
-     */
-    @GetMapping("/date-range")
-    public ResponseEntity<List<Order>> getOrdersByDateRange(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
-        List<Order> orders = orderService.getOrdersByDateRange(startDate, endDate);
-        return ResponseEntity.ok(orders);
-    }
+    // ─── HEALTH ─────────────────────────────────────────────────
 
     /**
-     * Get recent orders (last 30 days)
-     * GET /api/orders/recent
-     */
-    @GetMapping("/recent")
-    public ResponseEntity<List<Order>> getRecentOrders() {
-        List<Order> orders = orderService.getRecentOrders();
-        return ResponseEntity.ok(orders);
-    }
-
-    /**
-     * Delete order (admin only)
-     * DELETE /api/orders/{id}
-     */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> deleteOrder(@PathVariable Long id) {
-        try {
-            orderService.deleteOrder(id);
-            
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            response.put("message", "Order deleted successfully");
-            
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("success", false);
-            errorResponse.put("message", "Failed to delete order: " + e.getMessage());
-            
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-        }
-    }
-
-    /**
-     * Health check endpoint
+     * Health check.
      * GET /api/orders/health
      */
     @GetMapping("/health")
     public ResponseEntity<Map<String, String>> healthCheck() {
         Map<String, String> response = new HashMap<>();
         response.put("status", "UP");
-        response.put("service", "Order Management");
+        response.put("service", "Order Management Microservice");
         response.put("timestamp", LocalDateTime.now().toString());
-        
         return ResponseEntity.ok(response);
     }
 }

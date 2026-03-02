@@ -1,3 +1,24 @@
 spring:
   application:
     name: installation-management
+  datasource:
+    url: jdbc:postgresql://localhost:5432/smart_solutions_installation
+    username: postgres
+    password: 123456
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  port: 8083
+
+logging:
+  level:
+    com.ssms.installationmanagement: DEBUG
+    org.springframework.web: INFO

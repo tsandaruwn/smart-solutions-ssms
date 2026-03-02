@@ -1,0 +1,542 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -------------------< com.ssms:inventory-management >--------------------
+[INFO] Building inventory-management 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:4.0.2:run (default-cli) > test-compile @ inventory-management >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ inventory-management ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ inventory-management ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 27 source files with javac [debug parameters release 21] to target\classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ inventory-management ---
+[INFO] skip non existing resourceDirectory D:\github projects\smart-solutions-ssms\ssms\inventory-management\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ inventory-management ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 1 source file with javac [debug parameters release 21] to target\test-classes
+[INFO] 
+[INFO] <<< spring-boot:4.0.2:run (default-cli) < test-compile @ inventory-management <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:4.0.2:run (default-cli) @ inventory-management ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.0.2)
+
+2026-02-28T17:43:53.072+05:30  INFO 19628 --- [inventory-management] [           main] c.s.i.InventoryManagementApplication     : Starting InventoryManagementApplication using Java 21.0.9 with PID 19628 (D:\github projects\smart-solutions-ssms\ssms\inventory-management\target\classes started by Thilina in D:\github projects\smart-solutions-ssms\ssms\inventory-management)
+2026-02-28T17:43:53.074+05:30  INFO 19628 --- [inventory-management] [           main] c.s.i.InventoryManagementApplication     : No active profile set, falling back to 1 default profile: "default"
+2026-02-28T17:43:53.984+05:30  INFO 19628 --- [inventory-management] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-02-28T17:43:54.054+05:30  INFO 19628 --- [inventory-management] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 58 ms. Found 2 JPA repository interfaces.
+2026-02-28T17:43:54.299+05:30  INFO 19628 --- [inventory-management] [           main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=aca43387-6c05-3e50-bf68-2c87048abad2
+2026-02-28T17:43:54.629+05:30  INFO 19628 --- [inventory-management] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8084 (http)
+2026-02-28T17:43:54.652+05:30  INFO 19628 --- [inventory-management] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-02-28T17:43:54.652+05:30  INFO 19628 --- [inventory-management] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.15]
+2026-02-28T17:43:54.712+05:30  INFO 19628 --- [inventory-management] [           main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 1597 ms
+2026-02-28T17:43:54.946+05:30  INFO 19628 --- [inventory-management] [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-02-28T17:43:55.028+05:30  INFO 19628 --- [inventory-management] [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.1.Final
+2026-02-28T17:43:55.497+05:30  INFO 19628 --- [inventory-management] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-02-28T17:43:55.536+05:30  INFO 19628 --- [inventory-management] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-02-28T17:43:55.839+05:30  INFO 19628 --- [inventory-management] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@7d5d77a6
+2026-02-28T17:43:55.840+05:30  INFO 19628 --- [inventory-management] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-02-28T17:43:55.925+05:30  INFO 19628 --- [inventory-management] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/ssms]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.1
+	Default catalog/schema: ssms/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-02-28T17:43:56.801+05:30  INFO 19628 --- [inventory-management] [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-02-28T17:43:56.811+05:30  INFO 19628 --- [inventory-management] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-02-28T17:43:56.919+05:30  INFO 19628 --- [inventory-management] [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-02-28T17:43:57.806+05:30  INFO 19628 --- [inventory-management] [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://localhost:5432/ssms (PostgreSQL 18.1)
+2026-02-28T17:43:57.844+05:30  INFO 19628 --- [inventory-management] [           main] o.f.core.internal.command.DbValidate     : Successfully validated 2 migrations (execution time 00:00.026s)
+2026-02-28T17:43:57.863+05:30  INFO 19628 --- [inventory-management] [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": 2
+2026-02-28T17:43:57.866+05:30  INFO 19628 --- [inventory-management] [           main] o.f.core.internal.command.DbMigrate      : Schema "public" is up to date. No migration necessary.
+2026-02-28T17:43:58.027+05:30  WARN 19628 --- [inventory-management] [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: f3f648bc-b5cf-4fd0-998d-2fbc4adad068
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-02-28T17:43:58.037+05:30  INFO 19628 --- [inventory-management] [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-02-28T17:43:58.588+05:30  INFO 19628 --- [inventory-management] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 3 endpoints beneath base path '/actuator'
+2026-02-28T17:43:58.648+05:30  INFO 19628 --- [inventory-management] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8084 (http) with context path '/'
+2026-02-28T17:43:58.663+05:30  INFO 19628 --- [inventory-management] [           main] c.s.i.InventoryManagementApplication     : Started InventoryManagementApplication in 6.003 seconds (process running for 6.548)
+2026-02-28T17:45:18.765+05:30  INFO 19628 --- [inventory-management] [nio-8084-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-02-28T17:45:18.765+05:30  INFO 19628 --- [inventory-management] [nio-8084-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-02-28T17:45:18.772+05:30  INFO 19628 --- [inventory-management] [nio-8084-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 7 ms
+Hibernate: 
+    select
+        w1_0.warehouse_id,
+        w1_0.address,
+        w1_0.capacity,
+        w1_0.city,
+        w1_0.contact_phone,
+        w1_0.country,
+        w1_0.is_active,
+        w1_0.manager_user_id,
+        w1_0.name 
+    from
+        public.warehouse w1_0 
+    where
+        w1_0.is_active=true
+Hibernate: 
+    select
+        i1_0.inventory_id,
+        i1_0.is_deleted,
+        i1_0.last_restocked_at,
+        i1_0.low_stock_alert_sent,
+        i1_0.product_id,
+        i1_0.quantity_on_hand,
+        i1_0.reorder_level,
+        i1_0.reorder_quantity,
+        i1_0.updated_at,
+        i1_0.warehouse_id 
+    from
+        public.inventory i1_0 
+    where
+        i1_0.is_deleted=false
+Hibernate: 
+    select
+        w1_0.warehouse_id,
+        w1_0.address,
+        w1_0.capacity,
+        w1_0.city,
+        w1_0.contact_phone,
+        w1_0.country,
+        w1_0.is_active,
+        w1_0.manager_user_id,
+        w1_0.name 
+    from
+        public.warehouse w1_0 
+    where
+        w1_0.warehouse_id=?
+Hibernate: 
+    select
+        i1_0.inventory_id,
+        i1_0.is_deleted,
+        i1_0.last_restocked_at,
+        i1_0.low_stock_alert_sent,
+        i1_0.product_id,
+        i1_0.quantity_on_hand,
+        i1_0.reorder_level,
+        i1_0.reorder_quantity,
+        i1_0.updated_at,
+        i1_0.warehouse_id 
+    from
+        public.inventory i1_0 
+    where
+        i1_0.is_deleted=false 
+        and i1_0.quantity_on_hand<=i1_0.reorder_level
+Hibernate: 
+    select
+        w1_0.warehouse_id,
+        w1_0.address,
+        w1_0.capacity,
+        w1_0.city,
+        w1_0.contact_phone,
+        w1_0.country,
+        w1_0.is_active,
+        w1_0.manager_user_id,
+        w1_0.name 
+    from
+        public.warehouse w1_0 
+    where
+        w1_0.warehouse_id=?
+2026-02-28T17:46:10.425+05:30  INFO 19628 --- [inventory-management] [nio-8084-exec-7] c.s.i.service.impl.InventoryServiceImpl  : Stock update — inventoryId=1, operation=INCREASE, qty=100
+Hibernate: 
+    select
+        i1_0.inventory_id,
+        i1_0.is_deleted,
+        i1_0.last_restocked_at,
+        i1_0.low_stock_alert_sent,
+        i1_0.product_id,
+        i1_0.quantity_on_hand,
+        i1_0.reorder_level,
+        i1_0.reorder_quantity,
+        i1_0.updated_at,
+        i1_0.warehouse_id 
+    from
+        public.inventory i1_0 
+    where
+        i1_0.inventory_id=? 
+        and i1_0.is_deleted=false
+Hibernate: 
+    select
+        w1_0.warehouse_id,
+        w1_0.address,
+        w1_0.capacity,
+        w1_0.city,
+        w1_0.contact_phone,
+        w1_0.country,
+        w1_0.is_active,
+        w1_0.manager_user_id,
+        w1_0.name 
+    from
+        public.warehouse w1_0 
+    where
+        w1_0.warehouse_id=?
+Hibernate: 
+    update
+        public.inventory 
+    set
+        is_deleted=?,
+        last_restocked_at=?,
+        low_stock_alert_sent=?,
+        product_id=?,
+        quantity_on_hand=?,
+        reorder_level=?,
+        reorder_quantity=?,
+        updated_at=?,
+        warehouse_id=? 
+    where
+        inventory_id=?
+2026-02-28T17:46:29.860+05:30  INFO 19628 --- [inventory-management] [nio-8084-exec-9] c.s.i.service.impl.InventoryServiceImpl  : Stock update — inventoryId=1, operation=INCREASE, qty=100
+Hibernate: 
+    select
+        i1_0.inventory_id,
+        i1_0.is_deleted,
+        i1_0.last_restocked_at,
+        i1_0.low_stock_alert_sent,
+        i1_0.product_id,
+        i1_0.quantity_on_hand,
+        i1_0.reorder_level,
+        i1_0.reorder_quantity,
+        i1_0.updated_at,
+        i1_0.warehouse_id 
+    from
+        public.inventory i1_0 
+    where
+        i1_0.inventory_id=? 
+        and i1_0.is_deleted=false
+Hibernate: 
+    select
+        w1_0.warehouse_id,
+        w1_0.address,
+        w1_0.capacity,
+        w1_0.city,
+        w1_0.contact_phone,
+        w1_0.country,
+        w1_0.is_active,
+        w1_0.manager_user_id,
+        w1_0.name 
+    from
+        public.warehouse w1_0 
+    where
+        w1_0.warehouse_id=?
+Hibernate: 
+    update
+        public.inventory 
+    set
+        is_deleted=?,
+        last_restocked_at=?,
+        low_stock_alert_sent=?,
+        product_id=?,
+        quantity_on_hand=?,
+        reorder_level=?,
+        reorder_quantity=?,
+        updated_at=?,
+        warehouse_id=? 
+    where
+        inventory_id=?
+Hibernate: 
+    select
+        i1_0.inventory_id,
+        i1_0.is_deleted,
+        i1_0.last_restocked_at,
+        i1_0.low_stock_alert_sent,
+        i1_0.product_id,
+        i1_0.quantity_on_hand,
+        i1_0.reorder_level,
+        i1_0.reorder_quantity,
+        i1_0.updated_at,
+        i1_0.warehouse_id 
+    from
+        public.inventory i1_0 
+    where
+        i1_0.inventory_id=? 
+        and i1_0.is_deleted=false
+Hibernate: 
+    select
+        w1_0.warehouse_id,
+        w1_0.address,
+        w1_0.capacity,
+        w1_0.city,
+        w1_0.contact_phone,
+        w1_0.country,
+        w1_0.is_active,
+        w1_0.manager_user_id,
+        w1_0.name 
+    from
+        public.warehouse w1_0 
+    where
+        w1_0.warehouse_id=?
+2026-02-28T17:47:18.011+05:30  INFO 19628 --- [inventory-management] [nio-8084-exec-8] c.s.i.service.impl.InventoryServiceImpl  : Stock update — inventoryId=1, operation=SET, qty=8
+Hibernate: 
+    select
+        i1_0.inventory_id,
+        i1_0.is_deleted,
+        i1_0.last_restocked_at,
+        i1_0.low_stock_alert_sent,
+        i1_0.product_id,
+        i1_0.quantity_on_hand,
+        i1_0.reorder_level,
+        i1_0.reorder_quantity,
+        i1_0.updated_at,
+        i1_0.warehouse_id 
+    from
+        public.inventory i1_0 
+    where
+        i1_0.inventory_id=? 
+        and i1_0.is_deleted=false
+2026-02-28T17:47:18.013+05:30  WARN 19628 --- [inventory-management] [nio-8084-exec-8] c.s.i.service.impl.InventoryServiceImpl  : LOW STOCK ALERT — inventoryId=1, productId=1, qty=8, reorderLevel=10
+Hibernate: 
+    select
+        w1_0.warehouse_id,
+        w1_0.address,
+        w1_0.capacity,
+        w1_0.city,
+        w1_0.contact_phone,
+        w1_0.country,
+        w1_0.is_active,
+        w1_0.manager_user_id,
+        w1_0.name 
+    from
+        public.warehouse w1_0 
+    where
+        w1_0.warehouse_id=?
+Hibernate: 
+    update
+        public.inventory 
+    set
+        is_deleted=?,
+        last_restocked_at=?,
+        low_stock_alert_sent=?,
+        product_id=?,
+        quantity_on_hand=?,
+        reorder_level=?,
+        reorder_quantity=?,
+        updated_at=?,
+        warehouse_id=? 
+    where
+        inventory_id=?
+Hibernate: 
+    select
+        i1_0.inventory_id,
+        i1_0.is_deleted,
+        i1_0.last_restocked_at,
+        i1_0.low_stock_alert_sent,
+        i1_0.product_id,
+        i1_0.quantity_on_hand,
+        i1_0.reorder_level,
+        i1_0.reorder_quantity,
+        i1_0.updated_at,
+        i1_0.warehouse_id 
+    from
+        public.inventory i1_0 
+    where
+        i1_0.inventory_id=? 
+        and i1_0.is_deleted=false
+Hibernate: 
+    select
+        w1_0.warehouse_id,
+        w1_0.address,
+        w1_0.capacity,
+        w1_0.city,
+        w1_0.contact_phone,
+        w1_0.country,
+        w1_0.is_active,
+        w1_0.manager_user_id,
+        w1_0.name 
+    from
+        public.warehouse w1_0 
+    where
+        w1_0.warehouse_id=?
+2026-02-28T17:47:35.553+05:30  WARN 19628 --- [inventory-management] [nio-8084-exec-1] c.s.i.exception.GlobalExceptionHandler   : Validation failed: {productId=Product ID is required}
+2026-02-28T17:48:10.337+05:30  WARN 19628 --- [inventory-management] [nio-8084-exec-2] c.s.i.exception.GlobalExceptionHandler   : Validation failed: {productId=Product ID is required}
+Hibernate: 
+    select
+        i1_0.inventory_id,
+        i1_0.is_deleted,
+        i1_0.last_restocked_at,
+        i1_0.low_stock_alert_sent,
+        i1_0.product_id,
+        i1_0.quantity_on_hand,
+        i1_0.reorder_level,
+        i1_0.reorder_quantity,
+        i1_0.updated_at,
+        i1_0.warehouse_id 
+    from
+        public.inventory i1_0 
+    where
+        i1_0.warehouse_id=? 
+        and i1_0.is_deleted=false
+Hibernate: 
+    select
+        w1_0.warehouse_id,
+        w1_0.address,
+        w1_0.capacity,
+        w1_0.city,
+        w1_0.contact_phone,
+        w1_0.country,
+        w1_0.is_active,
+        w1_0.manager_user_id,
+        w1_0.name 
+    from
+        public.warehouse w1_0 
+    where
+        w1_0.warehouse_id=?
+2026-02-28T17:48:23.206+05:30  INFO 19628 --- [inventory-management] [nio-8084-exec-4] c.s.i.service.impl.InventoryServiceImpl  : Stock update — inventoryId=1, operation=DECREASE, qty=999
+Hibernate: 
+    select
+        i1_0.inventory_id,
+        i1_0.is_deleted,
+        i1_0.last_restocked_at,
+        i1_0.low_stock_alert_sent,
+        i1_0.product_id,
+        i1_0.quantity_on_hand,
+        i1_0.reorder_level,
+        i1_0.reorder_quantity,
+        i1_0.updated_at,
+        i1_0.warehouse_id 
+    from
+        public.inventory i1_0 
+    where
+        i1_0.inventory_id=? 
+        and i1_0.is_deleted=false
+2026-02-28T17:48:23.212+05:30  WARN 19628 --- [inventory-management] [nio-8084-exec-4] c.s.i.exception.GlobalExceptionHandler   : Business rule violation: Insufficient stock: requested quantity exceeds available stock
+Hibernate: 
+    select
+        i1_0.inventory_id,
+        i1_0.is_deleted,
+        i1_0.last_restocked_at,
+        i1_0.low_stock_alert_sent,
+        i1_0.product_id,
+        i1_0.quantity_on_hand,
+        i1_0.reorder_level,
+        i1_0.reorder_quantity,
+        i1_0.updated_at,
+        i1_0.warehouse_id 
+    from
+        public.inventory i1_0 
+    where
+        i1_0.warehouse_id=? 
+        and i1_0.is_deleted=false
+Hibernate: 
+    select
+        w1_0.warehouse_id,
+        w1_0.address,
+        w1_0.capacity,
+        w1_0.city,
+        w1_0.contact_phone,
+        w1_0.country,
+        w1_0.is_active,
+        w1_0.manager_user_id,
+        w1_0.name 
+    from
+        public.warehouse w1_0 
+    where
+        w1_0.warehouse_id=?
+2026-02-28T17:48:57.790+05:30  INFO 19628 --- [inventory-management] [nio-8084-exec-7] c.s.i.service.impl.InventoryServiceImpl  : Stock update — inventoryId=1, operation=DECREASE, qty=999
+Hibernate: 
+    select
+        i1_0.inventory_id,
+        i1_0.is_deleted,
+        i1_0.last_restocked_at,
+        i1_0.low_stock_alert_sent,
+        i1_0.product_id,
+        i1_0.quantity_on_hand,
+        i1_0.reorder_level,
+        i1_0.reorder_quantity,
+        i1_0.updated_at,
+        i1_0.warehouse_id 
+    from
+        public.inventory i1_0 
+    where
+        i1_0.inventory_id=? 
+        and i1_0.is_deleted=false
+2026-02-28T17:48:57.793+05:30  WARN 19628 --- [inventory-management] [nio-8084-exec-7] c.s.i.exception.GlobalExceptionHandler   : Business rule violation: Insufficient stock: requested quantity exceeds available stock
+2026-02-28T17:49:05.199+05:30  INFO 19628 --- [inventory-management] [nio-8084-exec-9] c.s.i.service.impl.InventoryServiceImpl  : Soft-deleting inventory record with ID: 1
+Hibernate: 
+    select
+        i1_0.inventory_id,
+        i1_0.is_deleted,
+        i1_0.last_restocked_at,
+        i1_0.low_stock_alert_sent,
+        i1_0.product_id,
+        i1_0.quantity_on_hand,
+        i1_0.reorder_level,
+        i1_0.reorder_quantity,
+        i1_0.updated_at,
+        i1_0.warehouse_id 
+    from
+        public.inventory i1_0 
+    where
+        i1_0.inventory_id=? 
+        and i1_0.is_deleted=false
+2026-02-28T17:49:05.199+05:30  INFO 19628 --- [inventory-management] [nio-8084-exec-9] c.s.i.service.impl.InventoryServiceImpl  : Inventory record soft-deleted: 1
+Hibernate: 
+    update
+        public.inventory 
+    set
+        is_deleted=?,
+        last_restocked_at=?,
+        low_stock_alert_sent=?,
+        product_id=?,
+        quantity_on_hand=?,
+        reorder_level=?,
+        reorder_quantity=?,
+        updated_at=?,
+        warehouse_id=? 
+    where
+        inventory_id=?
+Hibernate: 
+    select
+        i1_0.inventory_id,
+        i1_0.is_deleted,
+        i1_0.last_restocked_at,
+        i1_0.low_stock_alert_sent,
+        i1_0.product_id,
+        i1_0.quantity_on_hand,
+        i1_0.reorder_level,
+        i1_0.reorder_quantity,
+        i1_0.updated_at,
+        i1_0.warehouse_id 
+    from
+        public.inventory i1_0 
+    where
+        i1_0.inventory_id=? 
+        and i1_0.is_deleted=false
+2026-02-28T17:49:13.829+05:30  WARN 19628 --- [inventory-management] [nio-8084-exec-3] c.s.i.exception.GlobalExceptionHandler   : Resource not found: Inventory record not found with ID: 1
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  10:18 min
+[INFO] Finished at: 2026-02-28T17:54:04+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:4.0.2:run (default-cli) on project inventory-management: Process terminated with exit code: -1 -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

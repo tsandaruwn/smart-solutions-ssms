@@ -1,216 +1,242 @@
 package com.ssms.ordermanagement.service;
 
+import com.ssms.ordermanagement.dto.*;
 import com.ssms.ordermanagement.entity.Order;
+import com.ssms.ordermanagement.entity.OrderItem;
+import com.ssms.ordermanagement.entity.OrderStatus;
+import com.ssms.ordermanagement.exception.InvalidOrderStateException;
+import com.ssms.ordermanagement.exception.OrderNotFoundException;
 import com.ssms.ordermanagement.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrderService {
 
     private final OrderRepository orderRepository;
 
+    // ─── CREATE ─────────────────────────────────────────────────
+
     /**
-     * Place a new order
+     * Place a new order from a CreateOrderRequest DTO.
      */
     @Transactional
-    public Order placeOrder(Order order) {
-        // Generate unique order ID
-        order.setOrderId(generateUniqueOrderId());
-        order.setStatus(Order.OrderStatus.PENDING);
-        order.setOrderDate(LocalDateTime.now());
-        
-        return orderRepository.save(order);
+    public OrderResponse placeOrder(CreateOrderRequest request) {
+        Order order = Order.builder()
+                .orderNumber(generateUniqueOrderNumber())
+                .customerId(request.getCustomerId())
+                .createdByUserId(request.getCreatedByUserId())
+                .shippingAddress(request.getShippingAddress())
+                .shippingCity(request.getShippingCity())
+                .notes(request.getNotes())
+                .status(OrderStatus.PENDING)
+                .orderDate(LocalDateTime.now())
+                .build();
+
+        // Map request items → entity items
+        for (OrderItemRequest itemReq : request.getItems()) {
+            OrderItem item = OrderItem.builder()
+                    .productId(itemReq.getProductId())
+                    .quantity(itemReq.getQuantity())
+                    .unitPriceAtOrder(itemReq.getUnitPriceAtOrder())
+                    .discountPercent(itemReq.getDiscountPercent() != null
+                            ? itemReq.getDiscountPercent() : BigDecimal.ZERO)
+                    .build();
+            order.addItem(item);
+        }
+
+        // Calculate total
+        order.recalculateTotalAmount();
+
+        Order saved = orderRepository.save(order);
+        log.info("Order placed: {}", saved.getOrderNumber());
+        return OrderResponse.fromEntity(saved);
+    }
+
+    // ─── READ ───────────────────────────────────────────────────
+
+    /**
+     * Get order by primary key (order_id).
+     */
+    @Transactional(readOnly = true)
+    public OrderResponse getOrderById(Integer orderId) {
+        Order order = findOrderOrThrow(orderId);
+        return OrderResponse.fromEntity(order);
     }
 
     /**
-     * Generate unique order ID
+     * Get order by order_number.
      */
-    private String generateUniqueOrderId() {
-        String orderId;
+    @Transactional(readOnly = true)
+    public OrderResponse getOrderByOrderNumber(String orderNumber) {
+        Order order = orderRepository.findByOrderNumber(orderNumber)
+                .orElseThrow(() -> new OrderNotFoundException("Order not found with order number: " + orderNumber));
+        return OrderResponse.fromEntity(order);
+    }
+
+    /**
+     * Get all orders.
+     */
+    @Transactional(readOnly = true)
+    public List<OrderResponse> getAllOrders() {
+        return orderRepository.findAll().stream()
+                .map(OrderResponse::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get order history for a given customer.
+     */
+    @Transactional(readOnly = true)
+    public List<OrderResponse> getOrderHistory(Integer customerId) {
+        return orderRepository.findByCustomerIdOrderByOrderDateDesc(customerId).stream()
+                .map(OrderResponse::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get orders by status.
+     */
+    @Transactional(readOnly = true)
+    public List<OrderResponse> getOrdersByStatus(OrderStatus status) {
+        return orderRepository.findByStatus(status).stream()
+                .map(OrderResponse::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get orders by date range.
+     */
+    @Transactional(readOnly = true)
+    public List<OrderResponse> getOrdersByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+        return orderRepository.findByOrderDateBetween(startDate, endDate).stream()
+                .map(OrderResponse::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get recent orders (last 30 days).
+     */
+    @Transactional(readOnly = true)
+    public List<OrderResponse> getRecentOrders() {
+        LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
+        return orderRepository.findRecentOrders(thirtyDaysAgo).stream()
+                .map(OrderResponse::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    // ─── UPDATE ─────────────────────────────────────────────────
+
+    /**
+     * Update order status (Pending → Shipped → Delivered).
+     */
+    @Transactional
+    public OrderResponse updateOrderStatus(Integer orderId, UpdateOrderStatusRequest request) {
+        Order order = findOrderOrThrow(orderId);
+        validateStatusTransition(order.getStatus(), request.getStatus());
+
+        order.setStatus(request.getStatus());
+        Order saved = orderRepository.save(order);
+        log.info("Order {} status updated to {}", saved.getOrderNumber(), saved.getStatus());
+        return OrderResponse.fromEntity(saved);
+    }
+
+    // ─── CANCEL ─────────────────────────────────────────────────
+
+    /**
+     * Cancel an order. Only orders that are PENDING can be cancelled.
+     */
+    @Transactional
+    public OrderResponse cancelOrder(Integer orderId, CancelOrderRequest request) {
+        Order order = findOrderOrThrow(orderId);
+
+        if (order.getStatus() == OrderStatus.DELIVERED) {
+            throw new InvalidOrderStateException("Cannot cancel a delivered order");
+        }
+        if (order.getStatus() == OrderStatus.CANCELLED) {
+            throw new InvalidOrderStateException("Order is already cancelled");
+        }
+        if (order.getStatus() == OrderStatus.SHIPPED) {
+            throw new InvalidOrderStateException("Cannot cancel a shipped order");
+        }
+
+        order.setStatus(OrderStatus.CANCELLED);
+        order.setCancelledAt(LocalDateTime.now());
+        order.setCancellationReason(
+                request.getCancellationReason() != null
+                        ? request.getCancellationReason()
+                        : "Customer requested cancellation");
+
+        Order saved = orderRepository.save(order);
+        log.info("Order {} cancelled", saved.getOrderNumber());
+        return OrderResponse.fromEntity(saved);
+    }
+
+    // ─── DELETE ─────────────────────────────────────────────────
+
+    /**
+     * Delete an order (admin use).
+     */
+    @Transactional
+    public void deleteOrder(Integer orderId) {
+        Order order = findOrderOrThrow(orderId);
+        orderRepository.delete(order);
+        log.info("Order {} deleted", order.getOrderNumber());
+    }
+
+    // ─── Private helpers ────────────────────────────────────────
+
+    private Order findOrderOrThrow(Integer orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException(orderId));
+    }
+
+    /**
+     * Generate a unique order number: ORD-YYYYMMDD-XXXX
+     */
+    private String generateUniqueOrderNumber() {
+        String orderNumber;
         do {
-            // Format: ORD-YYYYMMDD-XXXX (e.g., ORD-20260131-A1B2)
             String dateStr = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
             String uniquePart = UUID.randomUUID().toString().substring(0, 4).toUpperCase();
-            orderId = String.format("ORD-%s-%s", dateStr, uniquePart);
-        } while (orderRepository.existsByOrderId(orderId));
-        
-        return orderId;
+            orderNumber = String.format("ORD-%s-%s", dateStr, uniquePart);
+        } while (orderRepository.existsByOrderNumber(orderNumber));
+        return orderNumber;
     }
 
     /**
-     * Get order by ID
+     * Validate that the requested status transition is legal.
+     * Allowed transitions: PENDING → SHIPPED → DELIVERED
      */
-    public Order getOrderById(Long id) {
-        return orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
-    }
+    private void validateStatusTransition(OrderStatus currentStatus, OrderStatus newStatus) {
+        if (currentStatus == OrderStatus.CANCELLED) {
+            throw new InvalidOrderStateException("Cannot update status of a cancelled order");
+        }
+        if (currentStatus == OrderStatus.DELIVERED) {
+            throw new InvalidOrderStateException("Cannot change status of a delivered order");
+        }
 
-    /**
-     * Get order by order ID
-     */
-    public Order getOrderByOrderId(String orderId) {
-        return orderRepository.findByOrderId(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found with orderId: " + orderId));
-    }
+        boolean valid = switch (currentStatus) {
+            case PENDING -> newStatus == OrderStatus.SHIPPED;
+            case SHIPPED -> newStatus == OrderStatus.DELIVERED;
+            default -> false;
+        };
 
-    /**
-     * Get all orders
-     */
-    public List<Order> getAllOrders() {
-        return orderRepository.findAll();
-    }
-
-    /**
-     * Get order history for a customer
-     */
-    public List<Order> getOrderHistory(Long customerId) {
-        return orderRepository.findByCustomerIdOrderByOrderDateDesc(customerId);
-    }
-
-    /**
-     * Update order status
-     */
-    @Transactional
-    public Order updateOrderStatus(String orderId, Order.OrderStatus newStatus) {
-        Order order = getOrderByOrderId(orderId);
-        
-        // Validate status transition
-        validateStatusTransition(order.getStatus(), newStatus);
-        
-        order.setStatus(newStatus);
-        
-        // Update timestamp based on status
-        switch (newStatus) {
-            case SHIPPED:
-                order.setShippedDate(LocalDateTime.now());
-                break;
-            case DELIVERED:
-                order.setDeliveredDate(LocalDateTime.now());
-                break;
-            case CANCELLED:
-                order.setCancelledDate(LocalDateTime.now());
-                break;
+        if (!valid) {
+            throw new InvalidOrderStateException(
+                    String.format("Invalid status transition from %s to %s", currentStatus, newStatus));
         }
-        
-        return orderRepository.save(order);
-    }
-
-    /**
-     * Cancel an order
-     */
-    @Transactional
-    public Order cancelOrder(String orderId, String reason) {
-        Order order = getOrderByOrderId(orderId);
-        
-        // Check if order can be cancelled
-        if (order.getStatus() == Order.OrderStatus.DELIVERED) {
-            throw new RuntimeException("Cannot cancel a delivered order");
-        }
-        
-        if (order.getStatus() == Order.OrderStatus.CANCELLED) {
-            throw new RuntimeException("Order is already cancelled");
-        }
-        
-        order.setStatus(Order.OrderStatus.CANCELLED);
-        order.setCancelledDate(LocalDateTime.now());
-        order.setCancellationReason(reason);
-        
-        return orderRepository.save(order);
-    }
-
-    /**
-     * Get orders by status
-     */
-    public List<Order> getOrdersByStatus(Order.OrderStatus status) {
-        return orderRepository.findByStatus(status);
-    }
-
-    /**
-     * Get orders by date range
-     */
-    public List<Order> getOrdersByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
-        return orderRepository.findByOrderDateBetween(startDate, endDate);
-    }
-
-    /**
-     * Get recent orders (last 30 days)
-     */
-    public List<Order> getRecentOrders() {
-        LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
-        return orderRepository.findRecentOrders(thirtyDaysAgo);
-    }
-
-    /**
-     * Validate status transition
-     */
-    private void validateStatusTransition(Order.OrderStatus currentStatus, Order.OrderStatus newStatus) {
-        if (currentStatus == Order.OrderStatus.CANCELLED) {
-            throw new RuntimeException("Cannot update status of a cancelled order");
-        }
-        
-        if (currentStatus == Order.OrderStatus.DELIVERED && newStatus != Order.OrderStatus.DELIVERED) {
-            throw new RuntimeException("Cannot change status of a delivered order");
-        }
-    }
-
-    /**
-     * Update order details
-     */
-    @Transactional
-    public Order updateOrderDetails(String orderId, Order updatedOrderDetails) {
-        Order existingOrder = getOrderByOrderId(orderId);
-        
-        // Validate that the order can be updated
-        if (existingOrder.getStatus() == Order.OrderStatus.DELIVERED) {
-            throw new RuntimeException("Cannot update a delivered order");
-        }
-        
-        if (existingOrder.getStatus() == Order.OrderStatus.CANCELLED) {
-            throw new RuntimeException("Cannot update a cancelled order");
-        }
-        
-        // Update allowed fields
-        if (updatedOrderDetails.getCustomerName() != null) {
-            existingOrder.setCustomerName(updatedOrderDetails.getCustomerName());
-        }
-        
-        if (updatedOrderDetails.getCustomerEmail() != null) {
-            existingOrder.setCustomerEmail(updatedOrderDetails.getCustomerEmail());
-        }
-        
-        if (updatedOrderDetails.getShippingAddress() != null) {
-            existingOrder.setShippingAddress(updatedOrderDetails.getShippingAddress());
-        }
-        
-        if (updatedOrderDetails.getItems() != null && !updatedOrderDetails.getItems().isEmpty()) {
-            existingOrder.setItems(updatedOrderDetails.getItems());
-        }
-        
-        if (updatedOrderDetails.getTotalAmount() != null) {
-            existingOrder.setTotalAmount(updatedOrderDetails.getTotalAmount());
-        }
-        
-        if (updatedOrderDetails.getNotes() != null) {
-            existingOrder.setNotes(updatedOrderDetails.getNotes());
-        }
-        
-        return orderRepository.save(existingOrder);
-    }
-
-    /**
-     * Delete order (admin only)
-     */
-    @Transactional
-    public void deleteOrder(Long id) {
-        orderRepository.deleteById(id);
     }
 }
 
