@@ -6,5 +6,8 @@ import java.util.List;
 
 public interface BillRepository extends JpaRepository<Bill, Long> {
 
-    List<Bill> findByUserId(Long userId);
+    List<Bill> findByCustomerId(Long customerId);
+
+    // convenience lookup used when enforcing one-invoice-per-order
+    Bill findByOrderId(Long orderId);
 }

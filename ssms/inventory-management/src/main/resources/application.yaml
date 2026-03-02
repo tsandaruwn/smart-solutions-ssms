@@ -1,3 +1,65 @@
 spring:
   application:
     name: inventory-management
+
+  # ──────────────────────────────────────────────
+  # PostgreSQL DataSource
+  # ──────────────────────────────────────────────
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ssms
+    username: postgres
+    password: admin
+    driver-class-name: org.postgresql.Driver
+
+  # ──────────────────────────────────────────────
+  # JPA / Hibernate
+  # ──────────────────────────────────────────────
+  # ──────────────────────────────────────────────
+  # Flyway Migrations  (manual bean in FlywayConfig.java handles execution)
+  # ──────────────────────────────────────────────
+  flyway:
+    enabled: false                               # Disable Boot auto-config; FlywayConfig.java manages it
+    locations: classpath:db/migration
+    table: flyway_schema_history_inventory        # unique per-service history table
+
+  # ──────────────────────────────────────────────
+  # JPA / Hibernate
+  # ──────────────────────────────────────────────
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none           # Flyway owns the schema — Hibernate must NOT touch it
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        default_schema: public
+
+# ──────────────────────────────────────────────
+# Server
+# ──────────────────────────────────────────────
+server:
+  port: 8084
+
+# ──────────────────────────────────────────────
+# Springdoc / Swagger UI
+# ──────────────────────────────────────────────
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: method
+
+# ──────────────────────────────────────────────
+# Actuator
+# ──────────────────────────────────────────────
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always

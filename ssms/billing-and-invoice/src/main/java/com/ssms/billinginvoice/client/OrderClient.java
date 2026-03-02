@@ -1,37 +1,21 @@
 package com.ssms.billinginvoice.client;
 
 import com.ssms.billinginvoice.dto.OrderDto;
-import com.ssms.billinginvoice.dto.OrderItemDto;
-import org.springframework.stereotype.Component;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
-import java.math.BigDecimal;
-import java.util.List;
+/**
+ * Feign client for the order-management microservice.
+ * Base URL is configured via order-service.url in application.yaml.
+ */
+@FeignClient(name = "order-management", url = "${order-service.url}")
+public interface OrderClient {
 
-@Component
-public class OrderClient {
-
-       // MOCK DATA (replace with REST call later)
-    public OrderDto getOrderById(Long orderId) {
-
-        OrderItemDto item = new OrderItemDto();
-        item = new OrderItemDto();
-        // Simulating a smart switch order
-
-        return new OrderDto() {
-            public Long getOrderId() { return orderId; }
-            public Long getUserId() { return 1L; }
-            public List<OrderItemDto> getItems() {
-                OrderItemDto switchItem = new OrderItemDto() {
-                    public BigDecimal getPrice() {
-                        return new BigDecimal("4500");
-                    }
-                    public int getQuantity() {
-                        return 2;
-                    }
-                };
-                return List.of(switchItem);
-            }
-        };
-    }
+    /**
+     * GET /api/orders/{orderId}
+     * Fetch a single order with all its line items.
+     */
+    @GetMapping("/api/orders/{orderId}")
+    OrderDto getOrderById(@PathVariable("orderId") Long orderId);
 }
-    
