@@ -5,68 +5,85 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "payments")
+@Table(name = "payment")
 public class Payment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "payment_id")
+    private Long paymentId;
 
-    private Long orderId;
-    private Long userId;
+    @Column(name = "transaction_reference", unique = true, length = 100)
+    private String transactionReference;
 
+    @Column(name = "invoice_id", nullable = false)
+    private Long invoiceId;
+
+    @Column(name = "customer_id", nullable = false)
+    private Long customerId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_method_id", nullable = false)
+    private PaymentMethod paymentMethod;
+
+    @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal amount;
 
-    @Enumerated(EnumType.STRING)
-    private PaymentMethod paymentMethod; // CREDIT_CARD, DEBIT_CARD, CASH, ONLINE_BANKING, MOBILE_WALLET
-
-    @Enumerated(EnumType.STRING)
-    private PaymentStatus status; // SUCCESS, FAILED, REFUNDED, PENDING
-
-    private String transactionId;
-    private String paymentReference;
-
+    @Column(name = "payment_date", nullable = false)
     private LocalDateTime paymentDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PaymentStatus status;
+
+    @Column(name = "gateway_response", columnDefinition = "TEXT")
+    private String gatewayResponse;
+
+    @Column(name = "refund_amount", precision = 12, scale = 2)
+    private BigDecimal refundAmount;
+
+    @Column(name = "refund_date")
     private LocalDateTime refundDate;
 
-    private String remarks;
+    @Column(name = "refund_reason", columnDefinition = "TEXT")
+    private String refundReason;
 
     public Payment() {
         this.paymentDate = LocalDateTime.now();
-        this.status = PaymentStatus.PENDING;
+        this.status = PaymentStatus.Pending;
     }
 
     // Getters and Setters
-    public Long getId() {
-        return id;
+    public Long getPaymentId() {
+        return paymentId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setPaymentId(Long paymentId) {
+        this.paymentId = paymentId;
     }
 
-    public Long getOrderId() {
-        return orderId;
+    public String getTransactionReference() {
+        return transactionReference;
     }
 
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
+    public void setTransactionReference(String transactionReference) {
+        this.transactionReference = transactionReference;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Long getInvoiceId() {
+        return invoiceId;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setInvoiceId(Long invoiceId) {
+        this.invoiceId = invoiceId;
     }
 
-    public BigDecimal getAmount() {
-        return amount;
+    public Long getCustomerId() {
+        return customerId;
     }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 
     public PaymentMethod getPaymentMethod() {
@@ -77,28 +94,12 @@ public class Payment {
         this.paymentMethod = paymentMethod;
     }
 
-    public PaymentStatus getStatus() {
-        return status;
+    public BigDecimal getAmount() {
+        return amount;
     }
 
-    public void setStatus(PaymentStatus status) {
-        this.status = status;
-    }
-
-    public String getTransactionId() {
-        return transactionId;
-    }
-
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
-    }
-
-    public String getPaymentReference() {
-        return paymentReference;
-    }
-
-    public void setPaymentReference(String paymentReference) {
-        this.paymentReference = paymentReference;
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 
     public LocalDateTime getPaymentDate() {
@@ -109,6 +110,30 @@ public class Payment {
         this.paymentDate = paymentDate;
     }
 
+    public PaymentStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(PaymentStatus status) {
+        this.status = status;
+    }
+
+    public String getGatewayResponse() {
+        return gatewayResponse;
+    }
+
+    public void setGatewayResponse(String gatewayResponse) {
+        this.gatewayResponse = gatewayResponse;
+    }
+
+    public BigDecimal getRefundAmount() {
+        return refundAmount;
+    }
+
+    public void setRefundAmount(BigDecimal refundAmount) {
+        this.refundAmount = refundAmount;
+    }
+
     public LocalDateTime getRefundDate() {
         return refundDate;
     }
@@ -117,11 +142,11 @@ public class Payment {
         this.refundDate = refundDate;
     }
 
-    public String getRemarks() {
-        return remarks;
+    public String getRefundReason() {
+        return refundReason;
     }
 
-    public void setRemarks(String remarks) {
-        this.remarks = remarks;
+    public void setRefundReason(String refundReason) {
+        this.refundReason = refundReason;
     }
 }
