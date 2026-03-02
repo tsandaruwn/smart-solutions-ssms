@@ -114,8 +114,13 @@ export const orderApi = {
   },
 
   // Get orders in date range
-  getByDateRange: async (startDate: string, endDate: string): Promise<OrderResponse[]> => {
-    const res = await fetch(`${BASE_URL}/date-range?startDate=${startDate}&endDate=${endDate}`);
+  getByDateRange: async (
+    startDate: string,
+    endDate: string,
+  ): Promise<OrderResponse[]> => {
+    const res = await fetch(
+      `${BASE_URL}/date-range?startDate=${startDate}&endDate=${endDate}`,
+    );
     return handleResponse<OrderResponse[]>(res);
   },
 
@@ -136,7 +141,10 @@ export const orderApi = {
   },
 
   // Update order status
-  updateStatus: async (orderId: number, request: UpdateOrderStatusRequest): Promise<ApiSuccessResponse> => {
+  updateStatus: async (
+    orderId: number,
+    request: UpdateOrderStatusRequest,
+  ): Promise<ApiSuccessResponse> => {
     const res = await fetch(`${BASE_URL}/${orderId}/status`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -146,7 +154,10 @@ export const orderApi = {
   },
 
   // Cancel order
-  cancel: async (orderId: number, request?: CancelOrderRequest): Promise<ApiSuccessResponse> => {
+  cancel: async (
+    orderId: number,
+    request?: CancelOrderRequest,
+  ): Promise<ApiSuccessResponse> => {
     const res = await fetch(`${BASE_URL}/${orderId}/cancel`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -164,8 +175,138 @@ export const orderApi = {
   },
 
   // Health check
-  health: async (): Promise<{ status: string; service: string; timestamp: string }> => {
+  health: async (): Promise<{
+    status: string;
+    service: string;
+    timestamp: string;
+  }> => {
     const res = await fetch(`${BASE_URL}/health`);
-    return handleResponse<{ status: string; service: string; timestamp: string }>(res);
+    return handleResponse<{
+      status: string;
+      service: string;
+      timestamp: string;
+    }>(res);
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Billing & Invoice API
+// Proxied to http://localhost:6543 via Next.js rewrite /api/billing → 6543
+// ---------------------------------------------------------------------------
+
+export type PaymentStatus = "SUCCESS" | "FAILED" | "PENDING";
+
+export interface BillDto {
+  billId: number;
+  customerId: number;
+  subtotal: number;
+  tax: number;
+  totalAmount: number;
+  status: string;
+}
+
+/** Raw entity returned from GET /invoices/{id} and CRUD endpoints */
+export interface Bill {
+  id: number;
+  orderId: number;
+  customerId: number;
+  subtotal: number;
+  tax: number;
+  totalAmount: number;
+  status: string;
+}
+
+export interface BillingCustomerDto {
+  customerId: number;
+  name: string;
+  email: string;
+}
+
+export interface BillingPaymentDto {
+  paymentId: number;
+  invoiceId: number;
+  amount: number;
+  status: PaymentStatus;
+  timestamp: string;
+}
+
+export interface RecordPaymentRequest {
+  amount: number;
+}
+
+export interface UpdateBillRequest {
+  subtotal?: number;
+  tax?: number;
+  totalAmount?: number;
+  status?: string;
+}
+
+const BILLING_BASE = "/api/billing";
+
+export const billingApi = {
+  /** POST /api/billing/orders/{orderId} – generate an invoice for an order */
+  generateInvoice: async (orderId: number): Promise<BillDto> => {
+    const res = await fetch(`${BILLING_BASE}/orders/${orderId}`, {
+      method: "POST",
+    });
+    return handleResponse<BillDto>(res);
+  },
+
+  /** GET /api/billing/invoices/{invoiceId} – fetch a single invoice */
+  getById: async (invoiceId: number): Promise<Bill> => {
+    const res = await fetch(`${BILLING_BASE}/invoices/${invoiceId}`);
+    return handleResponse<Bill>(res);
+  },
+
+  /** GET /api/billing/customers/{customerId} – list all invoices for a customer */
+  getByCustomer: async (customerId: number): Promise<Bill[]> => {
+    const res = await fetch(`${BILLING_BASE}/customers/${customerId}`);
+    return handleResponse<Bill[]>(res);
+  },
+
+  /** PUT /api/billing/invoices/{invoiceId} – update an invoice */
+  update: async (
+    invoiceId: number,
+    updates: UpdateBillRequest,
+  ): Promise<Bill> => {
+    const res = await fetch(`${BILLING_BASE}/invoices/${invoiceId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updates),
+    });
+    return handleResponse<Bill>(res);
+  },
+
+  /** DELETE /api/billing/invoices/{invoiceId} – delete an invoice */
+  delete: async (invoiceId: number): Promise<void> => {
+    const res = await fetch(`${BILLING_BASE}/invoices/${invoiceId}`, {
+      method: "DELETE",
+    });
+    if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
+  },
+
+  /** GET /api/billing/invoices/{invoiceId}/customer – customer info linked to invoice */
+  getCustomer: async (invoiceId: number): Promise<BillingCustomerDto> => {
+    const res = await fetch(`${BILLING_BASE}/invoices/${invoiceId}/customer`);
+    return handleResponse<BillingCustomerDto>(res);
+  },
+
+  /** GET /api/billing/invoices/{invoiceId}/payments – payments recorded on invoice */
+  getPayments: async (invoiceId: number): Promise<BillingPaymentDto[]> => {
+    const res = await fetch(`${BILLING_BASE}/invoices/${invoiceId}/payments`);
+    return handleResponse<BillingPaymentDto[]>(res);
+  },
+
+  /** POST /api/billing/invoices/{invoiceId}/payments – record a payment */
+  addPayment: async (
+    invoiceId: number,
+    payment: RecordPaymentRequest,
+  ): Promise<BillingPaymentDto> => {
+    const res = await fetch(`${BILLING_BASE}/invoices/${invoiceId}/payments`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payment),
+    });
+    return handleResponse<BillingPaymentDto>(res);
   },
 };
