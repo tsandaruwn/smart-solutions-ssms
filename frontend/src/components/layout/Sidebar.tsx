@@ -15,18 +15,20 @@ import {
   ChevronLeft,
   ChevronRight,
   Zap,
+  Receipt,
 } from "lucide-react";
 
 const navItems = [
-  { label: "Dashboard",    href: "/dashboard",                icon: LayoutDashboard },
-  { label: "Orders",       href: "/dashboard/orders",         icon: ShoppingCart },
-  { label: "Create Order", href: "/dashboard/orders/create",  icon: Plus },
+  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Orders", href: "/dashboard/orders", icon: ShoppingCart },
+  { label: "Create Order", href: "/dashboard/orders/create", icon: Plus },
+  { label: "Billing", href: "/dashboard/billing", icon: Receipt },
 ];
 
 const futureModules = [
-  { label: "Products",  icon: Package },
+  { label: "Products", icon: Package },
   { label: "Customers", icon: Users },
-  { label: "Settings",  icon: Settings },
+  { label: "Settings", icon: Settings },
 ];
 
 export default function Sidebar() {
@@ -54,10 +56,20 @@ export default function Sidebar() {
         </div>
         {!collapsed && (
           <div className="overflow-hidden">
-            <h1 className="mb-0 fw-bold text-white text-truncate" style={{ fontSize: "1rem" }}>
+            <h1
+              className="mb-0 fw-bold text-white text-truncate"
+              style={{ fontSize: "1rem" }}
+            >
               Smart Solutions
             </h1>
-            <p className="mb-0 text-uppercase" style={{ fontSize: ".625rem", letterSpacing: ".1em", color: "var(--steel-light)" }}>
+            <p
+              className="mb-0 text-uppercase"
+              style={{
+                fontSize: ".625rem",
+                letterSpacing: ".1em",
+                color: "var(--steel-light)",
+              }}
+            >
               SSMS
             </p>
           </div>
@@ -66,7 +78,10 @@ export default function Sidebar() {
 
       {/* Nav */}
       <nav className="flex-grow-1 px-2 py-3 overflow-y-auto">
-        <p className="sidebar-section-label" style={{ textAlign: collapsed ? "center" : undefined }}>
+        <p
+          className="sidebar-section-label"
+          style={{ textAlign: collapsed ? "center" : undefined }}
+        >
           {collapsed ? "•••" : "Main Menu"}
         </p>
         {navItems.map((item) => {
@@ -80,15 +95,22 @@ export default function Sidebar() {
               className={`sidebar-nav-link mb-1 ${active ? "active" : ""} ${collapsed ? "justify-content-center" : ""}`}
             >
               <Icon size={18} className="flex-shrink-0" />
-              {!collapsed && <span className="text-truncate flex-grow-1">{item.label}</span>}
-              {!collapsed && active && <ChevronRight size={14} className="ms-auto" />}
+              {!collapsed && (
+                <span className="text-truncate flex-grow-1">{item.label}</span>
+              )}
+              {!collapsed && active && (
+                <ChevronRight size={14} className="ms-auto" />
+              )}
             </Link>
           );
         })}
 
         {/* Future modules */}
         <div className="mt-4">
-          <p className="sidebar-section-label" style={{ textAlign: collapsed ? "center" : undefined }}>
+          <p
+            className="sidebar-section-label"
+            style={{ textAlign: collapsed ? "center" : undefined }}
+          >
             {collapsed ? "•••" : "Coming Soon"}
           </p>
           {futureModules.map((item) => {
@@ -99,7 +121,9 @@ export default function Sidebar() {
                 className={`sidebar-nav-link disabled mb-1 ${collapsed ? "justify-content-center" : ""}`}
               >
                 <Icon size={18} className="flex-shrink-0" />
-                {!collapsed && <span className="text-truncate">{item.label}</span>}
+                {!collapsed && (
+                  <span className="text-truncate">{item.label}</span>
+                )}
               </div>
             );
           })}
@@ -107,7 +131,10 @@ export default function Sidebar() {
       </nav>
 
       {/* Collapse toggle */}
-      <div className="px-2 py-3" style={{ borderTop: "1px solid var(--navy-light)" }}>
+      <div
+        className="px-2 py-3"
+        style={{ borderTop: "1px solid var(--navy-light)" }}
+      >
         <button
           onClick={() => setCollapsed(!collapsed)}
           className="w-100 d-flex align-items-center justify-content-center gap-2 py-2 rounded-3 border-0"
@@ -118,15 +145,25 @@ export default function Sidebar() {
             transition: "all .2s",
           }}
           onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.background = "var(--navy-light)";
+            (e.currentTarget as HTMLButtonElement).style.background =
+              "var(--navy-light)";
             (e.currentTarget as HTMLButtonElement).style.color = "#fff";
           }}
           onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.background = "transparent";
-            (e.currentTarget as HTMLButtonElement).style.color = "var(--steel-light)";
+            (e.currentTarget as HTMLButtonElement).style.background =
+              "transparent";
+            (e.currentTarget as HTMLButtonElement).style.color =
+              "var(--steel-light)";
           }}
         >
-          {collapsed ? <ChevronRight size={16} /> : <><ChevronLeft size={16} /><span>Collapse</span></>}
+          {collapsed ? (
+            <ChevronRight size={16} />
+          ) : (
+            <>
+              <ChevronLeft size={16} />
+              <span>Collapse</span>
+            </>
+          )}
         </button>
       </div>
     </div>
@@ -138,7 +175,13 @@ export default function Sidebar() {
       <button
         onClick={() => setMobileOpen(true)}
         className="d-lg-none position-fixed btn-navy"
-        style={{ top: 12, left: 12, zIndex: 1060, padding: "8px 10px", borderRadius: 10 }}
+        style={{
+          top: 12,
+          left: 12,
+          zIndex: 1060,
+          padding: "8px 10px",
+          borderRadius: 10,
+        }}
       >
         <Menu size={18} />
       </button>
