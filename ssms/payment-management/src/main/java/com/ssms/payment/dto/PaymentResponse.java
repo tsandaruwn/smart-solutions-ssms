@@ -1,6 +1,5 @@
 package com.ssms.payment.dto;
 
-import com.ssms.payment.entity.PaymentMethod;
 import com.ssms.payment.entity.PaymentStatus;
 
 import java.math.BigDecimal;
@@ -8,60 +7,89 @@ import java.time.LocalDateTime;
 
 public class PaymentResponse {
 
-    private Long id;
-    private Long orderId;
-    private Long userId;
+    private Long paymentId;
+    private String transactionReference;
+    private Long invoiceId;
+    private Long customerId;
+    private Long paymentMethodId;
+    private String paymentMethodName;
     private BigDecimal amount;
-    private PaymentMethod paymentMethod;
-    private PaymentStatus status;
-    private String transactionId;
-    private String paymentReference;
     private LocalDateTime paymentDate;
+    private PaymentStatus status;
+    private String gatewayResponse;
+    private BigDecimal refundAmount;
     private LocalDateTime refundDate;
-    private String remarks;
+    private String refundReason;
 
     public PaymentResponse() {}
 
-    public PaymentResponse(Long id, Long orderId, Long userId, BigDecimal amount, 
-                          PaymentMethod paymentMethod, PaymentStatus status, 
-                          String transactionId, String paymentReference, 
-                          LocalDateTime paymentDate, LocalDateTime refundDate, String remarks) {
-        this.id = id;
-        this.orderId = orderId;
-        this.userId = userId;
+    public PaymentResponse(Long paymentId, String transactionReference, Long invoiceId, 
+                          Long customerId, Long paymentMethodId, String paymentMethodName,
+                          BigDecimal amount, LocalDateTime paymentDate, PaymentStatus status, 
+                          String gatewayResponse, BigDecimal refundAmount, 
+                          LocalDateTime refundDate, String refundReason) {
+        this.paymentId = paymentId;
+        this.transactionReference = transactionReference;
+        this.invoiceId = invoiceId;
+        this.customerId = customerId;
+        this.paymentMethodId = paymentMethodId;
+        this.paymentMethodName = paymentMethodName;
         this.amount = amount;
-        this.paymentMethod = paymentMethod;
-        this.status = status;
-        this.transactionId = transactionId;
-        this.paymentReference = paymentReference;
         this.paymentDate = paymentDate;
+        this.status = status;
+        this.gatewayResponse = gatewayResponse;
+        this.refundAmount = refundAmount;
         this.refundDate = refundDate;
-        this.remarks = remarks;
+        this.refundReason = refundReason;
     }
 
     // Getters and Setters
-    public Long getId() {
-        return id;
+    public Long getPaymentId() {
+        return paymentId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setPaymentId(Long paymentId) {
+        this.paymentId = paymentId;
     }
 
-    public Long getOrderId() {
-        return orderId;
+    public String getTransactionReference() {
+        return transactionReference;
     }
 
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
+    public void setTransactionReference(String transactionReference) {
+        this.transactionReference = transactionReference;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Long getInvoiceId() {
+        return invoiceId;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setInvoiceId(Long invoiceId) {
+        this.invoiceId = invoiceId;
+    }
+
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
+    }
+
+    public Long getPaymentMethodId() {
+        return paymentMethodId;
+    }
+
+    public void setPaymentMethodId(Long paymentMethodId) {
+        this.paymentMethodId = paymentMethodId;
+    }
+
+    public String getPaymentMethodName() {
+        return paymentMethodName;
+    }
+
+    public void setPaymentMethodName(String paymentMethodName) {
+        this.paymentMethodName = paymentMethodName;
     }
 
     public BigDecimal getAmount() {
@@ -72,12 +100,12 @@ public class PaymentResponse {
         this.amount = amount;
     }
 
-    public PaymentMethod getPaymentMethod() {
-        return paymentMethod;
+    public LocalDateTime getPaymentDate() {
+        return paymentDate;
     }
 
-    public void setPaymentMethod(PaymentMethod paymentMethod) {
-        this.paymentMethod = paymentMethod;
+    public void setPaymentDate(LocalDateTime paymentDate) {
+        this.paymentDate = paymentDate;
     }
 
     public PaymentStatus getStatus() {
@@ -88,28 +116,20 @@ public class PaymentResponse {
         this.status = status;
     }
 
-    public String getTransactionId() {
-        return transactionId;
+    public String getGatewayResponse() {
+        return gatewayResponse;
     }
 
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
+    public void setGatewayResponse(String gatewayResponse) {
+        this.gatewayResponse = gatewayResponse;
     }
 
-    public String getPaymentReference() {
-        return paymentReference;
+    public BigDecimal getRefundAmount() {
+        return refundAmount;
     }
 
-    public void setPaymentReference(String paymentReference) {
-        this.paymentReference = paymentReference;
-    }
-
-    public LocalDateTime getPaymentDate() {
-        return paymentDate;
-    }
-
-    public void setPaymentDate(LocalDateTime paymentDate) {
-        this.paymentDate = paymentDate;
+    public void setRefundAmount(BigDecimal refundAmount) {
+        this.refundAmount = refundAmount;
     }
 
     public LocalDateTime getRefundDate() {
@@ -120,11 +140,11 @@ public class PaymentResponse {
         this.refundDate = refundDate;
     }
 
-    public String getRemarks() {
-        return remarks;
+    public String getRefundReason() {
+        return refundReason;
     }
 
-    public void setRemarks(String remarks) {
-        this.remarks = remarks;
+    public void setRefundReason(String refundReason) {
+        this.refundReason = refundReason;
     }
 }

@@ -1,36 +1,24 @@
-package com.ssms.payment.entity;
+package com.ssms.payment.dto;
 
-import jakarta.persistence.*;
+import com.ssms.payment.entity.PaymentMethodType;
 
-@Entity
-@Table(name = "payment_method")
-public class PaymentMethod {
+public class PaymentMethodResponse {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "payment_method_id")
     private Long paymentMethodId;
-
-    @Column(name = "method_name", unique = true, nullable = false, length = 50)
     private String methodName;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private PaymentMethodType type;
-
-    @Column(length = 200)
     private String description;
+    private Boolean isActive;
 
-    @Column(name = "is_active", nullable = false)
-    private Boolean isActive = true;
+    public PaymentMethodResponse() {}
 
-    public PaymentMethod() {}
-
-    public PaymentMethod(String methodName, PaymentMethodType type, String description, Boolean isActive) {
+    public PaymentMethodResponse(Long paymentMethodId, String methodName, PaymentMethodType type, 
+                                 String description, Boolean isActive) {
+        this.paymentMethodId = paymentMethodId;
         this.methodName = methodName;
         this.type = type;
         this.description = description;
-        this.isActive = isActive != null ? isActive : true;
+        this.isActive = isActive;
     }
 
     // Getters and Setters
@@ -74,4 +62,3 @@ public class PaymentMethod {
         this.isActive = isActive;
     }
 }
-
