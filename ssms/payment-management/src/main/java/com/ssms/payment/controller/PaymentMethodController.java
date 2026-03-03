@@ -22,10 +22,18 @@ public class PaymentMethodController {
 
     // Create a new payment method
     @PostMapping
-    public ResponseEntity<PaymentMethodResponse> createPaymentMethod(@Valid @RequestBody PaymentMethodRequest request) {
-        PaymentMethodResponse response = paymentMethodService.createPaymentMethod(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    public ResponseEntity<?> createPaymentMethod(@Valid @RequestBody PaymentMethodRequest request) {
+        try {
+            PaymentMethodResponse response = paymentMethodService.createPaymentMethod(request);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ErrorResponse(e.getMessage()));
+        }
     }
+    
+    // Error response class
+    private record ErrorResponse(String message) {}
 
     // Get all payment methods
     @GetMapping
