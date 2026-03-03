@@ -16,6 +16,7 @@ import {
   ChevronRight,
   Zap,
   Receipt,
+  CreditCard,
 } from "lucide-react";
 
 const navItems = [
@@ -23,6 +24,7 @@ const navItems = [
   { label: "Orders", href: "/dashboard/orders", icon: ShoppingCart },
   { label: "Create Order", href: "/dashboard/orders/create", icon: Plus },
   { label: "Billing", href: "/dashboard/billing", icon: Receipt },
+  { label: "Payments", href: "/dashboard/payments", icon: CreditCard },
 ];
 
 const futureModules = [

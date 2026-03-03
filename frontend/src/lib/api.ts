@@ -310,3 +310,205 @@ export const billingApi = {
     return handleResponse<BillingPaymentDto>(res);
   },
 };
+
+// ============================================
+// Payment Management API Service
+// ============================================
+
+const PAYMENT_BASE = "/api/payments";
+const PAYMENT_METHOD_BASE = "/api/payment-methods";
+
+export type PaymentTransactionStatus = "Pending" | "Success" | "Failed";
+export type PaymentMethodType = "Card" | "Bank_Transfer" | "Mobile_Wallet" | "Cash" | "Online_Banking";
+
+export interface PaymentMethodResponse {
+  paymentMethodId: number;
+  methodName: string;
+  type: PaymentMethodType;
+  description: string | null;
+  isActive: boolean;
+}
+
+export interface PaymentMethodRequest {
+  methodName: string;
+  type: PaymentMethodType;
+  description?: string;
+  isActive?: boolean;
+}
+
+export interface PaymentResponse {
+  paymentId: number;
+  transactionReference: string;
+  invoiceId: number;
+  customerId: number;
+  paymentMethodId: number;
+  paymentMethodName: string;
+  amount: number;
+  paymentDate: string;
+  status: PaymentTransactionStatus;
+  gatewayResponse: string | null;
+  refundAmount: number | null;
+  refundDate: string | null;
+  refundReason: string | null;
+}
+
+export interface PaymentRequest {
+  transactionReference?: string;
+  invoiceId: number;
+  customerId: number;
+  amount: number;
+  paymentMethodId: number;
+  gatewayResponse?: string;
+  refundAmount?: number;
+  refundReason?: string;
+}
+
+export interface ProcessRefundRequest {
+  refundReason?: string;
+  refundAmount?: number;
+}
+
+export const paymentApi = {
+  /** POST /api/payments – create a new payment */
+  create: async (payment: PaymentRequest): Promise<PaymentResponse> => {
+    const res = await fetch(PAYMENT_BASE, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payment),
+    });
+    return handleResponse<PaymentResponse>(res);
+  },
+
+  /** GET /api/payments – get all payments */
+  getAll: async (): Promise<PaymentResponse[]> => {
+    const res = await fetch(PAYMENT_BASE);
+    return handleResponse<PaymentResponse[]>(res);
+  },
+
+  /** GET /api/payments/{id} – get payment by ID */
+  getById: async (id: number): Promise<PaymentResponse> => {
+    const res = await fetch(`${PAYMENT_BASE}/${id}`);
+    return handleResponse<PaymentResponse>(res);
+  },
+
+  /** GET /api/payments/transaction/{transactionReference} – get payment by transaction reference */
+  getByTransactionReference: async (transactionReference: string): Promise<PaymentResponse> => {
+    const res = await fetch(`${PAYMENT_BASE}/transaction/${transactionReference}`);
+    return handleResponse<PaymentResponse>(res);
+  },
+
+  /** GET /api/payments/customer/{customerId} – get payment history by customer */
+  getByCustomerId: async (customerId: number): Promise<PaymentResponse[]> => {
+    const res = await fetch(`${PAYMENT_BASE}/customer/${customerId}`);
+    return handleResponse<PaymentResponse[]>(res);
+  },
+
+  /** GET /api/payments/invoice/{invoiceId} – get payments by invoice */
+  getByInvoiceId: async (invoiceId: number): Promise<PaymentResponse[]> => {
+    const res = await fetch(`${PAYMENT_BASE}/invoice/${invoiceId}`);
+    return handleResponse<PaymentResponse[]>(res);
+  },
+
+  /** PUT /api/payments/{id} – update payment */
+  update: async (id: number, payment: PaymentRequest): Promise<PaymentResponse> => {
+    const res = await fetch(`${PAYMENT_BASE}/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payment),
+    });
+    return handleResponse<PaymentResponse>(res);
+  },
+
+  /** PATCH /api/payments/{id}/status – update payment status */
+  updateStatus: async (id: number, status: PaymentTransactionStatus): Promise<PaymentResponse> => {
+    const res = await fetch(`${PAYMENT_BASE}/${id}/status?status=${status}`, {
+      method: "PATCH",
+    });
+    return handleResponse<PaymentResponse>(res);
+  },
+
+  /** POST /api/payments/{id}/refund – process refund */
+  processRefund: async (
+    id: number, 
+    refundReason?: string, 
+    refundAmount?: number
+  ): Promise<PaymentResponse> => {
+    const params = new URLSearchParams();
+    if (refundReason) params.append("refundReason", refundReason);
+    if (refundAmount !== undefined) params.append("refundAmount", refundAmount.toString());
+    
+    const url = `${PAYMENT_BASE}/${id}/refund${params.toString() ? `?${params.toString()}` : ""}`;
+    const res = await fetch(url, { method: "POST" });
+    return handleResponse<PaymentResponse>(res);
+  },
+
+  /** DELETE /api/payments/{id} – delete payment */
+  delete: async (id: number): Promise<void> => {
+    const res = await fetch(`${PAYMENT_BASE}/${id}`, {
+      method: "DELETE",
+    });
+    if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
+  },
+};
+
+export const paymentMethodApi = {
+  /** POST /api/payment-methods – create a new payment method */
+  create: async (method: PaymentMethodRequest): Promise<PaymentMethodResponse> => {
+    const res = await fetch(PAYMENT_METHOD_BASE, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(method),
+    });
+    return handleResponse<PaymentMethodResponse>(res);
+  },
+
+  /** GET /api/payment-methods – get all payment methods */
+  getAll: async (): Promise<PaymentMethodResponse[]> => {
+    const res = await fetch(PAYMENT_METHOD_BASE);
+    return handleResponse<PaymentMethodResponse[]>(res);
+  },
+
+  /** GET /api/payment-methods/active – get active payment methods */
+  getActive: async (): Promise<PaymentMethodResponse[]> => {
+    const res = await fetch(`${PAYMENT_METHOD_BASE}/active`);
+    return handleResponse<PaymentMethodResponse[]>(res);
+  },
+
+  /** GET /api/payment-methods/{id} – get payment method by ID */
+  getById: async (id: number): Promise<PaymentMethodResponse> => {
+    const res = await fetch(`${PAYMENT_METHOD_BASE}/${id}`);
+    return handleResponse<PaymentMethodResponse>(res);
+  },
+
+  /** GET /api/payment-methods/name/{methodName} – get payment method by name */
+  getByName: async (methodName: string): Promise<PaymentMethodResponse> => {
+    const res = await fetch(`${PAYMENT_METHOD_BASE}/name/${methodName}`);
+    return handleResponse<PaymentMethodResponse>(res);
+  },
+
+  /** PUT /api/payment-methods/{id} – update payment method */
+  update: async (id: number, method: PaymentMethodRequest): Promise<PaymentMethodResponse> => {
+    const res = await fetch(`${PAYMENT_METHOD_BASE}/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(method),
+    });
+    return handleResponse<PaymentMethodResponse>(res);
+  },
+
+  /** PATCH /api/payment-methods/{id}/toggle-status – toggle payment method active status */
+  toggleStatus: async (id: number): Promise<PaymentMethodResponse> => {
+    const res = await fetch(`${PAYMENT_METHOD_BASE}/${id}/toggle-status`, {
+      method: "PATCH",
+    });
+    return handleResponse<PaymentMethodResponse>(res);
+  },
+
+  /** DELETE /api/payment-methods/{id} – delete payment method */
+  delete: async (id: number): Promise<void> => {
+    const res = await fetch(`${PAYMENT_METHOD_BASE}/${id}`, {
+      method: "DELETE",
+    });
+    if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
+  },
+};
