@@ -5,15 +5,18 @@ import com.ssms.usermanagement.dto.UserRequestDTO;
 import com.ssms.usermanagement.dto.UserResponseDTO;
 import com.ssms.usermanagement.dto.UserUpdateDTO;
 import com.ssms.usermanagement.entity.User;
+import com.ssms.usermanagement.entity.Role;
 import com.ssms.usermanagement.exception.DuplicateResourceException;
 import com.ssms.usermanagement.exception.ResourceNotFoundException;
 import com.ssms.usermanagement.repository.UserRepository;
+import com.ssms.usermanagement.repository.RoleRepository;
 import com.ssms.usermanagement.util.ResponseMessages;
 import com.ssms.usermanagement.util.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,11 +31,15 @@ public class UserService {
 	@Autowired
 	private UserRepository userRepository;
 
+	@Autowired
+	private RoleRepository roleRepository;
+
 	/**
 	 * Get all users
 	 */
 	public List<UserResponseDTO> getAllUsers() {
 		return userRepository.findAll().stream()
+				.filter(user -> user.getDeletedAt() == null) // Exclude soft-deleted users
 				.map(UserMapper::toResponseDTO)
 				.collect(Collectors.toList());
 	}
@@ -40,9 +47,14 @@ public class UserService {
 	/**
 	 * Get user by ID
 	 */
-	public UserResponseDTO getUserById(Long id) {
+	public UserResponseDTO getUserById(Integer id) {
 		User user = userRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException(ResponseMessages.USER_NOT_FOUND + id));
+		
+		if (user.getDeletedAt() != null) {
+			throw new ResourceNotFoundException(ResponseMessages.USER_NOT_FOUND + id);
+		}
+		
 		return UserMapper.toResponseDTO(user);
 	}
 
@@ -60,18 +72,20 @@ public class UserService {
 			throw new DuplicateResourceException(ResponseMessages.EMAIL_ALREADY_EXISTS);
 		}
 
+		// Fetch the role
+		Role role = roleRepository.findById(requestDTO.getRoleId())
+				.orElseThrow(() -> new ResourceNotFoundException("Role not found with id: " + requestDTO.getRoleId()));
+
 		// Create new user entity
 		User user = new User();
 		user.setUsername(requestDTO.getUsername());
 		user.setEmail(requestDTO.getEmail());
-		user.setPassword(requestDTO.getPassword()); // In production, hash the password
+		user.setPasswordHash(requestDTO.getPassword()); // In production, hash the password properly
 		user.setFirstName(requestDTO.getFirstName());
 		user.setLastName(requestDTO.getLastName());
-		user.setPhoneNumber(requestDTO.getPhoneNumber());
-		
-		if (requestDTO.getRole() != null) {
-			user.setRole(requestDTO.getRole());
-		}
+		user.setPhone(requestDTO.getPhone());
+		user.setRole(role);
+		user.setIsActive(true);
 
 		User savedUser = userRepository.save(user);
 		return UserMapper.toResponseDTO(savedUser);
@@ -80,9 +94,13 @@ public class UserService {
 	/**
 	 * Update existing user
 	 */
-	public UserResponseDTO updateUser(Long id, UserUpdateDTO updateDTO) {
+	public UserResponseDTO updateUser(Integer id, UserUpdateDTO updateDTO) {
 		User user = userRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException(ResponseMessages.USER_NOT_FOUND + id));
+
+		if (user.getDeletedAt() != null) {
+			throw new ResourceNotFoundException(ResponseMessages.USER_NOT_FOUND + id);
+		}
 
 		// Check for duplicate username if updating
 		if (updateDTO.getUsername() != null && !updateDTO.getUsername().equals(user.getUsername())) {
@@ -102,7 +120,7 @@ public class UserService {
 
 		// Update other fields if provided
 		if (updateDTO.getPassword() != null) {
-			user.setPassword(updateDTO.getPassword()); // In production, hash the password
+			user.setPasswordHash(updateDTO.getPassword()); // In production, hash the password
 		}
 		if (updateDTO.getFirstName() != null) {
 			user.setFirstName(updateDTO.getFirstName());
@@ -110,14 +128,16 @@ public class UserService {
 		if (updateDTO.getLastName() != null) {
 			user.setLastName(updateDTO.getLastName());
 		}
-		if (updateDTO.getPhoneNumber() != null) {
-			user.setPhoneNumber(updateDTO.getPhoneNumber());
+		if (updateDTO.getPhone() != null) {
+			user.setPhone(updateDTO.getPhone());
 		}
-		if (updateDTO.getRole() != null) {
-			user.setRole(updateDTO.getRole());
+		if (updateDTO.getRoleId() != null) {
+			Role role = roleRepository.findById(updateDTO.getRoleId())
+					.orElseThrow(() -> new ResourceNotFoundException("Role not found with id: " + updateDTO.getRoleId()));
+			user.setRole(role);
 		}
-		if (updateDTO.getStatus() != null) {
-			user.setStatus(updateDTO.getStatus());
+		if (updateDTO.getIsActive() != null) {
+			user.setIsActive(updateDTO.getIsActive());
 		}
 
 		User updatedUser = userRepository.save(user);
@@ -125,12 +145,34 @@ public class UserService {
 	}
 
 	/**
-	 * Delete user by ID
+	 * Soft delete user by ID
 	 */
-	public void deleteUser(Long id) {
+	public void deleteUser(Integer id) {
+		User user = userRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException(ResponseMessages.USER_NOT_FOUND + id));
+		
+		// Soft delete
+		user.softDelete();
+		userRepository.save(user);
+	}
+
+	/**
+	 * Hard delete user by ID (permanent deletion)
+	 */
+	public void hardDeleteUser(Integer id) {
 		User user = userRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException(ResponseMessages.USER_NOT_FOUND + id));
 		userRepository.delete(user);
+	}
+
+	/**
+	 * Update last login time
+	 */
+	public void updateLastLogin(Integer userId) {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new ResourceNotFoundException(ResponseMessages.USER_NOT_FOUND + userId));
+		user.setLastLogin(LocalDateTime.now());
+		userRepository.save(user);
 	}
 }
 

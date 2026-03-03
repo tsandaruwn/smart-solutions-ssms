@@ -46,7 +46,7 @@ public class UserController {
 	 * GET /api/users/{id}
 	 */
 	@GetMapping("/{id}")
-	public ResponseEntity<ApiResponse<UserResponseDTO>> getUserById(@PathVariable Long id) {
+	public ResponseEntity<ApiResponse<UserResponseDTO>> getUserById(@PathVariable Integer id) {
 		UserResponseDTO user = userService.getUserById(id);
 		ApiResponse<UserResponseDTO> response = ApiResponse.success(
 			ResponseMessages.USER_RETRIEVED_SUCCESS, 
@@ -75,7 +75,7 @@ public class UserController {
 	 */
 	@PutMapping("/{id}")
 	public ResponseEntity<ApiResponse<UserResponseDTO>> updateUser(
-			@PathVariable Long id, 
+			@PathVariable Integer id, 
 			@Valid @RequestBody UserUpdateDTO updateDTO) {
 		UserResponseDTO updatedUser = userService.updateUser(id, updateDTO);
 		ApiResponse<UserResponseDTO> response = ApiResponse.success(
@@ -86,13 +86,35 @@ public class UserController {
 	}
 
 	/**
-	 * Delete user
+	 * Soft delete user
 	 * DELETE /api/users/{id}
 	 */
 	@DeleteMapping("/{id}")
-	public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable Long id) {
+	public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable Integer id) {
 		userService.deleteUser(id);
 		ApiResponse<Void> response = ApiResponse.success(ResponseMessages.USER_DELETED_SUCCESS);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	/**
+	 * Hard delete user (permanent deletion)
+	 * DELETE /api/users/{id}/hard
+	 */
+	@DeleteMapping("/{id}/hard")
+	public ResponseEntity<ApiResponse<Void>> hardDeleteUser(@PathVariable Integer id) {
+		userService.hardDeleteUser(id);
+		ApiResponse<Void> response = ApiResponse.success("User permanently deleted successfully");
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	/**
+	 * Update last login time
+	 * POST /api/users/{id}/login
+	 */
+	@PostMapping("/{id}/login")
+	public ResponseEntity<ApiResponse<Void>> updateLastLogin(@PathVariable Integer id) {
+		userService.updateLastLogin(id);
+		ApiResponse<Void> response = ApiResponse.success("Last login updated successfully");
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 }

@@ -2,8 +2,6 @@ package com.ssms.usermanagement.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
-import com.ssms.usermanagement.entity.User.UserRole;
-import com.ssms.usermanagement.entity.User.UserStatus;
 
 /**
  * DTO for user update requests
@@ -11,7 +9,7 @@ import com.ssms.usermanagement.entity.User.UserStatus;
  */
 public class UserUpdateDTO {
 
-    @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
+    @Size(min = 3, max = 80, message = "Username must be between 3 and 80 characters")
     private String username;
 
     @Email(message = "Email should be valid")
@@ -24,11 +22,11 @@ public class UserUpdateDTO {
 
     private String lastName;
 
-    private String phoneNumber;
+    private String phone;
 
-    private UserRole role;
+    private Integer roleId;
 
-    private UserStatus status;
+    private Boolean isActive;
 
     // Empty constructor
     public UserUpdateDTO() {
@@ -75,27 +73,27 @@ public class UserUpdateDTO {
         this.lastName = lastName;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
-    public UserRole getRole() {
-        return role;
+    public Integer getRoleId() {
+        return roleId;
     }
 
-    public void setRole(UserRole role) {
-        this.role = role;
+    public void setRoleId(Integer roleId) {
+        this.roleId = roleId;
     }
 
-    public UserStatus getStatus() {
-        return status;
+    public Boolean getIsActive() {
+        return isActive;
     }
 
-    public void setStatus(UserStatus status) {
-        this.status = status;
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
     }
 }

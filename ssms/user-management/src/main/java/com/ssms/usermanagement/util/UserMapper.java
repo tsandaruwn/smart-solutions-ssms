@@ -23,16 +23,23 @@ public class UserMapper {
         }
         
         UserResponseDTO dto = new UserResponseDTO();
-        dto.setId(user.getId());
+        dto.setUserId(user.getUserId());
         dto.setUsername(user.getUsername());
         dto.setEmail(user.getEmail());
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
-        dto.setPhoneNumber(user.getPhoneNumber());
-        dto.setRole(user.getRole());
-        dto.setStatus(user.getStatus());
+        dto.setPhone(user.getPhone());
+        
+        if (user.getRole() != null) {
+            dto.setRoleId(user.getRole().getRoleId());
+            dto.setRoleName(user.getRole().getRoleName().toString());
+        }
+        
+        dto.setIsActive(user.getIsActive());
+        dto.setLastLogin(user.getLastLogin());
         dto.setCreatedAt(user.getCreatedAt());
         dto.setUpdatedAt(user.getUpdatedAt());
+        dto.setDeletedAt(user.getDeletedAt());
         
         return dto;
     }

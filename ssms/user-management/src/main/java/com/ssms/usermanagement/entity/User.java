@@ -16,39 +16,42 @@ public class User {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "user_id")
+    private Integer userId;
 
-    @NotBlank(message = "Username is required")
-    @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
-    @Column(nullable = false, unique = true, length = 50)
-    private String username;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role role;
 
     @NotBlank(message = "Email is required")
     @Email(message = "Email should be valid")
-    @Column(nullable = false, unique = true, length = 100)
+    @Column(nullable = false, unique = true, length = 150)
     private String email;
+
+    @NotBlank(message = "Username is required")
+    @Size(min = 3, max = 80, message = "Username must be between 3 and 80 characters")
+    @Column(nullable = false, unique = true, length = 80)
+    private String username;
 
     @NotBlank(message = "Password is required")
     @Size(min = 6, message = "Password must be at least 6 characters")
-    @Column(nullable = false)
-    private String password;
+    @Column(name = "password_hash", nullable = false, length = 255)
+    private String passwordHash;
 
-    @Column(name = "first_name", length = 50)
+    @Column(name = "first_name", length = 80)
     private String firstName;
 
-    @Column(name = "last_name", length = 50)
+    @Column(name = "last_name", length = 80)
     private String lastName;
 
-    @Column(name = "phone_number", length = 20)
-    private String phoneNumber;
+    @Column(name = "phone", length = 20)
+    private String phone;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private UserRole role = UserRole.CUSTOMER;
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive = true;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private UserStatus status = UserStatus.ACTIVE;
+    @Column(name = "last_login")
+    private LocalDateTime lastLogin;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -56,15 +59,19 @@ public class User {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
     // Empty constructor - Required by JPA
     public User() {
     }
 
     // Constructor with required fields
-    public User(String username, String email, String password) {
+    public User(String username, String email, String passwordHash, Role role) {
         this.username = username;
         this.email = email;
-        this.password = password;
+        this.passwordHash = passwordHash;
+        this.role = role;
     }
 
     // PrePersist callback
@@ -72,11 +79,8 @@ public class User {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
-        if (this.role == null) {
-            this.role = UserRole.CUSTOMER;
-        }
-        if (this.status == null) {
-            this.status = UserStatus.ACTIVE;
+        if (this.isActive == null) {
+            this.isActive = true;
         }
     }
 
@@ -87,20 +91,20 @@ public class User {
     }
 
     // Getters and Setters
-    public Long getId() {
-        return id;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
-    public String getUsername() {
-        return username;
+    public Role getRole() {
+        return role;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public String getEmail() {
@@ -111,12 +115,20 @@ public class User {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
+    public String getUsername() {
+        return username;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
     public String getFirstName() {
@@ -135,28 +147,28 @@ public class User {
         this.lastName = lastName;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
-    public UserRole getRole() {
-        return role;
+    public Boolean getIsActive() {
+        return isActive;
     }
 
-    public void setRole(UserRole role) {
-        this.role = role;
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
     }
 
-    public UserStatus getStatus() {
-        return status;
+    public LocalDateTime getLastLogin() {
+        return lastLogin;
     }
 
-    public void setStatus(UserStatus status) {
-        this.status = status;
+    public void setLastLogin(LocalDateTime lastLogin) {
+        this.lastLogin = lastLogin;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -175,20 +187,22 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
-    // Enums
-    public enum UserRole {
-        ADMIN,
-        CUSTOMER,
-        SUPPLIER,
-        TECHNICIAN,
-        SALES_REPRESENTATIVE
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
     }
 
-    public enum UserStatus {
-        ACTIVE,
-        INACTIVE,
-        SUSPENDED,
-        DELETED
+    public void setDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+
+    // Soft delete method
+    public void softDelete() {
+        this.deletedAt = LocalDateTime.now();
+        this.isActive = false;
+    }
+
+    // Check if user is deleted
+    public boolean isDeleted() {
+        return this.deletedAt != null;
     }
 }
-

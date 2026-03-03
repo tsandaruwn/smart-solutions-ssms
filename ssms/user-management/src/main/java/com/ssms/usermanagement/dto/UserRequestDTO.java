@@ -2,8 +2,8 @@ package com.ssms.usermanagement.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import com.ssms.usermanagement.entity.User.UserRole;
 
 /**
  * DTO for user registration/creation requests
@@ -12,7 +12,7 @@ import com.ssms.usermanagement.entity.User.UserRole;
 public class UserRequestDTO {
 
     @NotBlank(message = "Username is required")
-    @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
+    @Size(min = 3, max = 80, message = "Username must be between 3 and 80 characters")
     private String username;
 
     @NotBlank(message = "Email is required")
@@ -27,23 +27,24 @@ public class UserRequestDTO {
 
     private String lastName;
 
-    private String phoneNumber;
+    private String phone;
 
-    private UserRole role;
+    @NotNull(message = "Role ID is required")
+    private Integer roleId;
 
     // Empty constructor
     public UserRequestDTO() {
     }
 
     // Constructor with all fields
-    public UserRequestDTO(String username, String email, String password, String firstName, String lastName, String phoneNumber, UserRole role) {
+    public UserRequestDTO(String username, String email, String password, String firstName, String lastName, String phone, Integer roleId) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.phoneNumber = phoneNumber;
-        this.role = role;
+        this.phone = phone;
+        this.roleId = roleId;
     }
 
     // Getters and Setters
@@ -87,19 +88,19 @@ public class UserRequestDTO {
         this.lastName = lastName;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
-    public UserRole getRole() {
-        return role;
+    public Integer getRoleId() {
+        return roleId;
     }
 
-    public void setRole(UserRole role) {
-        this.role = role;
+    public void setRoleId(Integer roleId) {
+        this.roleId = roleId;
     }
 }
