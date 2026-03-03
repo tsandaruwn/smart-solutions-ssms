@@ -1,6 +1,5 @@
 package com.ssms.payment.dto;
 
-import com.ssms.payment.entity.PaymentMethod;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
@@ -8,38 +7,50 @@ import java.math.BigDecimal;
 
 public class PaymentRequest {
 
-    @NotNull(message = "Order ID is required")
-    private Long orderId;
+    private String transactionReference;
 
-    @NotNull(message = "User ID is required")
-    private Long userId;
+    @NotNull(message = "Invoice ID is required")
+    private Long invoiceId;
+
+    @NotNull(message = "Customer ID is required")
+    private Long customerId;
 
     @NotNull(message = "Amount is required")
     @Positive(message = "Amount must be positive")
     private BigDecimal amount;
 
-    @NotNull(message = "Payment method is required")
-    private PaymentMethod paymentMethod;
+    @NotNull(message = "Payment method ID is required")
+    private Long paymentMethodId;
 
-    private String transactionId;
-    private String paymentReference;
-    private String remarks;
+    private String gatewayResponse;
+    
+    private BigDecimal refundAmount;
+    
+    private String refundReason;
 
     // Getters and Setters
-    public Long getOrderId() {
-        return orderId;
+    public String getTransactionReference() {
+        return transactionReference;
     }
 
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
+    public void setTransactionReference(String transactionReference) {
+        this.transactionReference = transactionReference;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Long getInvoiceId() {
+        return invoiceId;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setInvoiceId(Long invoiceId) {
+        this.invoiceId = invoiceId;
+    }
+
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 
     public BigDecimal getAmount() {
@@ -50,35 +61,35 @@ public class PaymentRequest {
         this.amount = amount;
     }
 
-    public PaymentMethod getPaymentMethod() {
-        return paymentMethod;
+    public Long getPaymentMethodId() {
+        return paymentMethodId;
     }
 
-    public void setPaymentMethod(PaymentMethod paymentMethod) {
-        this.paymentMethod = paymentMethod;
+    public void setPaymentMethodId(Long paymentMethodId) {
+        this.paymentMethodId = paymentMethodId;
     }
 
-    public String getTransactionId() {
-        return transactionId;
+    public String getGatewayResponse() {
+        return gatewayResponse;
     }
 
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
+    public void setGatewayResponse(String gatewayResponse) {
+        this.gatewayResponse = gatewayResponse;
     }
 
-    public String getPaymentReference() {
-        return paymentReference;
+    public BigDecimal getRefundAmount() {
+        return refundAmount;
     }
 
-    public void setPaymentReference(String paymentReference) {
-        this.paymentReference = paymentReference;
+    public void setRefundAmount(BigDecimal refundAmount) {
+        this.refundAmount = refundAmount;
     }
 
-    public String getRemarks() {
-        return remarks;
+    public String getRefundReason() {
+        return refundReason;
     }
 
-    public void setRemarks(String remarks) {
-        this.remarks = remarks;
+    public void setRefundReason(String refundReason) {
+        this.refundReason = refundReason;
     }
 }

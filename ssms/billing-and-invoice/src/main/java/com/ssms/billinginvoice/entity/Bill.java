@@ -3,7 +3,6 @@ package com.ssms.billinginvoice.entity;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "order_bill")
@@ -13,8 +12,11 @@ public class Bill {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private Long orderId;
-    private Long userId;
+
+    // foreign key linking back to the customer service
+    private Long customerId;
 
     private BigDecimal subtotal;
     private BigDecimal tax;
@@ -22,10 +24,7 @@ public class Bill {
 
     private String status; // PENDING, PAID
 
-    private LocalDateTime createdAt;
-
     public Bill() {
-        this.createdAt = LocalDateTime.now();
         this.status = "PENDING";
     }
 
@@ -38,8 +37,8 @@ public class Bill {
         return orderId;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Long getCustomerId() {
+        return customerId;
     }
 
     public BigDecimal getSubtotal() {
@@ -62,8 +61,8 @@ public class Bill {
         this.orderId = orderId;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 
     public void setSubtotal(BigDecimal subtotal) {

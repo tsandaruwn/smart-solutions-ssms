@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -42,17 +43,24 @@ public class PaymentController {
         return ResponseEntity.ok(response);
     }
 
-    // Get payment history by user ID
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<PaymentResponse>> getPaymentsByUserId(@PathVariable Long userId) {
-        List<PaymentResponse> payments = paymentService.getPaymentsByUserId(userId);
+    // Get payment by transaction reference
+    @GetMapping("/transaction/{transactionReference}")
+    public ResponseEntity<PaymentResponse> getPaymentByTransactionReference(@PathVariable String transactionReference) {
+        PaymentResponse response = paymentService.getPaymentByTransactionReference(transactionReference);
+        return ResponseEntity.ok(response);
+    }
+
+    // Get payment history by customer ID
+    @GetMapping("/customer/{customerId}")
+    public ResponseEntity<List<PaymentResponse>> getPaymentsByCustomerId(@PathVariable Long customerId) {
+        List<PaymentResponse> payments = paymentService.getPaymentsByCustomerId(customerId);
         return ResponseEntity.ok(payments);
     }
 
-    // Get payments by order ID
-    @GetMapping("/order/{orderId}")
-    public ResponseEntity<List<PaymentResponse>> getPaymentsByOrderId(@PathVariable Long orderId) {
-        List<PaymentResponse> payments = paymentService.getPaymentsByOrderId(orderId);
+    // Get payments by invoice ID
+    @GetMapping("/invoice/{invoiceId}")
+    public ResponseEntity<List<PaymentResponse>> getPaymentsByInvoiceId(@PathVariable Long invoiceId) {
+        List<PaymentResponse> payments = paymentService.getPaymentsByInvoiceId(invoiceId);
         return ResponseEntity.ok(payments);
     }
 
@@ -65,7 +73,7 @@ public class PaymentController {
         return ResponseEntity.ok(response);
     }
 
-    // Update payment status (Success, Failed, Refunded)
+    // Update payment status (Pending, Success, Failed)
     @PatchMapping("/{id}/status")
     public ResponseEntity<PaymentResponse> updatePaymentStatus(
             @PathVariable Long id,
@@ -78,8 +86,9 @@ public class PaymentController {
     @PostMapping("/{id}/refund")
     public ResponseEntity<PaymentResponse> processRefund(
             @PathVariable Long id,
-            @RequestParam(required = false) String remarks) {
-        PaymentResponse response = paymentService.processRefund(id, remarks);
+            @RequestParam(required = false) String refundReason,
+            @RequestParam(required = false) BigDecimal refundAmount) {
+        PaymentResponse response = paymentService.processRefund(id, refundReason, refundAmount);
         return ResponseEntity.ok(response);
     }
 
