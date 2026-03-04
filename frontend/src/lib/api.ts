@@ -512,3 +512,205 @@ export const paymentMethodApi = {
     if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
   },
 };
+
+// ============================================
+// Inventory Management API Service
+// Proxied to http://localhost:8084 via Next.js rewrite
+// ============================================
+
+const INVENTORY_BASE = "/api/v1/inventory";
+const WAREHOUSE_BASE = "/api/v1/warehouses";
+
+// -- Envelope used by inventory service --
+export interface InventoryApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T | null;
+  timestamp: string;
+}
+
+// -- Warehouse --
+
+export interface WarehouseResponse {
+  warehouseId: number;
+  name: string;
+  address: string | null;
+  city: string | null;
+  country: string | null;
+  managerUserId: number | null;
+  contactPhone: string | null;
+  capacity: number | null;
+  isActive: boolean;
+}
+
+export interface WarehouseRequest {
+  name: string;
+  address?: string;
+  city?: string;
+  country?: string;
+  managerUserId?: number;
+  contactPhone?: string;
+  capacity?: number;
+  isActive?: boolean;
+}
+
+// -- Inventory --
+
+export interface InventoryResponse {
+  inventoryId: number;
+  productId: number;
+  warehouse: WarehouseResponse;
+  quantityOnHand: number;
+  reorderLevel: number;
+  reorderQuantity: number;
+  lowStockAlertSent: boolean;
+  lowStock: boolean;
+  lastRestockedAt: string | null;
+  updatedAt: string | null;
+}
+
+export interface InventoryRequest {
+  productId: number;
+  warehouseId: number;
+  quantityOnHand: number;
+  reorderLevel?: number;
+  reorderQuantity?: number;
+}
+
+export type StockOperation = "INCREASE" | "DECREASE" | "SET";
+
+export interface StockUpdateRequest {
+  quantity: number;
+  operation: StockOperation;
+  reason?: string;
+}
+
+/** Helper to unwrap the ApiResponse<T> envelope from the inventory service */
+async function handleInventoryResponse<T>(response: Response): Promise<T> {
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({
+      success: false,
+      message: response.statusText,
+    }));
+    throw new Error(body.message || "An error occurred");
+  }
+  const envelope: InventoryApiResponse<T> = await response.json();
+  if (!envelope.success) {
+    throw new Error(envelope.message || "An error occurred");
+  }
+  return envelope.data as T;
+}
+
+export const inventoryApi = {
+  /** POST /api/v1/inventory – create inventory record */
+  create: async (req: InventoryRequest): Promise<InventoryResponse> => {
+    const res = await fetch(INVENTORY_BASE, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(req),
+    });
+    return handleInventoryResponse<InventoryResponse>(res);
+  },
+
+  /** GET /api/v1/inventory – get all inventory records */
+  getAll: async (): Promise<InventoryResponse[]> => {
+    const res = await fetch(INVENTORY_BASE);
+    return handleInventoryResponse<InventoryResponse[]>(res);
+  },
+
+  /** GET /api/v1/inventory/{id} – get by ID */
+  getById: async (id: number): Promise<InventoryResponse> => {
+    const res = await fetch(`${INVENTORY_BASE}/${id}`);
+    return handleInventoryResponse<InventoryResponse>(res);
+  },
+
+  /** GET /api/v1/inventory/product/{productId} – get by product */
+  getByProduct: async (productId: number): Promise<InventoryResponse[]> => {
+    const res = await fetch(`${INVENTORY_BASE}/product/${productId}`);
+    return handleInventoryResponse<InventoryResponse[]>(res);
+  },
+
+  /** GET /api/v1/inventory/warehouse/{warehouseId} – get by warehouse */
+  getByWarehouse: async (warehouseId: number): Promise<InventoryResponse[]> => {
+    const res = await fetch(`${INVENTORY_BASE}/warehouse/${warehouseId}`);
+    return handleInventoryResponse<InventoryResponse[]>(res);
+  },
+
+  /** PUT /api/v1/inventory/{id} – update inventory */
+  update: async (id: number, req: InventoryRequest): Promise<InventoryResponse> => {
+    const res = await fetch(`${INVENTORY_BASE}/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(req),
+    });
+    return handleInventoryResponse<InventoryResponse>(res);
+  },
+
+  /** PATCH /api/v1/inventory/{id}/stock – update stock */
+  updateStock: async (id: number, req: StockUpdateRequest): Promise<InventoryResponse> => {
+    const res = await fetch(`${INVENTORY_BASE}/${id}/stock`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(req),
+    });
+    return handleInventoryResponse<InventoryResponse>(res);
+  },
+
+  /** GET /api/v1/inventory/alerts/low-stock – all low-stock alerts */
+  getLowStockAlerts: async (): Promise<InventoryResponse[]> => {
+    const res = await fetch(`${INVENTORY_BASE}/alerts/low-stock`);
+    return handleInventoryResponse<InventoryResponse[]>(res);
+  },
+
+  /** GET /api/v1/inventory/alerts/low-stock/warehouse/{warehouseId} */
+  getLowStockByWarehouse: async (warehouseId: number): Promise<InventoryResponse[]> => {
+    const res = await fetch(`${INVENTORY_BASE}/alerts/low-stock/warehouse/${warehouseId}`);
+    return handleInventoryResponse<InventoryResponse[]>(res);
+  },
+
+  /** DELETE /api/v1/inventory/{id} – soft-delete */
+  delete: async (id: number): Promise<void> => {
+    const res = await fetch(`${INVENTORY_BASE}/${id}`, { method: "DELETE" });
+    if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
+  },
+};
+
+export const warehouseApi = {
+  /** POST /api/v1/warehouses – create warehouse */
+  create: async (req: WarehouseRequest): Promise<WarehouseResponse> => {
+    const res = await fetch(WAREHOUSE_BASE, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(req),
+    });
+    return handleInventoryResponse<WarehouseResponse>(res);
+  },
+
+  /** GET /api/v1/warehouses – get all active warehouses */
+  getAll: async (): Promise<WarehouseResponse[]> => {
+    const res = await fetch(WAREHOUSE_BASE);
+    return handleInventoryResponse<WarehouseResponse[]>(res);
+  },
+
+  /** GET /api/v1/warehouses/{id} – get by ID */
+  getById: async (id: number): Promise<WarehouseResponse> => {
+    const res = await fetch(`${WAREHOUSE_BASE}/${id}`);
+    return handleInventoryResponse<WarehouseResponse>(res);
+  },
+
+  /** PUT /api/v1/warehouses/{id} – update warehouse */
+  update: async (id: number, req: WarehouseRequest): Promise<WarehouseResponse> => {
+    const res = await fetch(`${WAREHOUSE_BASE}/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(req),
+    });
+    return handleInventoryResponse<WarehouseResponse>(res);
+  },
+
+  /** DELETE /api/v1/warehouses/{id} – soft-deactivate */
+  delete: async (id: number): Promise<void> => {
+    const res = await fetch(`${WAREHOUSE_BASE}/${id}`, { method: "DELETE" });
+    if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
+  },
+};

@@ -19,6 +19,14 @@ const nextConfig: NextConfig = {
         source: "/api/payment-methods/:path*",
         destination: "http://localhost:8086/api/payment-methods/:path*",
       },
+      {
+        source: "/api/v1/inventory/:path*",
+        destination: "http://localhost:8084/api/v1/inventory/:path*",
+      },
+      {
+        source: "/api/v1/warehouses/:path*",
+        destination: "http://localhost:8084/api/v1/warehouses/:path*",
+      },
     ];
   },
 };

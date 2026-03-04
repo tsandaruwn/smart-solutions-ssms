@@ -17,12 +17,15 @@ import {
   Zap,
   Receipt,
   CreditCard,
+  Warehouse,
 } from "lucide-react";
 
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Orders", href: "/dashboard/orders", icon: ShoppingCart },
   { label: "Create Order", href: "/dashboard/orders/create", icon: Plus },
+  { label: "Inventory", href: "/dashboard/inventory", icon: Package },
+  { label: "Warehouses", href: "/dashboard/inventory/warehouses", icon: Warehouse },
   { label: "Billing", href: "/dashboard/billing", icon: Receipt },
   { label: "Payments", href: "/dashboard/payments", icon: CreditCard },
 ];
