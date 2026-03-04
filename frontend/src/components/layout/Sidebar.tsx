@@ -19,7 +19,7 @@ import {
   CreditCard,
   Warehouse,
   UserCog,
-
+  Megaphone,
 } from "lucide-react";
 
 const navItems = [
@@ -28,10 +28,19 @@ const navItems = [
   { label: "Create Order", href: "/dashboard/orders/create", icon: Plus },
   { label: "Products", href: "/dashboard/products", icon: Package },
   { label: "Inventory", href: "/dashboard/inventory", icon: Package },
-  { label: "Warehouses", href: "/dashboard/inventory/warehouses", icon: Warehouse },
+  {
+    label: "Warehouses",
+    href: "/dashboard/inventory/warehouses",
+    icon: Warehouse,
+  },
   { label: "Billing", href: "/dashboard/billing", icon: Receipt },
   { label: "Payments", href: "/dashboard/payments", icon: CreditCard },
   { label: "User Management", href: "/dashboard/users", icon: UserCog },
+  {
+    label: "Digital Marketing",
+    href: "/dashboard/digital-marketing",
+    icon: Megaphone,
+  },
 ];
 
 const futureModules = [

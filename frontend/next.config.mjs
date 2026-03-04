@@ -33,6 +33,10 @@ const nextConfig = {
         source: "/api/categories/:path*",
         destination: "http://localhost:8080/api/categories/:path*",
       },
+      {
+        source: "/api/campaigns/:path*",
+        destination: "http://localhost:8088/api/campaigns/:path*",
+      },
     ];
   },
 };

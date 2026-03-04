@@ -34,5 +34,5 @@ public interface CampaignPerformanceRepository extends JpaRepository<CampaignPer
             FROM CampaignPerformance p
             WHERE p.campaign.campaignId = :campaignId
             """)
-    Object[] aggregateByCampaignId(@Param("campaignId") Integer campaignId);
+    List<Object[]> aggregateByCampaignId(@Param("campaignId") Integer campaignId);
 }
