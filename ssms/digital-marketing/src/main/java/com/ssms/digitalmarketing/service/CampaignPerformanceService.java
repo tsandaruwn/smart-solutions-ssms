@@ -100,7 +100,7 @@ public class CampaignPerformanceService {
         List<Object[]> rows = performanceRepository.aggregateByCampaignId(campaignId);
         Object[] row = (rows != null && !rows.isEmpty() && rows.get(0) != null)
                 ? rows.get(0)
-                : new Object[]{ null, null, null, null, null };
+                : new Object[] { null, null, null, null, null };
 
         long totalImpressions = toLong(row[0]);
         long totalClicks = toLong(row[1]);
