@@ -4,6 +4,8 @@ server:
 # URLs for downstream microservices
 order-service:
   url: http://localhost:8085
+payment-service:
+  url: http://localhost:8086 # update this to match the port in payment-management/application.yaml
 
 spring:
   datasource:
