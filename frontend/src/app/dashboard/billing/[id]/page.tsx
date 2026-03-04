@@ -29,8 +29,6 @@ export default function InvoiceDetailPage() {
   const [payments, setPayments] = useState<BillingPaymentDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [payAmount, setPayAmount] = useState<string>("");
-  const [paying, setPaying] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
 
   const fetchData = async () => {
@@ -60,24 +58,6 @@ export default function InvoiceDetailPage() {
     if (!bill) return;
     const updated = await billingApi.update(invoiceId, { status: "PAID" });
     setBill(updated);
-  };
-
-  const handleAddPayment = async () => {
-    const amount = Number.parseFloat(payAmount);
-    if (!amount || amount <= 0) return;
-    setPaying(true);
-    try {
-      const newPayment = await billingApi.addPayment(invoiceId, { amount });
-      setPayments((prev) => [...prev, newPayment]);
-      setPayAmount("");
-      // refresh bill to get updated status
-      const updated = await billingApi.getById(invoiceId);
-      setBill(updated);
-    } catch (err) {
-      alert(err instanceof Error ? err.message : "Payment failed");
-    } finally {
-      setPaying(false);
-    }
   };
 
   const handleDelete = async () => {
@@ -304,37 +284,6 @@ export default function InvoiceDetailPage() {
                 Customer #{bill.customerId}
               </p>
             )}
-          </div>
-
-          {/* Record payment */}
-          <div className="card-brand p-4">
-            <div className="d-flex align-items-center gap-2 mb-3">
-              <CreditCard size={18} className="text-amber-dark" />
-              <h2
-                className="fw-semibold text-navy mb-0"
-                style={{ fontSize: "1rem" }}
-              >
-                Record Payment
-              </h2>
-            </div>
-            <div className="d-flex gap-2">
-              <input
-                type="number"
-                placeholder="Amount"
-                value={payAmount}
-                onChange={(e) => setPayAmount(e.target.value)}
-                className="input-brand"
-                min={0}
-              />
-              <button
-                onClick={handleAddPayment}
-                disabled={paying || !payAmount}
-                className="btn-amber"
-                style={{ whiteSpace: "nowrap" }}
-              >
-                {paying ? "Saving…" : "Record"}
-              </button>
-            </div>
           </div>
         </div>
 
