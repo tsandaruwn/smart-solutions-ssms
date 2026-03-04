@@ -18,6 +18,8 @@ import {
   Receipt,
   CreditCard,
   Warehouse,
+  UserCog,
+
 } from "lucide-react";
 
 const navItems = [
@@ -28,6 +30,8 @@ const navItems = [
   { label: "Warehouses", href: "/dashboard/inventory/warehouses", icon: Warehouse },
   { label: "Billing", href: "/dashboard/billing", icon: Receipt },
   { label: "Payments", href: "/dashboard/payments", icon: CreditCard },
+  // 👤 USER MANAGEMENT MODULE - Created by [Your Name]
+  { label: "User Management", href: "/dashboard/users", icon: UserCog },
 ];
 
 const futureModules = [

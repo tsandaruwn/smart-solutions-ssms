@@ -1,104 +1,89 @@
-# Smart Solutions Management System (SSMS)
+# Product Management Microservice
 
-SSMS is a **microservices-based management system** designed for a Smart Solutions Pvt Ltd.  
-It handles core business operations such as users, products, orders, inventory, payments, billing, installations, suppliers, and digital marketing.
+Product management system for smart home products. Built with Spring Boot backend and Next.js frontend.
 
-The system is built with **modern, scalable architecture** using Spring Boot microservices and a Next.js frontend.
+## Features
 
----
+- Add new smart home products
+- Store product details (name, category, price, description)
+- Update product details
+- Remove discontinued products
+- List all available products
 
-## 🧩 Project Architecture
+## Tech Stack
 
-- **Frontend:** Next.js  
-- **Backend:** Spring Boot (Microservices)  
-- **Database:** PostgreSQL  
-- **Java Version:** JDK 21  
-- **Configuration:** YAML (`application.yml`)  
-- **Build Tool:** Maven  
+- Frontend: Next.js 14 with TypeScript
+- Backend: Spring Boot 3.2.0 (Java 21)
+- Database: PostgreSQL
+- Build Tool: Maven
 
----
+## Setup
 
-## 🏗️ Backend – Spring Boot Microservices
+### Prerequisites
 
-Each feature is developed as an **independent microservice** with its own structure and configuration.
+- JDK 21
+- Maven 3.6+
+- PostgreSQL 12+
+- Node.js 18+
 
-### Microservices Included
+### Database
 
-- User Management  
-- Customer Service  
-- Product Management  
-- Inventory Management  
-- Order Management  
-- Payment Management  
-- Billing & Invoice  
-- Installation Management  
-- Supplier Management  
-- Digital Marketing  
+Create database:
+```sql
+CREATE DATABASE productdb;
+```
 
-Each microservice follows a layered architecture:
+Update credentials in `backend/src/main/resources/application.yml` if needed.
 
----
-
-## 📂 Project Folder Structure
-
-ssms/
-│
-├─ user-management/
-├─ customer-service/
-├─ product-management/
-├─ inventory-management/
-├─ order-management/
-├─ payment-management/
-├─ billing-and-invoice/
-├─ installation-management/
-├─ supplier-management/
-└─ digital-marketing/
-
-
-Each service contains:
-- `controller` – REST APIs  
-- `service` – Business logic  
-- `repository` – Database access  
-- `entity` – JPA entities  
-- `application.yml` – Service configuration  
-
----
-
-## 🎨 Frontend – Next.js
-
-- Built using **Next.js**
-- Communicates with backend microservices via REST APIs
-- Handles UI, routing, authentication, and client-side logic
-
----
-
-## 🗄️ Database
-
-- **PostgreSQL**
-- Each microservice can have:
-  - Its own schema, or
-  - A shared database with separate tables (based on configuration)
-
----
-
-## ⚙️ Requirements
-
-Make sure you have the following installed:
-
-- **JDK 21**
-- **Maven**
-- **PostgreSQL**
-- **Node.js (for Next.js frontend)**
-
----
-
-## ▶️ Running the Backend Services
-
-1. Configure PostgreSQL credentials in each `application.yml`
-2. Navigate to a microservice directory
-3. Run:
+### Backend
 
 ```bash
+cd backend
+mvn clean install
 mvn spring-boot:run
+```
 
+Backend runs on `http://localhost:8080`
 
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend runs on `http://localhost:3000`
+
+## API Endpoints
+
+- `GET /api/products` - Get all products
+- `GET /api/products/available` - Get available products only
+- `GET /api/products/{id}` - Get product by ID
+- `POST /api/products` - Create product
+- `PUT /api/products/{id}` - Update product
+- `DELETE /api/products/{id}` - Delete product
+- `PATCH /api/products/{id}/discontinue` - Mark as discontinued
+
+## Project Structure
+
+```
+Product-Management/
+├── backend/
+│   ├── src/main/java/com/productmanagement/
+│   │   ├── ProductManagementApplication.java
+│   │   ├── controller/
+│   │   ├── service/
+│   │   ├── repository/
+│   │   ├── model/
+│   │   ├── dto/
+│   │   └── exception/
+│   └── pom.xml
+├── frontend/
+│   ├── app/
+│   │   ├── layout.tsx
+│   │   ├── page.tsx
+│   │   └── globals.css
+│   └── package.json
+└── README.md
+```
