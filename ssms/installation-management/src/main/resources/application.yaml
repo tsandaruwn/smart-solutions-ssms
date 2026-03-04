@@ -4,7 +4,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/smart_solutions_installation
     username: postgres
-    password: 123456
+    password: 2805
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

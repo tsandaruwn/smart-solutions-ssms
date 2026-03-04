@@ -27,7 +27,7 @@ public class InstallationServiceImpl implements InstallationService {
 
     @Override
     public InstallationDTO scheduleInstallation(InstallationDTO installationDTO) {
-        log.info("Scheduling new installation for customer: {}", installationDTO.getCustomerName());
+        log.info("Scheduling new installation for customer: {}", installationDTO.getCustomerId());
         Installation installation = mapToEntity(installationDTO);
         installation.setStatus(InstallationStatus.SCHEDULED);
         Installation savedInstallation = installationRepository.save(installation);
@@ -38,7 +38,6 @@ public class InstallationServiceImpl implements InstallationService {
     public InstallationDTO assignTechnician(Long installationId, TechnicianAssignmentDTO assignmentDTO) {
         Installation installation = getInstallationEntity(installationId);
         installation.setTechnicianId(assignmentDTO.getTechnicianId());
-        installation.setTechnicianName(assignmentDTO.getTechnicianName());
         return mapToDTO(installationRepository.save(installation));
     }
 
@@ -77,7 +76,10 @@ public class InstallationServiceImpl implements InstallationService {
         Installation installation = getInstallationEntity(id);
         installation.setStatus(statusUpdateDTO.getStatus());
         if (statusUpdateDTO.getNotes() != null) {
-            installation.setNotes(statusUpdateDTO.getNotes());
+            installation.setTechnicianNotes(statusUpdateDTO.getNotes());
+        }
+        if (statusUpdateDTO.getStatus() == InstallationStatus.COMPLETED) {
+            installation.setCompletedDate(LocalDateTime.now());
         }
         return mapToDTO(installationRepository.save(installation));
     }
@@ -115,16 +117,19 @@ public class InstallationServiceImpl implements InstallationService {
     private InstallationDTO mapToDTO(Installation installation) {
         InstallationDTO dto = new InstallationDTO();
         dto.setId(installation.getId());
+        dto.setJobReference(installation.getJobReference());
+        dto.setOrderId(installation.getOrderId());
         dto.setCustomerId(installation.getCustomerId());
-        dto.setProductId(installation.getProductId());
-        dto.setCustomerName(installation.getCustomerName());
-        dto.setProductName(installation.getProductName());
-        dto.setInstallationAddress(installation.getInstallationAddress());
-        dto.setScheduledDate(installation.getScheduledDate());
         dto.setTechnicianId(installation.getTechnicianId());
-        dto.setTechnicianName(installation.getTechnicianName());
+        dto.setScheduledByUserId(installation.getScheduledByUserId());
+        dto.setScheduledDate(installation.getScheduledDate());
+        dto.setCompletedDate(installation.getCompletedDate());
+        dto.setInstallationAddress(installation.getInstallationAddress());
         dto.setStatus(installation.getStatus());
-        dto.setNotes(installation.getNotes());
+        dto.setTechnicianNotes(installation.getTechnicianNotes());
+        dto.setCancellationReason(installation.getCancellationReason());
+        dto.setIsDeleted(installation.getIsDeleted());
+        dto.setDeletedAt(installation.getDeletedAt());
         dto.setCreatedAt(installation.getCreatedAt());
         dto.setUpdatedAt(installation.getUpdatedAt());
         return dto;
@@ -132,15 +137,16 @@ public class InstallationServiceImpl implements InstallationService {
 
     private Installation mapToEntity(InstallationDTO dto) {
         Installation installation = new Installation();
+        installation.setJobReference(dto.getJobReference());
+        installation.setOrderId(dto.getOrderId());
         installation.setCustomerId(dto.getCustomerId());
-        installation.setProductId(dto.getProductId());
-        installation.setCustomerName(dto.getCustomerName());
-        installation.setProductName(dto.getProductName());
-        installation.setInstallationAddress(dto.getInstallationAddress());
-        installation.setScheduledDate(dto.getScheduledDate());
         installation.setTechnicianId(dto.getTechnicianId());
-        installation.setTechnicianName(dto.getTechnicianName());
-        installation.setNotes(dto.getNotes());
+        installation.setScheduledByUserId(dto.getScheduledByUserId());
+        installation.setScheduledDate(dto.getScheduledDate());
+        installation.setInstallationAddress(dto.getInstallationAddress());
+        if (dto.getTechnicianNotes() != null) {
+            installation.setTechnicianNotes(dto.getTechnicianNotes());
+        }
         return installation;
     }
 }

@@ -1,7 +1,6 @@
 package com.ssms.ordermanagement.dto;
 
 import com.ssms.ordermanagement.entity.Order;
-import com.ssms.ordermanagement.entity.OrderItem;
 import com.ssms.ordermanagement.entity.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

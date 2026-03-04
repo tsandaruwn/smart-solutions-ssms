@@ -28,7 +28,6 @@ class CustomerRepositoryTest {
     private CustomerRepository customerRepository;
 
     private Customer customer1;
-    private Customer customer2;
 
     @BeforeEach
     void setUp() {
@@ -42,18 +41,6 @@ class CustomerRepositoryTest {
                 .city("New York")
                 .country("USA")
                 .dateOfBirth(LocalDate.of(1990, 1, 1))
-                .registrationDate(LocalDateTime.now())
-                .isDeleted(false)
-                .build());
-
-        customer2 = customerRepository.save(Customer.builder()
-                .email("bob@example.com")
-                .firstName("Bob")
-                .lastName("Johnson")
-                .phone("+2222222222")
-                .city("Chicago")
-                .country("USA")
-                .dateOfBirth(LocalDate.of(1985, 6, 15))
                 .registrationDate(LocalDateTime.now())
                 .isDeleted(false)
                 .build());

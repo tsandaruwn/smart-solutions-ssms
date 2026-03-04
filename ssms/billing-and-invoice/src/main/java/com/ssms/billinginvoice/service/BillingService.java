@@ -8,7 +8,6 @@ import com.ssms.billinginvoice.client.PaymentClient;
 import com.ssms.billinginvoice.dto.BillDto;
 import com.ssms.billinginvoice.dto.OrderDto;
 import com.ssms.billinginvoice.dto.CustomerDto;
-import com.ssms.billinginvoice.dto.CustomerApiResponse;
 import com.ssms.billinginvoice.dto.PaymentDto;
 import com.ssms.billinginvoice.entity.Bill;
 import com.ssms.billinginvoice.repository.BillRepository;
