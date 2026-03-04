@@ -5,7 +5,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/ssms_test
     username: postgres
-    password: sampath123
+    password: admin
     driver-class-name: org.postgresql.Driver
   
   jpa:

@@ -823,3 +823,607 @@ export const productApi = {
     if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
   },
 };
+
+// ============================================
+// Customer Service API
+// Proxied to http://localhost:8082 via Next.js rewrite
+// ============================================
+
+const CUSTOMER_BASE = "/api/v1/customers";
+
+export interface CustomerResponse {
+  customerId: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone: string | null;
+  addressLine1: string | null;
+  addressLine2: string | null;
+  city: string | null;
+  state: string | null;
+  country: string | null;
+  postalCode: string | null;
+  dateOfBirth: string | null;
+  registrationDate: string;
+}
+
+export interface CustomerRequest {
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+  addressLine1?: string;
+  addressLine2?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  postalCode?: string;
+  dateOfBirth?: string;
+}
+
+export interface CustomerUpdateRequest {
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  addressLine1?: string;
+  addressLine2?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  postalCode?: string;
+  dateOfBirth?: string;
+}
+
+interface CustomerApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
+  timestamp: string;
+}
+
+async function handleCustomerResponse<T>(response: Response): Promise<T> {
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({
+      success: false,
+      message: response.statusText,
+    }));
+    throw new Error(body.message || "An error occurred");
+  }
+  const envelope: CustomerApiResponse<T> = await response.json();
+  if (!envelope.success) {
+    throw new Error(envelope.message || "An error occurred");
+  }
+  return envelope.data;
+}
+
+export const customerApi = {
+  /** GET /api/v1/customers – list customers (paginated) */
+  getAll: async (page = 0, size = 20, search?: string): Promise<{ content: CustomerResponse[]; totalElements: number; totalPages: number }> => {
+    const params = new URLSearchParams({ page: String(page), size: String(size) });
+    if (search) params.append("search", search);
+    const res = await fetch(`${CUSTOMER_BASE}?${params}`);
+    return handleCustomerResponse(res);
+  },
+
+  /** GET /api/v1/customers/{id} */
+  getById: async (id: number): Promise<CustomerResponse> => {
+    const res = await fetch(`${CUSTOMER_BASE}/${id}`);
+    return handleCustomerResponse<CustomerResponse>(res);
+  },
+
+  /** GET /api/v1/customers/email/{email} */
+  getByEmail: async (email: string): Promise<CustomerResponse> => {
+    const res = await fetch(`${CUSTOMER_BASE}/email/${email}`);
+    return handleCustomerResponse<CustomerResponse>(res);
+  },
+
+  /** POST /api/v1/customers */
+  create: async (data: CustomerRequest): Promise<CustomerResponse> => {
+    const res = await fetch(CUSTOMER_BASE, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return handleCustomerResponse<CustomerResponse>(res);
+  },
+
+  /** PUT /api/v1/customers/{id} */
+  update: async (id: number, data: CustomerUpdateRequest): Promise<CustomerResponse> => {
+    const res = await fetch(`${CUSTOMER_BASE}/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return handleCustomerResponse<CustomerResponse>(res);
+  },
+
+  /** DELETE /api/v1/customers/{id} */
+  delete: async (id: number): Promise<void> => {
+    const res = await fetch(`${CUSTOMER_BASE}/${id}`, { method: "DELETE" });
+    if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
+  },
+};
+
+// ============================================
+// Supplier Management API
+// Proxied to http://localhost:8087 via Next.js rewrite
+// ============================================
+
+const SUPPLIER_BASE = "/api/v1/suppliers";
+const SUPPLIER_PRODUCT_BASE = "/api/v1/supplier-products";
+
+export interface SupplierResponse {
+  supplierId: number;
+  email: string;
+  companyName: string;
+  contactPerson: string;
+  phone: string | null;
+  address: string | null;
+  city: string | null;
+  country: string | null;
+  contractStartDate: string | null;
+  contractEndDate: string | null;
+  isActive: boolean;
+  createdAt: string;
+  products: SupplierProductResponse[];
+}
+
+export interface SupplierRequest {
+  email: string;
+  companyName: string;
+  contactPerson: string;
+  phone?: string;
+  address?: string;
+  city?: string;
+  country?: string;
+  contractStartDate?: string;
+  contractEndDate?: string;
+  isActive?: boolean;
+}
+
+export interface SupplierProductResponse {
+  productId: number;
+  productName: string;
+  description: string | null;
+  unitPrice: number;
+  quantityInStock: number;
+  supplierId: number;
+  supplierName: string;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface SupplierProductRequest {
+  productName: string;
+  description?: string;
+  unitPrice: number;
+  quantityInStock: number;
+  supplierId: number;
+  isActive?: boolean;
+}
+
+interface SupplierApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
+  timestamp: string;
+}
+
+async function handleSupplierResponse<T>(response: Response): Promise<T> {
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({
+      success: false,
+      message: response.statusText,
+    }));
+    throw new Error(body.message || "An error occurred");
+  }
+  const envelope: SupplierApiResponse<T> = await response.json();
+  if (!envelope.success) {
+    throw new Error(envelope.message || "An error occurred");
+  }
+  return envelope.data;
+}
+
+export const supplierApi = {
+  /** GET /api/v1/suppliers – get all suppliers */
+  getAll: async (): Promise<SupplierResponse[]> => {
+    const res = await fetch(SUPPLIER_BASE);
+    return handleSupplierResponse<SupplierResponse[]>(res);
+  },
+
+  /** GET /api/v1/suppliers/active */
+  getActive: async (): Promise<SupplierResponse[]> => {
+    const res = await fetch(`${SUPPLIER_BASE}/active`);
+    return handleSupplierResponse<SupplierResponse[]>(res);
+  },
+
+  /** GET /api/v1/suppliers/{id} */
+  getById: async (id: number): Promise<SupplierResponse> => {
+    const res = await fetch(`${SUPPLIER_BASE}/${id}`);
+    return handleSupplierResponse<SupplierResponse>(res);
+  },
+
+  /** POST /api/v1/suppliers */
+  create: async (data: SupplierRequest): Promise<SupplierResponse> => {
+    const res = await fetch(SUPPLIER_BASE, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return handleSupplierResponse<SupplierResponse>(res);
+  },
+
+  /** PUT /api/v1/suppliers/{id} */
+  update: async (id: number, data: SupplierRequest): Promise<SupplierResponse> => {
+    const res = await fetch(`${SUPPLIER_BASE}/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return handleSupplierResponse<SupplierResponse>(res);
+  },
+
+  /** DELETE /api/v1/suppliers/{id} – soft delete */
+  delete: async (id: number): Promise<void> => {
+    const res = await fetch(`${SUPPLIER_BASE}/${id}`, { method: "DELETE" });
+    if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
+  },
+
+  /** PATCH /api/v1/suppliers/{id}/activate */
+  activate: async (id: number): Promise<SupplierResponse> => {
+    const res = await fetch(`${SUPPLIER_BASE}/${id}/activate`, { method: "PATCH" });
+    return handleSupplierResponse<SupplierResponse>(res);
+  },
+
+  /** PATCH /api/v1/suppliers/{id}/deactivate */
+  deactivate: async (id: number): Promise<SupplierResponse> => {
+    const res = await fetch(`${SUPPLIER_BASE}/${id}/deactivate`, { method: "PATCH" });
+    return handleSupplierResponse<SupplierResponse>(res);
+  },
+
+  /** GET /api/v1/suppliers/search?companyName= */
+  search: async (companyName: string): Promise<SupplierResponse[]> => {
+    const res = await fetch(`${SUPPLIER_BASE}/search?companyName=${encodeURIComponent(companyName)}`);
+    return handleSupplierResponse<SupplierResponse[]>(res);
+  },
+
+  /** GET /api/v1/suppliers/{id}/products */
+  getProducts: async (id: number): Promise<SupplierProductResponse[]> => {
+    const res = await fetch(`${SUPPLIER_BASE}/${id}/products`);
+    return handleSupplierResponse<SupplierProductResponse[]>(res);
+  },
+};
+
+export const supplierProductApi = {
+  /** GET /api/v1/supplier-products – all products */
+  getAll: async (): Promise<SupplierProductResponse[]> => {
+    const res = await fetch(SUPPLIER_PRODUCT_BASE);
+    return handleSupplierResponse<SupplierProductResponse[]>(res);
+  },
+
+  /** POST /api/v1/supplier-products */
+  create: async (data: SupplierProductRequest): Promise<SupplierProductResponse> => {
+    const res = await fetch(SUPPLIER_PRODUCT_BASE, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return handleSupplierResponse<SupplierProductResponse>(res);
+  },
+
+  /** PUT /api/v1/supplier-products/{id} */
+  update: async (id: number, data: SupplierProductRequest): Promise<SupplierProductResponse> => {
+    const res = await fetch(`${SUPPLIER_PRODUCT_BASE}/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return handleSupplierResponse<SupplierProductResponse>(res);
+  },
+
+  /** DELETE /api/v1/supplier-products/{id} */
+  delete: async (id: number): Promise<void> => {
+    const res = await fetch(`${SUPPLIER_PRODUCT_BASE}/${id}`, { method: "DELETE" });
+    if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
+  },
+};
+
+// ============================================
+// Installation Management API
+// Proxied to http://localhost:8083 via Next.js rewrite
+// ============================================
+
+const INSTALLATION_BASE = "/api/installations";
+
+export type InstallationStatus = "SCHEDULED" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
+
+export interface InstallationResponse {
+  id: number;
+  jobReference: string;
+  orderId: number;
+  customerId: number;
+  technicianId: number;
+  scheduledByUserId: number | null;
+  scheduledDate: string;
+  completedDate: string | null;
+  installationAddress: string;
+  status: InstallationStatus;
+  technicianNotes: string | null;
+  cancellationReason: string | null;
+  isDeleted: boolean;
+  deletedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface InstallationRequest {
+  jobReference: string;
+  orderId: number;
+  customerId: number;
+  technicianId: number;
+  scheduledByUserId?: number;
+  scheduledDate: string;
+  installationAddress: string;
+  status: InstallationStatus;
+  technicianNotes?: string;
+}
+
+export interface TechnicianAssignment {
+  technicianId: number;
+  technicianName: string;
+}
+
+export interface StatusUpdate {
+  status: InstallationStatus;
+  notes?: string;
+}
+
+export const installationApi = {
+  /** GET /api/installations – get all */
+  getAll: async (): Promise<InstallationResponse[]> => {
+    const res = await fetch(INSTALLATION_BASE);
+    return handleResponse<InstallationResponse[]>(res);
+  },
+
+  /** GET /api/installations/{id} */
+  getById: async (id: number): Promise<InstallationResponse> => {
+    const res = await fetch(`${INSTALLATION_BASE}/${id}`);
+    return handleResponse<InstallationResponse>(res);
+  },
+
+  /** GET /api/installations/status/{status} */
+  getByStatus: async (status: InstallationStatus): Promise<InstallationResponse[]> => {
+    const res = await fetch(`${INSTALLATION_BASE}/status/${status}`);
+    return handleResponse<InstallationResponse[]>(res);
+  },
+
+  /** GET /api/installations/technician/{technicianId} */
+  getByTechnician: async (technicianId: number): Promise<InstallationResponse[]> => {
+    const res = await fetch(`${INSTALLATION_BASE}/technician/${technicianId}`);
+    return handleResponse<InstallationResponse[]>(res);
+  },
+
+  /** GET /api/installations/date-range?start=&end= */
+  getByDateRange: async (start: string, end: string): Promise<InstallationResponse[]> => {
+    const res = await fetch(`${INSTALLATION_BASE}/date-range?start=${start}&end=${end}`);
+    return handleResponse<InstallationResponse[]>(res);
+  },
+
+  /** POST /api/installations */
+  create: async (data: InstallationRequest): Promise<InstallationResponse> => {
+    const res = await fetch(INSTALLATION_BASE, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return handleResponse<InstallationResponse>(res);
+  },
+
+  /** PUT /api/installations/{id}/assign-technician */
+  assignTechnician: async (id: number, data: TechnicianAssignment): Promise<InstallationResponse> => {
+    const res = await fetch(`${INSTALLATION_BASE}/${id}/assign-technician`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return handleResponse<InstallationResponse>(res);
+  },
+
+  /** PATCH /api/installations/{id}/status */
+  updateStatus: async (id: number, data: StatusUpdate): Promise<InstallationResponse> => {
+    const res = await fetch(`${INSTALLATION_BASE}/${id}/status`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return handleResponse<InstallationResponse>(res);
+  },
+
+  /** PATCH /api/installations/{id}/cancel */
+  cancel: async (id: number): Promise<InstallationResponse> => {
+    const res = await fetch(`${INSTALLATION_BASE}/${id}/cancel`, {
+      method: "PATCH",
+    });
+    return handleResponse<InstallationResponse>(res);
+  },
+
+  /** DELETE /api/installations/{id} */
+  delete: async (id: number): Promise<void> => {
+    const res = await fetch(`${INSTALLATION_BASE}/${id}`, { method: "DELETE" });
+    if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
+  },
+};
+
+// ============================================
+// Digital Marketing / Campaign API
+// Proxied to http://localhost:8089 via Next.js rewrite
+// ============================================
+
+const CAMPAIGN_BASE = "/api/campaigns";
+
+export type CampaignType = "EMAIL" | "SOCIAL_MEDIA" | "SEO" | "PPC" | "CONTENT" | "INFLUENCER" | "AFFILIATE" | "OTHER";
+export type CampaignStatus = "DRAFT" | "ACTIVE" | "PAUSED" | "COMPLETED" | "CANCELLED";
+
+export interface CampaignResponse {
+  campaignId: number;
+  createdByUserId: number;
+  name: string;
+  type: CampaignType;
+  description: string | null;
+  targetAudience: string | null;
+  startDate: string;
+  endDate: string;
+  budget: number;
+  status: CampaignStatus;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface CreateCampaignRequest {
+  createdByUserId: number;
+  name: string;
+  type?: CampaignType;
+  description?: string;
+  targetAudience?: string;
+  startDate: string;
+  endDate: string;
+  budget: number;
+  status?: CampaignStatus;
+}
+
+export interface UpdateCampaignRequest {
+  name?: string;
+  type?: CampaignType;
+  description?: string;
+  targetAudience?: string;
+  startDate?: string;
+  endDate?: string;
+  budget?: number;
+  status?: CampaignStatus;
+}
+
+export interface PerformanceResponse {
+  perfId: number;
+  campaignId: number;
+  campaignName: string;
+  recordedDate: string;
+  impressions: number;
+  clicks: number;
+  conversions: number;
+  revenueGenerated: number;
+  costIncurred: number;
+  clickThroughRate: number;
+  conversionRate: number;
+  roas: number;
+}
+
+export interface RecordPerformanceRequest {
+  recordedDate: string;
+  impressions?: number;
+  clicks?: number;
+  conversions?: number;
+  revenueGenerated?: number;
+  costIncurred?: number;
+}
+
+export interface CampaignSummary {
+  campaignId: number;
+  campaignName: string;
+  totalImpressions: number;
+  totalClicks: number;
+  totalConversions: number;
+  totalRevenue: number;
+  totalCost: number;
+  clickThroughRate: string;
+  conversionRate: string;
+  roas: string;
+}
+
+export const campaignApi = {
+  /** GET /api/campaigns – get all */
+  getAll: async (): Promise<CampaignResponse[]> => {
+    const res = await fetch(CAMPAIGN_BASE);
+    return handleResponse<CampaignResponse[]>(res);
+  },
+
+  /** GET /api/campaigns/{id} */
+  getById: async (id: number): Promise<CampaignResponse> => {
+    const res = await fetch(`${CAMPAIGN_BASE}/${id}`);
+    return handleResponse<CampaignResponse>(res);
+  },
+
+  /** GET /api/campaigns/user/{userId} */
+  getByUser: async (userId: number): Promise<CampaignResponse[]> => {
+    const res = await fetch(`${CAMPAIGN_BASE}/user/${userId}`);
+    return handleResponse<CampaignResponse[]>(res);
+  },
+
+  /** GET /api/campaigns/status/{status} */
+  getByStatus: async (status: CampaignStatus): Promise<CampaignResponse[]> => {
+    const res = await fetch(`${CAMPAIGN_BASE}/status/${status}`);
+    return handleResponse<CampaignResponse[]>(res);
+  },
+
+  /** POST /api/campaigns */
+  create: async (data: CreateCampaignRequest): Promise<{ success: boolean; campaign: CampaignResponse }> => {
+    const res = await fetch(CAMPAIGN_BASE, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return handleResponse<{ success: boolean; campaign: CampaignResponse }>(res);
+  },
+
+  /** PUT /api/campaigns/{id} */
+  update: async (id: number, data: UpdateCampaignRequest): Promise<{ success: boolean; campaign: CampaignResponse }> => {
+    const res = await fetch(`${CAMPAIGN_BASE}/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return handleResponse<{ success: boolean; campaign: CampaignResponse }>(res);
+  },
+
+  /** PATCH /api/campaigns/{id}/status?status= */
+  updateStatus: async (id: number, status: CampaignStatus): Promise<{ success: boolean; campaign: CampaignResponse }> => {
+    const res = await fetch(`${CAMPAIGN_BASE}/${id}/status?status=${status}`, {
+      method: "PATCH",
+    });
+    return handleResponse<{ success: boolean; campaign: CampaignResponse }>(res);
+  },
+
+  /** DELETE /api/campaigns/{id} */
+  delete: async (id: number): Promise<void> => {
+    const res = await fetch(`${CAMPAIGN_BASE}/${id}`, { method: "DELETE" });
+    if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
+  },
+
+  /** POST /api/campaigns/{id}/performance – add performance data */
+  addPerformance: async (campaignId: number, data: RecordPerformanceRequest): Promise<{ success: boolean; performance: PerformanceResponse }> => {
+    const res = await fetch(`${CAMPAIGN_BASE}/${campaignId}/performance`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return handleResponse<{ success: boolean; performance: PerformanceResponse }>(res);
+  },
+
+  /** GET /api/campaigns/{id}/performance */
+  getPerformance: async (campaignId: number): Promise<PerformanceResponse[]> => {
+    const res = await fetch(`${CAMPAIGN_BASE}/${campaignId}/performance`);
+    return handleResponse<PerformanceResponse[]>(res);
+  },
+
+  /** GET /api/campaigns/{id}/performance/summary */
+  getPerformanceSummary: async (campaignId: number): Promise<CampaignSummary> => {
+    const res = await fetch(`${CAMPAIGN_BASE}/${campaignId}/performance/summary`);
+    return handleResponse<CampaignSummary>(res);
+  },
+
+  /** DELETE /api/campaigns/{id}/performance/{perfId} */
+  deletePerformance: async (campaignId: number, perfId: number): Promise<void> => {
+    const res = await fetch(`${CAMPAIGN_BASE}/${campaignId}/performance/${perfId}`, { method: "DELETE" });
+    if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
+  },
+};

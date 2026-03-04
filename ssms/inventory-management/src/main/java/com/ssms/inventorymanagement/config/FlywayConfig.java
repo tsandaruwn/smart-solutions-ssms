@@ -49,6 +49,7 @@ public class FlywayConfig {
                 .locations(locations)
                 .table(historyTable)
                 .baselineOnMigrate(true)
+                .baselineVersion("0")
                 .validateOnMigrate(true)
                 .load();
     }

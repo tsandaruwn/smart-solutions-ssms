@@ -1,11 +1,11 @@
 server:
-  port: 6543
+  port: 8089
 
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/digitel_marketing
     username: postgres
-    password: root
+    password: admin
     driver-class-name: org.postgresql.Driver
 
   jpa:

@@ -6,7 +6,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/supplier-management
     username: postgres
-    password: admin123
+    password: admin
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -19,7 +19,7 @@ spring:
         format_sql: true
 
 server:
-  port: 8085
+  port: 8087
 
 # Logging configuration
 logging:

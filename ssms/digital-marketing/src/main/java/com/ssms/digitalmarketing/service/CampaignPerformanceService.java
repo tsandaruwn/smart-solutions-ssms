@@ -97,7 +97,11 @@ public class CampaignPerformanceService {
     @Transactional(readOnly = true)
     public Map<String, Object> getCampaignSummary(Integer campaignId) {
         Campaign campaign = findCampaignOrThrow(campaignId);
-        Object[] row = performanceRepository.aggregateByCampaignId(campaignId);
+        Object[] result = performanceRepository.aggregateByCampaignId(campaignId);
+        // JPA aggregate query returns Object[][] — unwrap the first row
+        Object[] row = (result != null && result.length > 0 && result[0] instanceof Object[])
+                ? (Object[]) result[0]
+                : result;
 
         long totalImpressions = toLong(row[0]);
         long totalClicks = toLong(row[1]);
