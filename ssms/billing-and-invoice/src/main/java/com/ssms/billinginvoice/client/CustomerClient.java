@@ -1,25 +1,13 @@
 package com.ssms.billinginvoice.client;
 
-import com.ssms.billinginvoice.dto.CustomerDto;
-import org.springframework.stereotype.Component;
+import com.ssms.billinginvoice.dto.CustomerApiResponse;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
-@Component
-public class CustomerClient {
+@FeignClient(name = "customer-service", url = "${customer-service.url}")
+public interface CustomerClient {
 
-    // temporary mock; replace with real REST/Feign call to customer-service
-    public CustomerDto getCustomerById(Long customerId) {
-        return new CustomerDto() {
-            public Long getCustomerId() {
-                return customerId;
-            }
-
-            public String getName() {
-                return "Mock Customer";
-            }
-
-            public String getEmail() {
-                return "customer@example.com";
-            }
-        };
-    }
+    @GetMapping("/api/v1/customers/{id}")
+    CustomerApiResponse getCustomerById(@PathVariable("id") Long id);
 }
