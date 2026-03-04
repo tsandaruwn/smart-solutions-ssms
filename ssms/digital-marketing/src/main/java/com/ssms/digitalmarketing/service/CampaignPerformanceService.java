@@ -5,7 +5,6 @@ import com.ssms.digitalmarketing.dto.RecordPerformanceRequest;
 import com.ssms.digitalmarketing.entity.Campaign;
 import com.ssms.digitalmarketing.entity.CampaignPerformance;
 import com.ssms.digitalmarketing.exception.CampaignNotFoundException;
-import com.ssms.digitalmarketing.exception.DuplicatePerformanceEntryException;
 import com.ssms.digitalmarketing.repository.CampaignPerformanceRepository;
 import com.ssms.digitalmarketing.repository.CampaignRepository;
 import lombok.RequiredArgsConstructor;

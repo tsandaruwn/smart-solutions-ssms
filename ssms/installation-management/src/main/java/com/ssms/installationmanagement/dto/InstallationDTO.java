@@ -16,28 +16,35 @@ public class InstallationDTO {
 
     private Long id;
 
+    @NotBlank(message = "Job reference is required")
+    private String jobReference;
+
+    @NotNull(message = "Order ID is required")
+    private Long orderId;
+
     @NotNull(message = "Customer ID is required")
     private Long customerId;
 
-    @NotNull(message = "Product ID is required")
-    private Long productId;
+    @NotNull(message = "Technician ID is required")
+    private Long technicianId;
 
-    @NotBlank(message = "Customer name is required")
-    private String customerName;
-
-    @NotBlank(message = "Product name is required")
-    private String productName;
-
-    @NotBlank(message = "Installation address is required")
-    private String installationAddress;
+    private Long scheduledByUserId;
 
     @NotNull(message = "Scheduled date is required")
     private LocalDateTime scheduledDate;
 
-    private Long technicianId;
-    private String technicianName;
+    private LocalDateTime completedDate;
+
+    @NotBlank(message = "Installation address is required")
+    private String installationAddress;
+
+    @NotNull(message = "Status is required")
     private InstallationStatus status;
-    private String notes;
+
+    private String technicianNotes;
+    private String cancellationReason;
+    private Boolean isDeleted;
+    private LocalDateTime deletedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
