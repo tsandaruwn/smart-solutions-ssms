@@ -33,9 +33,13 @@ public class Installation {
     @Column(name = "customer_id", nullable = false)
     private Long customerId;
 
-    @NotNull(message = "Technician ID is required")
-    @Column(name = "technician_id", nullable = false)
+    @Column(name = "technician_id")
     private Long technicianId;
+
+    @NotNull(message = "Technician is required")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "technician_id", nullable = false, insertable = false, updatable = false)
+    private Technician technician;
 
     @Column(name = "scheduled_by_user_id")
     private Long scheduledByUserId;
