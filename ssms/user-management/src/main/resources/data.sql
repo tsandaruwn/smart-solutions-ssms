@@ -5,7 +5,8 @@ INSERT INTO role (role_name, description, created_at) VALUES
 ('EMPLOYEE', 'Regular employee with standard access', CURRENT_TIMESTAMP),
 ('CUSTOMER', 'Customer with limited access', CURRENT_TIMESTAMP),
 ('SUPPLIER', 'Supplier with vendor-specific access', CURRENT_TIMESTAMP),
-('TECHNICIAN', 'Technical staff with maintenance access', CURRENT_TIMESTAMP);
+('TECHNICIAN', 'Technical staff with maintenance access', CURRENT_TIMESTAMP)
+ON CONFLICT (role_name) DO NOTHING;
 
 -- Insert default permissions for User Management module
 INSERT INTO permission (permission_name, module, action) VALUES
@@ -13,7 +14,8 @@ INSERT INTO permission (permission_name, module, action) VALUES
 ('USER_READ', 'USER_MANAGEMENT', 'READ'),
 ('USER_UPDATE', 'USER_MANAGEMENT', 'UPDATE'),
 ('USER_DELETE', 'USER_MANAGEMENT', 'DELETE'),
-('USER_MANAGE', 'USER_MANAGEMENT', 'MANAGE');
+('USER_MANAGE', 'USER_MANAGEMENT', 'MANAGE')
+ON CONFLICT (permission_name) DO NOTHING;
 
 -- Insert default permissions for Role Management module
 INSERT INTO permission (permission_name, module, action) VALUES
@@ -21,7 +23,8 @@ INSERT INTO permission (permission_name, module, action) VALUES
 ('ROLE_READ', 'ROLE_MANAGEMENT', 'READ'),
 ('ROLE_UPDATE', 'ROLE_MANAGEMENT', 'UPDATE'),
 ('ROLE_DELETE', 'ROLE_MANAGEMENT', 'DELETE'),
-('ROLE_MANAGE', 'ROLE_MANAGEMENT', 'MANAGE');
+('ROLE_MANAGE', 'ROLE_MANAGEMENT', 'MANAGE')
+ON CONFLICT (permission_name) DO NOTHING;
 
 -- Insert default permissions for Permission Management module
 INSERT INTO permission (permission_name, module, action) VALUES
@@ -29,4 +32,60 @@ INSERT INTO permission (permission_name, module, action) VALUES
 ('PERMISSION_READ', 'PERMISSION_MANAGEMENT', 'READ'),
 ('PERMISSION_UPDATE', 'PERMISSION_MANAGEMENT', 'UPDATE'),
 ('PERMISSION_DELETE', 'PERMISSION_MANAGEMENT', 'DELETE'),
-('PERMISSION_MANAGE', 'PERMISSION_MANAGEMENT', 'MANAGE');
+('PERMISSION_MANAGE', 'PERMISSION_MANAGEMENT', 'MANAGE')
+ON CONFLICT (permission_name) DO NOTHING;
+
+-- Assign permissions to ADMIN role (full access)
+INSERT INTO role_permission (role_id, permission_id, granted_at)
+SELECT r.role_id, p.permission_id, CURRENT_TIMESTAMP
+FROM role r
+CROSS JOIN permission p
+WHERE r.role_name = 'ADMIN'
+ON CONFLICT (role_id, permission_id) DO NOTHING;
+
+-- Assign permissions to MANAGER role
+INSERT INTO role_permission (role_id, permission_id, granted_at)
+SELECT r.role_id, p.permission_id, CURRENT_TIMESTAMP
+FROM role r, permission p
+WHERE r.role_name = 'MANAGER'
+AND p.permission_name IN ('USER_CREATE', 'USER_READ', 'USER_UPDATE', 'ROLE_READ', 'PERMISSION_READ')
+ON CONFLICT (role_id, permission_id) DO NOTHING;
+
+-- Assign permissions to EMPLOYEE role
+INSERT INTO role_permission (role_id, permission_id, granted_at)
+SELECT r.role_id, p.permission_id, CURRENT_TIMESTAMP
+FROM role r, permission p
+WHERE r.role_name = 'EMPLOYEE'
+AND p.permission_name IN ('USER_READ', 'ROLE_READ', 'PERMISSION_READ')
+ON CONFLICT (role_id, permission_id) DO NOTHING;
+
+-- Assign permissions to CUSTOMER role
+INSERT INTO role_permission (role_id, permission_id, granted_at)
+SELECT r.role_id, p.permission_id, CURRENT_TIMESTAMP
+FROM role r, permission p
+WHERE r.role_name = 'CUSTOMER'
+AND p.permission_name = 'USER_READ'
+ON CONFLICT (role_id, permission_id) DO NOTHING;
+
+-- Assign permissions to SUPPLIER role
+INSERT INTO role_permission (role_id, permission_id, granted_at)
+SELECT r.role_id, p.permission_id, CURRENT_TIMESTAMP
+FROM role r, permission p
+WHERE r.role_name = 'SUPPLIER'
+AND p.permission_name IN ('USER_READ', 'USER_UPDATE')
+ON CONFLICT (role_id, permission_id) DO NOTHING;
+
+-- Assign permissions to TECHNICIAN role
+INSERT INTO role_permission (role_id, permission_id, granted_at)
+SELECT r.role_id, p.permission_id, CURRENT_TIMESTAMP
+FROM role r, permission p
+WHERE r.role_name = 'TECHNICIAN'
+AND p.permission_name IN ('USER_READ', 'USER_UPDATE', 'ROLE_READ', 'PERMISSION_READ')
+ON CONFLICT (role_id, permission_id) DO NOTHING;
+
+-- Create default admin user
+INSERT INTO "user" (role_id, email, username, password_hash, first_name, last_name, is_active, created_at, updated_at)
+SELECT r.role_id, 'admin@ssms.com', 'admin', 'admin123', 'System', 'Administrator', TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+FROM role r
+WHERE r.role_name = 'ADMIN'
+ON CONFLICT (username) DO NOTHING;
