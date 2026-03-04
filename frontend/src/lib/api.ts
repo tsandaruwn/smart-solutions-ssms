@@ -319,7 +319,12 @@ const PAYMENT_BASE = "/api/payments";
 const PAYMENT_METHOD_BASE = "/api/payment-methods";
 
 export type PaymentTransactionStatus = "Pending" | "Success" | "Failed";
-export type PaymentMethodType = "Card" | "Bank_Transfer" | "Mobile_Wallet" | "Cash" | "Online_Banking";
+export type PaymentMethodType =
+  | "Card"
+  | "Bank_Transfer"
+  | "Mobile_Wallet"
+  | "Cash"
+  | "Online_Banking";
 
 export interface PaymentMethodResponse {
   paymentMethodId: number;
@@ -392,8 +397,12 @@ export const paymentApi = {
   },
 
   /** GET /api/payments/transaction/{transactionReference} – get payment by transaction reference */
-  getByTransactionReference: async (transactionReference: string): Promise<PaymentResponse> => {
-    const res = await fetch(`${PAYMENT_BASE}/transaction/${transactionReference}`);
+  getByTransactionReference: async (
+    transactionReference: string,
+  ): Promise<PaymentResponse> => {
+    const res = await fetch(
+      `${PAYMENT_BASE}/transaction/${transactionReference}`,
+    );
     return handleResponse<PaymentResponse>(res);
   },
 
@@ -410,7 +419,10 @@ export const paymentApi = {
   },
 
   /** PUT /api/payments/{id} – update payment */
-  update: async (id: number, payment: PaymentRequest): Promise<PaymentResponse> => {
+  update: async (
+    id: number,
+    payment: PaymentRequest,
+  ): Promise<PaymentResponse> => {
     const res = await fetch(`${PAYMENT_BASE}/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -420,7 +432,10 @@ export const paymentApi = {
   },
 
   /** PATCH /api/payments/{id}/status – update payment status */
-  updateStatus: async (id: number, status: PaymentTransactionStatus): Promise<PaymentResponse> => {
+  updateStatus: async (
+    id: number,
+    status: PaymentTransactionStatus,
+  ): Promise<PaymentResponse> => {
     const res = await fetch(`${PAYMENT_BASE}/${id}/status?status=${status}`, {
       method: "PATCH",
     });
@@ -429,14 +444,15 @@ export const paymentApi = {
 
   /** POST /api/payments/{id}/refund – process refund */
   processRefund: async (
-    id: number, 
-    refundReason?: string, 
-    refundAmount?: number
+    id: number,
+    refundReason?: string,
+    refundAmount?: number,
   ): Promise<PaymentResponse> => {
     const params = new URLSearchParams();
     if (refundReason) params.append("refundReason", refundReason);
-    if (refundAmount !== undefined) params.append("refundAmount", refundAmount.toString());
-    
+    if (refundAmount !== undefined)
+      params.append("refundAmount", refundAmount.toString());
+
     const url = `${PAYMENT_BASE}/${id}/refund${params.toString() ? `?${params.toString()}` : ""}`;
     const res = await fetch(url, { method: "POST" });
     return handleResponse<PaymentResponse>(res);
@@ -453,7 +469,9 @@ export const paymentApi = {
 
 export const paymentMethodApi = {
   /** POST /api/payment-methods – create a new payment method */
-  create: async (method: PaymentMethodRequest): Promise<PaymentMethodResponse> => {
+  create: async (
+    method: PaymentMethodRequest,
+  ): Promise<PaymentMethodResponse> => {
     const res = await fetch(PAYMENT_METHOD_BASE, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -487,7 +505,10 @@ export const paymentMethodApi = {
   },
 
   /** PUT /api/payment-methods/{id} – update payment method */
-  update: async (id: number, method: PaymentMethodRequest): Promise<PaymentMethodResponse> => {
+  update: async (
+    id: number,
+    method: PaymentMethodRequest,
+  ): Promise<PaymentMethodResponse> => {
     const res = await fetch(`${PAYMENT_METHOD_BASE}/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -637,7 +658,10 @@ export const inventoryApi = {
   },
 
   /** PUT /api/v1/inventory/{id} – update inventory */
-  update: async (id: number, req: InventoryRequest): Promise<InventoryResponse> => {
+  update: async (
+    id: number,
+    req: InventoryRequest,
+  ): Promise<InventoryResponse> => {
     const res = await fetch(`${INVENTORY_BASE}/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -647,7 +671,10 @@ export const inventoryApi = {
   },
 
   /** PATCH /api/v1/inventory/{id}/stock – update stock */
-  updateStock: async (id: number, req: StockUpdateRequest): Promise<InventoryResponse> => {
+  updateStock: async (
+    id: number,
+    req: StockUpdateRequest,
+  ): Promise<InventoryResponse> => {
     const res = await fetch(`${INVENTORY_BASE}/${id}/stock`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -663,8 +690,12 @@ export const inventoryApi = {
   },
 
   /** GET /api/v1/inventory/alerts/low-stock/warehouse/{warehouseId} */
-  getLowStockByWarehouse: async (warehouseId: number): Promise<InventoryResponse[]> => {
-    const res = await fetch(`${INVENTORY_BASE}/alerts/low-stock/warehouse/${warehouseId}`);
+  getLowStockByWarehouse: async (
+    warehouseId: number,
+  ): Promise<InventoryResponse[]> => {
+    const res = await fetch(
+      `${INVENTORY_BASE}/alerts/low-stock/warehouse/${warehouseId}`,
+    );
     return handleInventoryResponse<InventoryResponse[]>(res);
   },
 
@@ -699,7 +730,10 @@ export const warehouseApi = {
   },
 
   /** PUT /api/v1/warehouses/{id} – update warehouse */
-  update: async (id: number, req: WarehouseRequest): Promise<WarehouseResponse> => {
+  update: async (
+    id: number,
+    req: WarehouseRequest,
+  ): Promise<WarehouseResponse> => {
     const res = await fetch(`${WAREHOUSE_BASE}/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -802,7 +836,10 @@ export const productApi = {
     return handleResponse<ProductResponse>(res);
   },
 
-  update: async (id: number, data: ProductRequest): Promise<ProductResponse> => {
+  update: async (
+    id: number,
+    data: ProductRequest,
+  ): Promise<ProductResponse> => {
     const res = await fetch(`${PRODUCT_BASE}/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -821,5 +858,171 @@ export const productApi = {
   delete: async (id: number): Promise<void> => {
     const res = await fetch(`${PRODUCT_BASE}/${id}`, { method: "DELETE" });
     if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
+  },
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Digital Marketing API
+// Connects to the Spring Boot Digital Marketing service at localhost:8088
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type CampaignStatus =
+  | "DRAFT"
+  | "ACTIVE"
+  | "PAUSED"
+  | "COMPLETED"
+  | "CANCELLED";
+export type CampaignType =
+  | "EMAIL"
+  | "SOCIAL_MEDIA"
+  | "SEO"
+  | "PPC"
+  | "CONTENT"
+  | "INFLUENCER"
+  | "AFFILIATE"
+  | "OTHER";
+
+export interface CampaignResponse {
+  campaignId: number;
+  createdByUserId: number;
+  name: string;
+  type: CampaignType | null;
+  description: string | null;
+  targetAudience: string | null;
+  startDate: string;
+  endDate: string;
+  budget: number | null;
+  status: CampaignStatus;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface CreateCampaignRequest {
+  createdByUserId: number;
+  name: string;
+  type?: CampaignType;
+  description?: string;
+  targetAudience?: string;
+  startDate: string;
+  endDate: string;
+  budget?: number;
+  status?: CampaignStatus;
+}
+
+export interface UpdateCampaignRequest {
+  name?: string;
+  type?: CampaignType;
+  description?: string;
+  targetAudience?: string;
+  startDate?: string;
+  endDate?: string;
+  budget?: number;
+  status?: CampaignStatus;
+}
+
+export interface PerformanceResponse {
+  perfId: number;
+  campaignId: number;
+  campaignName: string;
+  recordedDate: string;
+  impressions: number;
+  clicks: number;
+  conversions: number;
+  revenueGenerated: number;
+  costIncurred: number;
+  clickThroughRate: number;
+  conversionRate: number;
+  roas: number;
+}
+
+export interface RecordPerformanceRequest {
+  recordedDate: string;
+  impressions?: number;
+  clicks?: number;
+  conversions?: number;
+  revenueGenerated?: number;
+  costIncurred?: number;
+}
+
+export interface CampaignApiSuccessResponse {
+  success: boolean;
+  message: string;
+  campaign?: CampaignResponse;
+}
+
+const CAMPAIGN_BASE = "/api/campaigns";
+
+export const campaignApi = {
+  getAll: async (): Promise<CampaignResponse[]> => {
+    const res = await fetch(CAMPAIGN_BASE);
+    return handleResponse<CampaignResponse[]>(res);
+  },
+
+  getById: async (id: number): Promise<CampaignResponse> => {
+    const res = await fetch(`${CAMPAIGN_BASE}/${id}`);
+    return handleResponse<CampaignResponse>(res);
+  },
+
+  getByStatus: async (status: CampaignStatus): Promise<CampaignResponse[]> => {
+    const res = await fetch(`${CAMPAIGN_BASE}/status/${status}`);
+    return handleResponse<CampaignResponse[]>(res);
+  },
+
+  create: async (
+    data: CreateCampaignRequest,
+  ): Promise<CampaignApiSuccessResponse> => {
+    const res = await fetch(CAMPAIGN_BASE, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return handleResponse<CampaignApiSuccessResponse>(res);
+  },
+
+  update: async (
+    id: number,
+    data: UpdateCampaignRequest,
+  ): Promise<CampaignApiSuccessResponse> => {
+    const res = await fetch(`${CAMPAIGN_BASE}/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return handleResponse<CampaignApiSuccessResponse>(res);
+  },
+
+  delete: async (id: number): Promise<void> => {
+    const res = await fetch(`${CAMPAIGN_BASE}/${id}`, { method: "DELETE" });
+    if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
+  },
+};
+
+export const performanceApi = {
+  getByCampaign: async (campaignId: number): Promise<PerformanceResponse[]> => {
+    const res = await fetch(`${CAMPAIGN_BASE}/${campaignId}/performance`);
+    return handleResponse<PerformanceResponse[]>(res);
+  },
+
+  getSummary: async (campaignId: number): Promise<Record<string, number>> => {
+    const res = await fetch(
+      `${CAMPAIGN_BASE}/${campaignId}/performance/summary`,
+    );
+    return handleResponse<Record<string, number>>(res);
+  },
+
+  record: async (
+    campaignId: number,
+    data: RecordPerformanceRequest,
+  ): Promise<{
+    success: boolean;
+    message: string;
+    performance?: PerformanceResponse;
+  }> => {
+    const res = await fetch(`${CAMPAIGN_BASE}/${campaignId}/performance`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return handleResponse(res);
   },
 };

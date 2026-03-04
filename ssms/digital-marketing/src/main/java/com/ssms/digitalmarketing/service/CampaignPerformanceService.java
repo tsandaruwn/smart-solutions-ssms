@@ -97,7 +97,10 @@ public class CampaignPerformanceService {
     @Transactional(readOnly = true)
     public Map<String, Object> getCampaignSummary(Integer campaignId) {
         Campaign campaign = findCampaignOrThrow(campaignId);
-        Object[] row = performanceRepository.aggregateByCampaignId(campaignId);
+        List<Object[]> rows = performanceRepository.aggregateByCampaignId(campaignId);
+        Object[] row = (rows != null && !rows.isEmpty() && rows.get(0) != null)
+                ? rows.get(0)
+                : new Object[] { null, null, null, null, null };
 
         long totalImpressions = toLong(row[0]);
         long totalClicks = toLong(row[1]);
