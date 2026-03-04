@@ -31,11 +31,11 @@ const navItems = [
   { label: "Warehouses", href: "/dashboard/inventory/warehouses", icon: Warehouse },
   { label: "Billing", href: "/dashboard/billing", icon: Receipt },
   { label: "Payments", href: "/dashboard/payments", icon: CreditCard },
+  { label: "Customers", href: "/dashboard/customers", icon: Users },
   { label: "User Management", href: "/dashboard/users", icon: UserCog },
 ];
 
 const futureModules = [
-  { label: "Customers", icon: Users },
   { label: "Settings", icon: Settings },
 ];
 
