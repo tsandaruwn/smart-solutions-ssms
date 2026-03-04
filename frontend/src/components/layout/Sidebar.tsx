@@ -26,16 +26,15 @@ const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Orders", href: "/dashboard/orders", icon: ShoppingCart },
   { label: "Create Order", href: "/dashboard/orders/create", icon: Plus },
+  { label: "Products", href: "/dashboard/products", icon: Package },
   { label: "Inventory", href: "/dashboard/inventory", icon: Package },
   { label: "Warehouses", href: "/dashboard/inventory/warehouses", icon: Warehouse },
   { label: "Billing", href: "/dashboard/billing", icon: Receipt },
   { label: "Payments", href: "/dashboard/payments", icon: CreditCard },
-  // 👤 USER MANAGEMENT MODULE - Created by [Your Name]
   { label: "User Management", href: "/dashboard/users", icon: UserCog },
 ];
 
 const futureModules = [
-  { label: "Products", icon: Package },
   { label: "Customers", icon: Users },
   { label: "Settings", icon: Settings },
 ];

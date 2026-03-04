@@ -1,6 +1,4 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+const nextConfig = {
   async rewrites() {
     return [
       {
@@ -26,6 +24,14 @@ const nextConfig: NextConfig = {
       {
         source: "/api/v1/warehouses/:path*",
         destination: "http://localhost:8084/api/v1/warehouses/:path*",
+      },
+      {
+        source: "/api/products/:path*",
+        destination: "http://localhost:8080/api/products/:path*",
+      },
+      {
+        source: "/api/categories/:path*",
+        destination: "http://localhost:8080/api/categories/:path*",
       },
     ];
   },

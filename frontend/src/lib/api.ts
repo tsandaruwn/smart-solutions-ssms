@@ -714,3 +714,112 @@ export const warehouseApi = {
     if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
   },
 };
+
+// ============================================
+// Product Management API Service
+// Proxied to http://localhost:8080 via Next.js rewrite
+// ============================================
+
+const PRODUCT_BASE = "/api/products";
+const CATEGORY_BASE = "/api/categories";
+
+export interface ProductCategory {
+  id: number;
+  name: string;
+  description?: string;
+  createdAt?: string;
+}
+
+export interface ProductResponse {
+  id: number;
+  sku: string;
+  name: string;
+  categoryId: number;
+  categoryName?: string;
+  supplierId: number;
+  price: number;
+  description?: string;
+  imageUrl?: string;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  discontinuedAt?: string;
+}
+
+export interface ProductRequest {
+  sku: string;
+  name: string;
+  categoryId: number;
+  supplierId: number;
+  price: number;
+  description?: string;
+  imageUrl?: string;
+}
+
+export interface CategoryRequest {
+  name: string;
+  description?: string;
+}
+
+export const categoryApi = {
+  getAll: async (): Promise<ProductCategory[]> => {
+    const res = await fetch(CATEGORY_BASE);
+    return handleResponse<ProductCategory[]>(res);
+  },
+
+  create: async (data: CategoryRequest): Promise<ProductCategory> => {
+    const res = await fetch(CATEGORY_BASE, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return handleResponse<ProductCategory>(res);
+  },
+};
+
+export const productApi = {
+  getAll: async (): Promise<ProductResponse[]> => {
+    const res = await fetch(PRODUCT_BASE);
+    return handleResponse<ProductResponse[]>(res);
+  },
+
+  getAvailable: async (): Promise<ProductResponse[]> => {
+    const res = await fetch(`${PRODUCT_BASE}/available`);
+    return handleResponse<ProductResponse[]>(res);
+  },
+
+  getById: async (id: number): Promise<ProductResponse> => {
+    const res = await fetch(`${PRODUCT_BASE}/${id}`);
+    return handleResponse<ProductResponse>(res);
+  },
+
+  create: async (data: ProductRequest): Promise<ProductResponse> => {
+    const res = await fetch(PRODUCT_BASE, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return handleResponse<ProductResponse>(res);
+  },
+
+  update: async (id: number, data: ProductRequest): Promise<ProductResponse> => {
+    const res = await fetch(`${PRODUCT_BASE}/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return handleResponse<ProductResponse>(res);
+  },
+
+  discontinue: async (id: number): Promise<ProductResponse> => {
+    const res = await fetch(`${PRODUCT_BASE}/${id}/discontinue`, {
+      method: "PATCH",
+    });
+    return handleResponse<ProductResponse>(res);
+  },
+
+  delete: async (id: number): Promise<void> => {
+    const res = await fetch(`${PRODUCT_BASE}/${id}`, { method: "DELETE" });
+    if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
+  },
+};
