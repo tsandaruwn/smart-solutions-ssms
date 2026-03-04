@@ -9,7 +9,6 @@ import {
   Plus,
   Package,
   Users,
-  Settings,
   Menu,
   X,
   ChevronLeft,
@@ -19,7 +18,9 @@ import {
   CreditCard,
   Warehouse,
   UserCog,
-
+  Truck,
+  Wrench,
+  Megaphone,
 } from "lucide-react";
 
 const navItems = [
@@ -29,14 +30,13 @@ const navItems = [
   { label: "Products", href: "/dashboard/products", icon: Package },
   { label: "Inventory", href: "/dashboard/inventory", icon: Package },
   { label: "Warehouses", href: "/dashboard/inventory/warehouses", icon: Warehouse },
+  { label: "Customers", href: "/dashboard/customers", icon: Users },
+  { label: "Suppliers", href: "/dashboard/suppliers", icon: Truck },
+  { label: "Installations", href: "/dashboard/installations", icon: Wrench },
   { label: "Billing", href: "/dashboard/billing", icon: Receipt },
   { label: "Payments", href: "/dashboard/payments", icon: CreditCard },
+  { label: "Campaigns", href: "/dashboard/campaigns", icon: Megaphone },
   { label: "User Management", href: "/dashboard/users", icon: UserCog },
-];
-
-const futureModules = [
-  { label: "Customers", icon: Users },
-  { label: "Settings", icon: Settings },
 ];
 
 export default function Sidebar() {
@@ -113,29 +113,7 @@ export default function Sidebar() {
           );
         })}
 
-        {/* Future modules */}
-        <div className="mt-4">
-          <p
-            className="sidebar-section-label"
-            style={{ textAlign: collapsed ? "center" : undefined }}
-          >
-            {collapsed ? "•••" : "Coming Soon"}
-          </p>
-          {futureModules.map((item) => {
-            const Icon = item.icon;
-            return (
-              <div
-                key={item.label}
-                className={`sidebar-nav-link disabled mb-1 ${collapsed ? "justify-content-center" : ""}`}
-              >
-                <Icon size={18} className="flex-shrink-0" />
-                {!collapsed && (
-                  <span className="text-truncate">{item.label}</span>
-                )}
-              </div>
-            );
-          })}
-        </div>
+
       </nav>
 
       {/* Collapse toggle */}
