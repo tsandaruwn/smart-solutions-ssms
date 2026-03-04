@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -15,12 +16,20 @@ public class ProductDTO {
     private Long id;
     
     @NotBlank
-    @Size(min = 2, max = 100)
+    @Size(max = 60)
+    private String sku;
+
+    @NotBlank
+    @Size(max = 150)
     private String name;
     
-    @NotBlank
-    @Size(max = 50)
-    private String category;
+    @NotNull
+    private Long categoryId;
+
+    private String categoryName;
+
+    @NotNull
+    private Long supplierId;
     
     @NotNull
     @DecimalMin(value = "0.0", inclusive = false)
@@ -28,6 +37,13 @@ public class ProductDTO {
     
     @Size(max = 1000)
     private String description;
+
+    @Size(max = 255)
+    private String imageUrl;
     
-    private Boolean discontinued;
+    private Boolean isActive;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private LocalDateTime discontinuedAt;
 }
