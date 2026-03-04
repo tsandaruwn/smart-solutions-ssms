@@ -1,14 +1,14 @@
 server:
-  port: 8086
+  port: 8085
 
 spring:
   application:
     name: payment-management
-
+    
   datasource:
     url: jdbc:postgresql://localhost:5432/ssms_payment
     username: postgres
-    password: root
+    password: 2805
     driver-class-name: org.postgresql.Driver
 
   jpa:

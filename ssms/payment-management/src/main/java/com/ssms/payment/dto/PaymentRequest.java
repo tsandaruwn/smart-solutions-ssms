@@ -19,6 +19,7 @@ public class PaymentRequest {
     @Positive(message = "Amount must be positive")
     private BigDecimal amount;
 
+    @NotNull(message = "Payment method ID is required")
     private Long paymentMethodId;
 
     private String gatewayResponse;

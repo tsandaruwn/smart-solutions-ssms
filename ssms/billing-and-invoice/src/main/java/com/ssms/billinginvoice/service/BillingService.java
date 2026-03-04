@@ -71,10 +71,6 @@ public class BillingService {
                 savedBill.getStatus());
     }
 
-    public List<Bill> getAllBills() {
-        return billRepository.findAll();
-    }
-
     public List<Bill> getBillsByCustomer(Long customerId) {
         return billRepository.findByCustomerId(customerId);
     }
@@ -112,14 +108,11 @@ public class BillingService {
     }
 
     public PaymentDto recordPayment(Long invoiceId, PaymentDto payment) {
-        Bill bill = billRepository.findById(invoiceId).orElseThrow();
         payment.setInvoiceId(invoiceId);
-        payment.setCustomerId(bill.getCustomerId());
         PaymentDto recorded = paymentClient.createPayment(payment);
         // update status if fully paid
-        BigDecimal totalPaid = paymentClient.getPaymentsByInvoiceId(invoiceId).stream()
-                .map(PaymentDto::getAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        Bill bill = billRepository.findById(invoiceId).orElseThrow();
+        BigDecimal totalPaid = paymentClient.getTotalPaidForInvoice(invoiceId);
         if (totalPaid.compareTo(bill.getTotalAmount()) >= 0) {
             bill.setStatus("PAID");
             billRepository.save(bill);

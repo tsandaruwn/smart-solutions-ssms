@@ -23,11 +23,6 @@ public class BillingController {
         return billingService.generateBill(orderId);
     }
 
-    @GetMapping("/invoices")
-    public List<Bill> getAllInvoices() {
-        return billingService.getAllBills();
-    }
-
     @GetMapping("/customers/{customerId}")
     public List<Bill> getBills(@PathVariable Long customerId) {
         return billingService.getBillsByCustomer(customerId);

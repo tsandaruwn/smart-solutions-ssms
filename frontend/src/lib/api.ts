@@ -252,12 +252,6 @@ export const billingApi = {
     return handleResponse<BillDto>(res);
   },
 
-  /** GET /api/billing/invoices – fetch all invoices */
-  getAll: async (): Promise<Bill[]> => {
-    const res = await fetch(`${BILLING_BASE}/invoices`);
-    return handleResponse<Bill[]>(res);
-  },
-
   /** GET /api/billing/invoices/{invoiceId} – fetch a single invoice */
   getById: async (invoiceId: number): Promise<Bill> => {
     const res = await fetch(`${BILLING_BASE}/invoices/${invoiceId}`);
@@ -325,12 +319,7 @@ const PAYMENT_BASE = "/api/payments";
 const PAYMENT_METHOD_BASE = "/api/payment-methods";
 
 export type PaymentTransactionStatus = "Pending" | "Success" | "Failed";
-export type PaymentMethodType =
-  | "Card"
-  | "Bank_Transfer"
-  | "Mobile_Wallet"
-  | "Cash"
-  | "Online_Banking";
+export type PaymentMethodType = "Card" | "Bank_Transfer" | "Mobile_Wallet" | "Cash" | "Online_Banking";
 
 export interface PaymentMethodResponse {
   paymentMethodId: number;
@@ -403,12 +392,8 @@ export const paymentApi = {
   },
 
   /** GET /api/payments/transaction/{transactionReference} – get payment by transaction reference */
-  getByTransactionReference: async (
-    transactionReference: string,
-  ): Promise<PaymentResponse> => {
-    const res = await fetch(
-      `${PAYMENT_BASE}/transaction/${transactionReference}`,
-    );
+  getByTransactionReference: async (transactionReference: string): Promise<PaymentResponse> => {
+    const res = await fetch(`${PAYMENT_BASE}/transaction/${transactionReference}`);
     return handleResponse<PaymentResponse>(res);
   },
 
@@ -425,10 +410,7 @@ export const paymentApi = {
   },
 
   /** PUT /api/payments/{id} – update payment */
-  update: async (
-    id: number,
-    payment: PaymentRequest,
-  ): Promise<PaymentResponse> => {
+  update: async (id: number, payment: PaymentRequest): Promise<PaymentResponse> => {
     const res = await fetch(`${PAYMENT_BASE}/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -438,10 +420,7 @@ export const paymentApi = {
   },
 
   /** PATCH /api/payments/{id}/status – update payment status */
-  updateStatus: async (
-    id: number,
-    status: PaymentTransactionStatus,
-  ): Promise<PaymentResponse> => {
+  updateStatus: async (id: number, status: PaymentTransactionStatus): Promise<PaymentResponse> => {
     const res = await fetch(`${PAYMENT_BASE}/${id}/status?status=${status}`, {
       method: "PATCH",
     });
@@ -450,15 +429,14 @@ export const paymentApi = {
 
   /** POST /api/payments/{id}/refund – process refund */
   processRefund: async (
-    id: number,
-    refundReason?: string,
-    refundAmount?: number,
+    id: number, 
+    refundReason?: string, 
+    refundAmount?: number
   ): Promise<PaymentResponse> => {
     const params = new URLSearchParams();
     if (refundReason) params.append("refundReason", refundReason);
-    if (refundAmount !== undefined)
-      params.append("refundAmount", refundAmount.toString());
-
+    if (refundAmount !== undefined) params.append("refundAmount", refundAmount.toString());
+    
     const url = `${PAYMENT_BASE}/${id}/refund${params.toString() ? `?${params.toString()}` : ""}`;
     const res = await fetch(url, { method: "POST" });
     return handleResponse<PaymentResponse>(res);
@@ -475,9 +453,7 @@ export const paymentApi = {
 
 export const paymentMethodApi = {
   /** POST /api/payment-methods – create a new payment method */
-  create: async (
-    method: PaymentMethodRequest,
-  ): Promise<PaymentMethodResponse> => {
+  create: async (method: PaymentMethodRequest): Promise<PaymentMethodResponse> => {
     const res = await fetch(PAYMENT_METHOD_BASE, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -511,10 +487,7 @@ export const paymentMethodApi = {
   },
 
   /** PUT /api/payment-methods/{id} – update payment method */
-  update: async (
-    id: number,
-    method: PaymentMethodRequest,
-  ): Promise<PaymentMethodResponse> => {
+  update: async (id: number, method: PaymentMethodRequest): Promise<PaymentMethodResponse> => {
     const res = await fetch(`${PAYMENT_METHOD_BASE}/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -664,10 +637,7 @@ export const inventoryApi = {
   },
 
   /** PUT /api/v1/inventory/{id} – update inventory */
-  update: async (
-    id: number,
-    req: InventoryRequest,
-  ): Promise<InventoryResponse> => {
+  update: async (id: number, req: InventoryRequest): Promise<InventoryResponse> => {
     const res = await fetch(`${INVENTORY_BASE}/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -677,10 +647,7 @@ export const inventoryApi = {
   },
 
   /** PATCH /api/v1/inventory/{id}/stock – update stock */
-  updateStock: async (
-    id: number,
-    req: StockUpdateRequest,
-  ): Promise<InventoryResponse> => {
+  updateStock: async (id: number, req: StockUpdateRequest): Promise<InventoryResponse> => {
     const res = await fetch(`${INVENTORY_BASE}/${id}/stock`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -696,12 +663,8 @@ export const inventoryApi = {
   },
 
   /** GET /api/v1/inventory/alerts/low-stock/warehouse/{warehouseId} */
-  getLowStockByWarehouse: async (
-    warehouseId: number,
-  ): Promise<InventoryResponse[]> => {
-    const res = await fetch(
-      `${INVENTORY_BASE}/alerts/low-stock/warehouse/${warehouseId}`,
-    );
+  getLowStockByWarehouse: async (warehouseId: number): Promise<InventoryResponse[]> => {
+    const res = await fetch(`${INVENTORY_BASE}/alerts/low-stock/warehouse/${warehouseId}`);
     return handleInventoryResponse<InventoryResponse[]>(res);
   },
 
@@ -736,10 +699,7 @@ export const warehouseApi = {
   },
 
   /** PUT /api/v1/warehouses/{id} – update warehouse */
-  update: async (
-    id: number,
-    req: WarehouseRequest,
-  ): Promise<WarehouseResponse> => {
+  update: async (id: number, req: WarehouseRequest): Promise<WarehouseResponse> => {
     const res = await fetch(`${WAREHOUSE_BASE}/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -842,10 +802,7 @@ export const productApi = {
     return handleResponse<ProductResponse>(res);
   },
 
-  update: async (
-    id: number,
-    data: ProductRequest,
-  ): Promise<ProductResponse> => {
+  update: async (id: number, data: ProductRequest): Promise<ProductResponse> => {
     const res = await fetch(`${PRODUCT_BASE}/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
