@@ -10,6 +10,7 @@ import com.ssms.usermanagement.util.ResponseMessages;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +21,7 @@ import java.util.List;
  * All endpoints use DTOs and standardized responses
  */
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping(value = "/api/users", produces = "application/json")
 @CrossOrigin(origins = "*")
 public class UserController {
 
@@ -59,7 +60,7 @@ public class UserController {
 	 * Create new user
 	 * POST /api/users
 	 */
-	@PostMapping
+	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ApiResponse<UserResponseDTO>> createUser(@Valid @RequestBody UserRequestDTO requestDTO) {
 		UserResponseDTO createdUser = userService.createUser(requestDTO);
 		ApiResponse<UserResponseDTO> response = ApiResponse.success(
@@ -73,7 +74,7 @@ public class UserController {
 	 * Update existing user
 	 * PUT /api/users/{id}
 	 */
-	@PutMapping("/{id}")
+	@PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ApiResponse<UserResponseDTO>> updateUser(
 			@PathVariable Integer id, 
 			@Valid @RequestBody UserUpdateDTO updateDTO) {

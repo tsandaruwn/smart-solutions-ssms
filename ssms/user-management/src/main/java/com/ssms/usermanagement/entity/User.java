@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
  * All fields are private with proper getters and setters
  */
 @Entity
-@Table(name = "users")
+@Table(name = "\"user\"")
 public class User {
     
     @Id
