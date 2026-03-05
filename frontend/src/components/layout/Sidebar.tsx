@@ -20,6 +20,7 @@ import {
   Warehouse,
   UserCog,
   Megaphone,
+  Wrench,
 } from "lucide-react";
 
 const navItems = [
@@ -40,6 +41,11 @@ const navItems = [
     label: "Digital Marketing",
     href: "/dashboard/digital-marketing",
     icon: Megaphone,
+  },
+  {
+    label: "Installation Management",
+    href: "/dashboard/installation-management",
+    icon: Wrench,
   },
 ];
 
