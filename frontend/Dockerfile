@@ -4,6 +4,7 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm ci
 COPY . .
+ENV DOCKER=true
 RUN npm run build
 
 # Stage 2: Run

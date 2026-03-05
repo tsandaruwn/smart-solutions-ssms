@@ -83,7 +83,7 @@ export default function DashboardPage() {
         <div className="warning-banner mb-4">
           <span className="animate-pulse rounded-circle bg-amber d-inline-block flex-shrink-0" style={{ width: 8, height: 8 }} />
           <p className="mb-0 text-amber-dark" style={{ fontSize: ".875rem" }}>
-            <strong>Backend not connected</strong> &mdash; Start the Order Management service on port 8085 to see live data.
+            <strong>Backend not connected</strong> &mdash; Start the Order Management service on port 8084 to see live data.
           </p>
           <button onClick={fetchOrders} className="btn-ghost ms-auto" style={{ padding: "4px 12px", fontSize: ".75rem" }}>
             Retry
