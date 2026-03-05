@@ -6,7 +6,7 @@ spring:
   # PostgreSQL DataSource
   # ──────────────────────────────────────────────
   datasource:
-    url: jdbc:postgresql://localhost:5432/ssms
+    url: jdbc:postgresql://localhost:5432/ssms_inventory
     username: postgres
     password: admin
     driver-class-name: org.postgresql.Driver
@@ -39,7 +39,7 @@ spring:
 # Server
 # ──────────────────────────────────────────────
 server:
-  port: 8084
+  port: 8083
 
 # ──────────────────────────────────────────────
 # Springdoc / Swagger UI

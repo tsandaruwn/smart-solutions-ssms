@@ -4,9 +4,11 @@ import { useEffect, useMemo, useState } from "react";
 import {
   categoryApi,
   productApi,
+  supplierApi,
   type ProductCategory,
   type ProductRequest,
   type ProductResponse,
+  type SupplierResponse,
 } from "@/lib/api";
 import { Edit, Plus, Save, Trash2, Ban, Package } from "lucide-react";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
@@ -24,6 +26,7 @@ const emptyProductForm = {
 export default function ProductsPage() {
   const [products, setProducts] = useState<ProductResponse[]>([]);
   const [categories, setCategories] = useState<ProductCategory[]>([]);
+  const [suppliers, setSuppliers] = useState<SupplierResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -37,12 +40,14 @@ export default function ProductsPage() {
     setLoading(true);
     setError(null);
     try {
-      const [productsData, categoriesData] = await Promise.all([
+      const [productsData, categoriesData, suppliersData] = await Promise.all([
         showOnlyActive ? productApi.getAvailable() : productApi.getAll(),
         categoryApi.getAll(),
+        supplierApi.getAll(),
       ]);
       setProducts(productsData);
       setCategories(categoriesData);
+      setSuppliers(suppliersData);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load products");
     } finally {
@@ -208,8 +213,15 @@ export default function ProductsPage() {
                   </select>
                 </div>
                 <div className="col-12 col-md-3">
-                  <label className="form-label">Supplier ID</label>
-                  <input type="number" className="input-brand" value={productForm.supplierId} onChange={(e) => setProductForm({ ...productForm, supplierId: e.target.value })} required />
+                  <label className="form-label">Supplier</label>
+                  <select className="input-brand" value={productForm.supplierId} onChange={(e) => setProductForm({ ...productForm, supplierId: e.target.value })} required>
+                    <option value="">Select supplier</option>
+                    {suppliers.map((s) => (
+                      <option key={s.supplierId} value={s.supplierId}>
+                        {s.companyName} ({s.contactPerson})
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="col-12 col-md-3">
                   <label className="form-label">Price</label>
@@ -297,7 +309,7 @@ export default function ProductsPage() {
                     <td>{p.name}</td>
                     <td>{p.categoryName || p.categoryId}</td>
                     <td>{p.supplierId}</td>
-                    <td className="text-end">Rs. {Number(p.price).toFixed(2)}</td>
+                    <td className="text-end">LKR {Number(p.price).toFixed(2)}</td>
                     <td>
                       <span className={`badge ${p.isActive ? "text-bg-success" : "text-bg-secondary"}`}>
                         {p.isActive ? "ACTIVE" : "INACTIVE"}

@@ -1,9 +1,9 @@
 server:
-  port: 8089
+  port: 8087
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/digitel_marketing
+    url: jdbc:postgresql://localhost:5432/ssms_digital_marketing
     username: postgres
     password: admin
     driver-class-name: org.postgresql.Driver

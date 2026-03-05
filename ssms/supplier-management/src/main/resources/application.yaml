@@ -4,7 +4,7 @@ spring:
 
   # PostgreSQL Database Configuration
   datasource:
-    url: jdbc:postgresql://localhost:5432/supplier-management
+    url: jdbc:postgresql://localhost:5432/ssms_supplier
     username: postgres
     password: admin
     driver-class-name: org.postgresql.Driver
@@ -19,7 +19,7 @@ spring:
         format_sql: true
 
 server:
-  port: 8087
+  port: 8088
 
 # Logging configuration
 logging:

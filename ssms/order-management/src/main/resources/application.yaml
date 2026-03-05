@@ -1,11 +1,11 @@
 server:
-  port: 8085
+  port: 8084
 
 spring:
   application:
     name: order-management
   datasource:
-    url: jdbc:postgresql://localhost:5432/ssms
+    url: jdbc:postgresql://localhost:5432/ssms_order
     username: postgres
     password: admin
     driver-class-name: org.postgresql.Driver

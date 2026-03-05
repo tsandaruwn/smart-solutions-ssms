@@ -205,7 +205,7 @@ export default function PaymentDetailsPage({ params }: { params: Promise<{ id: s
                       Amount Paid
                     </p>
                     <p className="text-navy mb-0" style={{ fontSize: "1.5rem", fontWeight: 700, color: "#10b981" }}>
-                      ${payment.amount.toFixed(2)}
+                      LKR {payment.amount.toFixed(2)}
                     </p>
                   </div>
                 </div>
@@ -364,7 +364,7 @@ export default function PaymentDetailsPage({ params }: { params: Promise<{ id: s
                     Refund Amount
                   </p>
                   <p className="mb-0" style={{ fontSize: "1.25rem", fontWeight: 700, color: "#ef4444" }}>
-                    ${payment.refundAmount.toFixed(2)}
+                    LKR {payment.refundAmount.toFixed(2)}
                   </p>
                 </div>
                 <div className="col-md-4">
@@ -521,7 +521,7 @@ export default function PaymentDetailsPage({ params }: { params: Promise<{ id: s
                   <div className="d-flex justify-content-between align-items-center">
                     <span className="text-muted-brand" style={{ fontSize: ".75rem" }}>Refunded</span>
                     <span style={{ fontSize: ".75rem", fontWeight: 600, color: "#ef4444" }}>
-                      ${payment.refundAmount.toFixed(2)}
+                      LKR {payment.refundAmount.toFixed(2)}
                     </span>
                   </div>
                 )}

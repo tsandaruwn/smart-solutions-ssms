@@ -1256,6 +1256,46 @@ export const installationApi = {
 };
 
 // ============================================
+// Technician API (part of Installation Management)
+// ============================================
+
+const TECHNICIAN_BASE = "/api/technicians";
+
+export type AvailabilityStatus = "AVAILABLE" | "ON_JOB" | "ON_LEAVE" | "UNAVAILABLE";
+
+export interface TechnicianResponse {
+  id: number;
+  userId: number;
+  specialization: string;
+  certificationNumber: string;
+  availabilityStatus: AvailabilityStatus;
+  phone: string | null;
+  hiredDate: string;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export const technicianApi = {
+  /** GET /api/technicians – all technicians */
+  getAll: async (): Promise<TechnicianResponse[]> => {
+    const res = await fetch(TECHNICIAN_BASE);
+    return handleResponse<TechnicianResponse[]>(res);
+  },
+
+  /** GET /api/technicians/active – active technicians only */
+  getActive: async (): Promise<TechnicianResponse[]> => {
+    const res = await fetch(`${TECHNICIAN_BASE}/active`);
+    return handleResponse<TechnicianResponse[]>(res);
+  },
+
+  /** GET /api/technicians/{id} */
+  getById: async (id: number): Promise<TechnicianResponse> => {
+    const res = await fetch(`${TECHNICIAN_BASE}/${id}`);
+    return handleResponse<TechnicianResponse>(res);
+  },
+};
+
+// ============================================
 // Digital Marketing / Campaign API
 // Proxied to http://localhost:8089 via Next.js rewrite
 // ============================================

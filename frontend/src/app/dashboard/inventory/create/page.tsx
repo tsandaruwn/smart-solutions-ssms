@@ -7,14 +7,17 @@ import { ArrowLeft } from "lucide-react";
 import {
   inventoryApi,
   warehouseApi,
+  productApi,
   type InventoryRequest,
   type WarehouseResponse,
+  type ProductResponse,
 } from "@/lib/api";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 export default function CreateInventoryPage() {
   const router = useRouter();
   const [warehouses, setWarehouses] = useState<WarehouseResponse[]>([]);
+  const [products, setProducts] = useState<ProductResponse[]>([]);
   const [loadingWarehouses, setLoadingWarehouses] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -33,6 +36,7 @@ export default function CreateInventoryPage() {
       .then(setWarehouses)
       .catch(() => setWarehouses([]))
       .finally(() => setLoadingWarehouses(false));
+    productApi.getAvailable().then(setProducts).catch(() => {});
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -95,19 +99,23 @@ export default function CreateInventoryPage() {
                   className="form-label text-muted-brand fw-medium"
                   style={{ fontSize: ".875rem" }}
                 >
-                  Product ID *
+                  Product *
                 </label>
-                <input
-                  type="number"
+                <select
                   className="input-brand"
-                  min={1}
                   required
                   value={form.productId || ""}
                   onChange={(e) =>
                     updateField("productId", Number(e.target.value))
                   }
-                  placeholder="Enter product ID"
-                />
+                >
+                  <option value="">Select product</option>
+                  {products.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name} ({p.sku})
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="col-12 col-sm-6">

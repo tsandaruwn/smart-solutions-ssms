@@ -4,12 +4,14 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, CreditCard, AlertCircle } from "lucide-react";
-import { paymentApi, paymentMethodApi, type PaymentRequest, type PaymentMethodResponse } from "@/lib/api";
+import { paymentApi, paymentMethodApi, customerApi, billingApi, type PaymentRequest, type PaymentMethodResponse, type CustomerResponse, type Bill } from "@/lib/api";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 export default function ProcessPaymentPage() {
   const router = useRouter();
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodResponse[]>([]);
+  const [customers, setCustomers] = useState<CustomerResponse[]>([]);
+  const [invoices, setInvoices] = useState<Bill[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,6 +27,7 @@ export default function ProcessPaymentPage() {
 
   useEffect(() => {
     loadPaymentMethods();
+    customerApi.getAll(0, 1000).then((res) => setCustomers(res.content)).catch(() => {});
     // Generate a default transaction reference
     const txnRef = `TXN-${new Date().getFullYear()}-${Date.now().toString().slice(-8)}`;
     setFormData((prev) => ({ ...prev, transactionReference: txnRef }));
@@ -153,37 +156,54 @@ export default function ProcessPaymentPage() {
               </small>
             </div>
 
-            {/* Customer ID & Invoice ID */}
+            {/* Customer & Invoice */}
             <div className="col-md-6">
               <label htmlFor="customerId" className="form-label-brand">
-                Customer ID <span className="text-danger">*</span>
+                Customer <span className="text-danger">*</span>
               </label>
-              <input
-                type="number"
+              <select
                 id="customerId"
                 value={formData.customerId || ""}
-                onChange={(e) => handleChange("customerId", parseInt(e.target.value) || 0)}
+                onChange={(e) => {
+                  const cid = parseInt(e.target.value) || 0;
+                  handleChange("customerId", cid);
+                  handleChange("invoiceId", 0);
+                  setInvoices([]);
+                  if (cid > 0) {
+                    billingApi.getByCustomer(cid).then(setInvoices).catch(() => {});
+                  }
+                }}
                 required
-                min="1"
                 className="input-brand"
-                placeholder="1"
-              />
+              >
+                <option value="">Select customer</option>
+                {customers.map((c) => (
+                  <option key={c.customerId} value={c.customerId}>
+                    {c.firstName} {c.lastName} ({c.email})
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="col-md-6">
               <label htmlFor="invoiceId" className="form-label-brand">
-                Invoice ID <span className="text-danger">*</span>
+                Invoice <span className="text-danger">*</span>
               </label>
-              <input
-                type="number"
+              <select
                 id="invoiceId"
                 value={formData.invoiceId || ""}
                 onChange={(e) => handleChange("invoiceId", parseInt(e.target.value) || 0)}
                 required
-                min="1"
                 className="input-brand"
-                placeholder="1"
-              />
+                disabled={invoices.length === 0 && formData.customerId > 0}
+              >
+                <option value="">{formData.customerId ? (invoices.length ? "Select invoice" : "No invoices found") : "Select customer first"}</option>
+                {invoices.map((inv) => (
+                  <option key={inv.id} value={inv.id}>
+                    INV-{String(inv.id).padStart(5, "0")} — Order #{inv.orderId} — LKR {inv.totalAmount.toLocaleString()} ({inv.status})
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Amount & Payment Method */}
@@ -193,7 +213,7 @@ export default function ProcessPaymentPage() {
               </label>
               <div className="input-group">
                 <span className="input-group-text" style={{ background: "var(--cream-light)", border: "1px solid var(--border-color)", color: "var(--steel)" }}>
-                  Rs.
+                  LKR
                 </span>
                 <input
                   type="number"

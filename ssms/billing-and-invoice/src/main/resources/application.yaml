@@ -1,15 +1,15 @@
 server:
-  port: 8088
+  port: 8085
 
 # URLs for downstream microservices
 customer-service:
-  url: http://localhost:8082
+  url: http://localhost:8081
 order-service:
-  url: http://localhost:8085
+  url: http://localhost:8084
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/billing
+    url: jdbc:postgresql://localhost:5432/ssms_billing
     username: postgres
     password: admin
     driver-class-name: org.postgresql.Driver

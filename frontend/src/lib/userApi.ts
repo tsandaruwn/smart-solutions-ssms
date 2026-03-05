@@ -1,13 +1,12 @@
 // ====================================
 // USER MANAGEMENT API
-// Created by: [Your Name]
 // Purpose: API utilities for user management operations
-// Base URL: http://localhost:8081
+// Proxied via Next.js rewrites → localhost:8081
 // ====================================
 
 import type { User, CreateUserRequest, UpdateUserRequest, Role, ApiResponse } from "@/types/user";
 
-const BASE_URL = "http://localhost:8081/api";
+const BASE_URL = "/api";
 
 class UserManagementAPI {
   // ============ USER ENDPOINTS ============

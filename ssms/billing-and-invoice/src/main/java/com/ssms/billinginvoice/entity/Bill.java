@@ -24,6 +24,8 @@ public class Bill {
 
     private String status; // PENDING, PAID
 
+    private Long deletedByUserId;
+
     public Bill() {
         this.status = "PENDING";
     }
@@ -79,5 +81,13 @@ public class Bill {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Long getDeletedByUserId() {
+        return deletedByUserId;
+    }
+
+    public void setDeletedByUserId(Long deletedByUserId) {
+        this.deletedByUserId = deletedByUserId;
     }
 }

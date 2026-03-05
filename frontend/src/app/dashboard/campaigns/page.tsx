@@ -13,6 +13,8 @@ import {
   type RecordPerformanceRequest,
 } from "@/lib/api";
 import { formatCurrency } from "@/lib/utils";
+import { userApi } from "@/lib/userApi";
+import type { User as UserType } from "@/types/user";
 import {
   Plus,
   Edit,
@@ -58,7 +60,7 @@ const STATUS_COLORS: Record<CampaignStatus, string> = {
 };
 
 const emptyForm: CreateCampaignRequest = {
-  createdByUserId: 1,
+  createdByUserId: 0,
   name: "",
   type: "EMAIL",
   description: "",
@@ -99,6 +101,13 @@ export default function CampaignsPage() {
 
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
+
+  // Dropdown data
+  const [users, setUsers] = useState<UserType[]>([]);
+
+  useEffect(() => {
+    userApi.getAllUsers().then(setUsers).catch(() => {});
+  }, []);
 
   const loadCampaigns = async () => {
     setLoading(true);
@@ -636,6 +645,22 @@ export default function CampaignsPage() {
                         value={form.name}
                         onChange={(e) => setForm({ ...form, name: e.target.value })}
                       />
+                    </div>
+                    <div className="col-md-6">
+                      <label className="form-label fw-medium">Created By *</label>
+                      <select
+                        className="input-brand w-100"
+                        required
+                        value={form.createdByUserId || ""}
+                        onChange={(e) => setForm({ ...form, createdByUserId: parseInt(e.target.value) || 0 })}
+                      >
+                        <option value="">Select user</option>
+                        {users.map((u) => (
+                          <option key={u.userId} value={u.userId}>
+                            {u.firstName} {u.lastName} ({u.username})
+                          </option>
+                        ))}
+                      </select>
                     </div>
                     <div className="col-md-6">
                       <label className="form-label fw-medium">Type</label>

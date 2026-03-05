@@ -12,7 +12,7 @@ import {
   Plus,
   CheckCircle,
 } from "lucide-react";
-import { billingApi, type Bill, type BillDto } from "@/lib/api";
+import { billingApi, orderApi, customerApi, type Bill, type BillDto, type OrderResponse, type CustomerResponse } from "@/lib/api";
 import { formatCurrency } from "@/lib/utils";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
@@ -34,6 +34,15 @@ export default function BillingPage() {
   const [genLoading, setGenLoading] = useState(false);
   const [genResult, setGenResult] = useState<BillDto | null>(null);
   const [genError, setGenError] = useState<string | null>(null);
+
+  // Dropdown data
+  const [customers, setCustomers] = useState<CustomerResponse[]>([]);
+  const [orders, setOrders] = useState<OrderResponse[]>([]);
+
+  useEffect(() => {
+    customerApi.getAll(0, 1000).then((res) => setCustomers(res.content)).catch(() => {});
+    orderApi.getAll().then(setOrders).catch(() => {});
+  }, []);
 
   const handleGenerate = async () => {
     const orderId = Number(genOrderId);
@@ -160,15 +169,19 @@ export default function BillingPage() {
           will be created automatically.
         </p>
         <div className="d-flex gap-2 mb-2">
-          <input
-            type="number"
-            placeholder="Order ID"
+          <select
             value={genOrderId}
             onChange={(e) => setGenOrderId(e.target.value)}
             className="input-brand"
-            style={{ maxWidth: 180 }}
-            onKeyDown={(e) => e.key === "Enter" && handleGenerate()}
-          />
+            style={{ maxWidth: 320 }}
+          >
+            <option value="">Select order</option>
+            {orders.map((o) => (
+              <option key={o.orderId} value={o.orderId}>
+                {o.orderNumber} (#{o.orderId}) — Customer #{o.customerId}
+              </option>
+            ))}
+          </select>
           <button
             onClick={handleGenerate}
             disabled={genLoading || !genOrderId}
@@ -195,7 +208,7 @@ export default function BillingPage() {
               Invoice{" "}
               <strong>INV-{String(genResult.billId).padStart(5, "0")}</strong>{" "}
               created — Total{" "}
-              <strong>Rs.{genResult.totalAmount.toLocaleString()}</strong>
+              <strong>LKR {genResult.totalAmount.toLocaleString()}</strong>
             </span>
           </div>
         )}
@@ -207,17 +220,22 @@ export default function BillingPage() {
           className="fw-semibold text-navy mb-2"
           style={{ fontSize: ".875rem" }}
         >
-          Look up invoices by Customer ID
+          Look up invoices by Customer
         </p>
         <div className="d-flex gap-2">
-          <input
-            type="number"
-            placeholder="Customer ID"
+          <select
             value={customerId}
             onChange={(e) => setCustomerId(e.target.value)}
             className="input-brand"
-            style={{ maxWidth: 180 }}
-          />
+            style={{ maxWidth: 320 }}
+          >
+            <option value="">Select customer</option>
+            {customers.map((c) => (
+              <option key={c.customerId} value={c.customerId}>
+                {c.firstName} {c.lastName} ({c.email})
+              </option>
+            ))}
+          </select>
           <button
             onClick={fetchBills}
             className="btn-amber"

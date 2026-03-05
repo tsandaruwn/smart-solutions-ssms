@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Plus, Trash2, ShoppingCart, MapPin, User, FileText, Package } from "lucide-react";
-import { orderApi, type OrderItemRequest } from "@/lib/api";
+import { orderApi, customerApi, productApi, type OrderItemRequest, type CustomerResponse, type ProductResponse } from "@/lib/api";
+import { userApi } from "@/lib/userApi";
+import type { User as UserType } from "@/types/user";
 
 interface OrderItemForm {
   productId: string;
@@ -25,6 +27,17 @@ export default function CreateOrderPage() {
   const [shippingCity, setShippingCity] = useState("");
   const [notes, setNotes] = useState("");
   const [items, setItems] = useState<OrderItemForm[]>([{ ...emptyItem }]);
+
+  // Dropdown data
+  const [customers, setCustomers] = useState<CustomerResponse[]>([]);
+  const [users, setUsers] = useState<UserType[]>([]);
+  const [products, setProducts] = useState<ProductResponse[]>([]);
+
+  useEffect(() => {
+    customerApi.getAll(0, 1000).then((res) => setCustomers(res.content)).catch(() => {});
+    userApi.getAllUsers().then(setUsers).catch(() => {});
+    productApi.getAvailable().then(setProducts).catch(() => {});
+  }, []);
 
   const addItem    = () => setItems([...items, { ...emptyItem }]);
   const removeItem = (index: number) => { if (items.length > 1) setItems(items.filter((_, i) => i !== index)); };
@@ -92,17 +105,31 @@ export default function CreateOrderPage() {
             <div className="row g-3">
               <div className="col-12 col-sm-6">
                 <label className="d-block fw-medium text-navy mb-1" style={{ fontSize: ".875rem" }}>
-                  Customer ID <span className="text-danger">*</span>
+                  Customer <span className="text-danger">*</span>
                 </label>
-                <input type="number" required min="1" placeholder="Enter customer ID" value={customerId}
-                  onChange={(e) => setCustomerId(e.target.value)} className="input-brand" />
+                <select required value={customerId}
+                  onChange={(e) => setCustomerId(e.target.value)} className="input-brand">
+                  <option value="">Select customer</option>
+                  {customers.map((c) => (
+                    <option key={c.customerId} value={c.customerId}>
+                      {c.firstName} {c.lastName} ({c.email})
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="col-12 col-sm-6">
                 <label className="d-block fw-medium text-navy mb-1" style={{ fontSize: ".875rem" }}>
-                  Created By (User ID)
+                  Created By (User)
                 </label>
-                <input type="number" min="1" placeholder="Optional" value={createdByUserId}
-                  onChange={(e) => setCreatedByUserId(e.target.value)} className="input-brand" />
+                <select value={createdByUserId}
+                  onChange={(e) => setCreatedByUserId(e.target.value)} className="input-brand">
+                  <option value="">Select user (optional)</option>
+                  {users.map((u) => (
+                    <option key={u.userId} value={u.userId}>
+                      {u.firstName} {u.lastName} ({u.username})
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
           </div>
@@ -152,10 +179,21 @@ export default function CreateOrderPage() {
                   <div className="row g-2 align-items-end">
                     <div className="col-12 col-sm-3">
                       <label className="d-block fw-medium text-muted-brand mb-1" style={{ fontSize: ".75rem" }}>
-                        Product ID <span className="text-danger">*</span>
+                        Product <span className="text-danger">*</span>
                       </label>
-                      <input type="number" required min="1" placeholder="Product ID" value={item.productId}
-                        onChange={(e) => updateItem(index, "productId", e.target.value)} className="input-sm" />
+                      <select required value={item.productId}
+                        onChange={(e) => {
+                          updateItem(index, "productId", e.target.value);
+                          const prod = products.find((p) => String(p.id) === e.target.value);
+                          if (prod) updateItem(index, "unitPriceAtOrder", String(prod.price));
+                        }} className="input-sm">
+                        <option value="">Select product</option>
+                        {products.map((p) => (
+                          <option key={p.id} value={p.id}>
+                            {p.name} ({p.sku})
+                          </option>
+                        ))}
+                      </select>
                     </div>
                     <div className="col-4 col-sm-2">
                       <label className="d-block fw-medium text-muted-brand mb-1" style={{ fontSize: ".75rem" }}>
@@ -178,7 +216,7 @@ export default function CreateOrderPage() {
                     </div>
                     <div className="col-6 col-sm-2 d-flex align-items-center justify-content-between">
                       <span className="d-none d-sm-block fw-semibold text-navy" style={{ fontSize: ".875rem" }}>
-                        {new Intl.NumberFormat("en-PH", { style: "currency", currency: "PHP" }).format(calcLineTotal(item))}
+                        {new Intl.NumberFormat("en-LK", { style: "currency", currency: "LKR" }).format(calcLineTotal(item))}
                       </span>
                       {items.length > 1 && (
                         <button type="button" onClick={() => removeItem(index)} className="btn-icon ms-auto" style={{ color: "#f87171" }}>
@@ -194,7 +232,7 @@ export default function CreateOrderPage() {
             <div className="d-flex align-items-center justify-content-between pt-3 mt-2" style={{ borderTop: "1px solid var(--border-color)" }}>
               <span className="fw-semibold text-navy" style={{ fontSize: ".875rem" }}>Estimated Total</span>
               <span className="fw-bold text-navy" style={{ fontSize: "1.25rem" }}>
-                {new Intl.NumberFormat("en-PH", { style: "currency", currency: "PHP" }).format(totalAmount)}
+                {new Intl.NumberFormat("en-LK", { style: "currency", currency: "LKR" }).format(totalAmount)}
               </span>
             </div>
           </div>

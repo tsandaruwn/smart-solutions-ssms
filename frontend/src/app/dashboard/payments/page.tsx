@@ -235,11 +235,11 @@ export default function PaymentsPage() {
                       </td>
                       <td className="text-end">
                         <span className="fw-bold text-navy" style={{ fontSize: ".875rem" }}>
-                          Rs.{payment.amount.toLocaleString()}
+                          LKR {payment.amount.toLocaleString()}
                         </span>
                         {payment.refundAmount && (
                           <div style={{ fontSize: ".7rem", color: "#dc2626", marginTop: 2 }}>
-                            Refunded: Rs.{payment.refundAmount.toLocaleString()}
+                            Refunded: LKR {payment.refundAmount.toLocaleString()}
                           </div>
                         )}
                       </td>

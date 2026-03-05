@@ -1,12 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { paymentApi, type PaymentResponse } from "@/lib/api";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import ErrorMessage from "@/components/ui/ErrorMessage";
+import { ArrowLeft, RotateCcw, AlertCircle } from "lucide-react";
 
-export default function RefundPage({ params }: { params: { id: string } }) {
+export default function RefundPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
+  const { id } = use(params);
   const [payment, setPayment] = useState<PaymentResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -16,13 +20,13 @@ export default function RefundPage({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     loadPayment();
-  }, [params.id]);
+  }, [id]);
 
   async function loadPayment() {
     try {
       setLoading(true);
       setError(null);
-      const data = await paymentApi.getById(Number(params.id));
+      const data = await paymentApi.getById(Number(id));
       setPayment(data);
       setRefundAmount(data.amount.toString());
     } catch (err) {
@@ -47,7 +51,7 @@ export default function RefundPage({ params }: { params: { id: string } }) {
       return;
     }
 
-    if (!confirm(`Are you sure you want to refund $${amount.toFixed(2)}?`)) return;
+    if (!confirm(`Are you sure you want to refund LKR ${amount.toFixed(2)}?`)) return;
 
     try {
       setProcessing(true);
@@ -62,36 +66,39 @@ export default function RefundPage({ params }: { params: { id: string } }) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Loading payment details...</div>
+      <div className="d-flex align-items-center justify-content-center" style={{ minHeight: "400px" }}>
+        <LoadingSpinner message="Loading payment details..." />
       </div>
     );
   }
 
   if (error || !payment) {
     return (
-      <div className="p-6">
-        <div className="bg-red-100 text-red-700 p-4 rounded">
-          {error || "Payment not found"}
+      <div style={{ padding: "2rem" }}>
+        <ErrorMessage message={error || "Payment not found"} onRetry={loadPayment} />
+        <div className="text-center mt-4">
+          <Link href="/dashboard/payments" className="btn-navy">
+            <ArrowLeft size={16} style={{ marginRight: "8px" }} />
+            Back to Payments
+          </Link>
         </div>
-        <Link href="/dashboard/payments" className="mt-4 inline-block text-blue-600 hover:underline">
-          ← Back to Payments
-        </Link>
       </div>
     );
   }
 
   if (payment.status !== "Success") {
     return (
-      <div className="p-6">
-        <div className="bg-yellow-100 text-yellow-700 p-4 rounded">
-          Only successful payments can be refunded. This payment has status: {payment.status}
+      <div style={{ padding: "2rem" }}>
+        <div className="alert alert-warning d-flex align-items-center gap-2">
+          <AlertCircle size={20} />
+          Only successful payments can be refunded. This payment has status: <strong>{payment.status}</strong>
         </div>
         <Link
           href={`/dashboard/payments/${payment.paymentId}`}
-          className="mt-4 inline-block text-blue-600 hover:underline"
+          className="btn-navy d-inline-flex align-items-center gap-2"
         >
-          ← Back to Payment Details
+          <ArrowLeft size={16} />
+          Back to Payment Details
         </Link>
       </div>
     );
@@ -99,104 +106,115 @@ export default function RefundPage({ params }: { params: { id: string } }) {
 
   if (payment.refundAmount) {
     return (
-      <div className="p-6">
-        <div className="bg-yellow-100 text-yellow-700 p-4 rounded">
+      <div style={{ padding: "2rem" }}>
+        <div className="alert alert-warning d-flex align-items-center gap-2">
+          <AlertCircle size={20} />
           This payment has already been refunded.
         </div>
         <Link
           href={`/dashboard/payments/${payment.paymentId}`}
-          className="mt-4 inline-block text-blue-600 hover:underline"
+          className="btn-navy d-inline-flex align-items-center gap-2"
         >
-          ← Back to Payment Details
+          <ArrowLeft size={16} />
+          Back to Payment Details
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="p-6">
-      <div className="mb-6">
+    <div style={{ padding: "2rem", maxWidth: "720px", margin: "0 auto" }}>
+      {/* Back Link */}
+      <div className="mb-4">
         <Link
           href={`/dashboard/payments/${payment.paymentId}`}
-          className="text-blue-600 hover:underline"
+          className="d-inline-flex align-items-center gap-2 text-muted-brand"
+          style={{ fontSize: ".875rem", textDecoration: "none" }}
         >
-          ← Back to Payment Details
+          <ArrowLeft size={16} />
+          Back to Payment Details
         </Link>
       </div>
 
-      <div className="max-w-2xl bg-white rounded shadow p-6">
-        <h1 className="text-3xl font-bold mb-6">Process Refund</h1>
+      <div className="bg-surface rounded-3 border-brand p-4" style={{ border: "1px solid" }}>
+        <h1 className="text-navy mb-4 d-flex align-items-center gap-2" style={{ fontSize: "1.75rem", fontWeight: 700 }}>
+          <RotateCcw size={28} />
+          Process Refund
+        </h1>
 
         {/* Payment Summary */}
-        <div className="mb-6 p-4 bg-gray-50 rounded border">
-          <h3 className="font-semibold mb-3">Payment Information</h3>
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            <div>
-              <span className="text-gray-500">Payment ID:</span>
-              <span className="ml-2 font-semibold">#{payment.paymentId}</span>
+        <div className="bg-cream-light rounded-3 p-3 mb-4">
+          <h3 className="text-navy mb-3" style={{ fontSize: "1rem", fontWeight: 600 }}>
+            Payment Information
+          </h3>
+          <div className="row g-3">
+            <div className="col-sm-6">
+              <span className="text-muted-brand" style={{ fontSize: ".8rem" }}>Payment ID:</span>
+              <span className="ms-2 fw-semibold text-navy">#{payment.paymentId}</span>
             </div>
-            <div>
-              <span className="text-gray-500">Transaction Ref:</span>
-              <span className="ml-2 font-mono">{payment.transactionReference}</span>
+            <div className="col-sm-6">
+              <span className="text-muted-brand" style={{ fontSize: ".8rem" }}>Transaction Ref:</span>
+              <span className="ms-2" style={{ fontFamily: "monospace" }}>{payment.transactionReference}</span>
             </div>
-            <div>
-              <span className="text-gray-500">Original Amount:</span>
-              <span className="ml-2 font-bold text-green-600">${payment.amount.toFixed(2)}</span>
+            <div className="col-sm-6">
+              <span className="text-muted-brand" style={{ fontSize: ".8rem" }}>Original Amount:</span>
+              <span className="ms-2 fw-bold" style={{ color: "#10b981" }}>LKR {payment.amount.toFixed(2)}</span>
             </div>
-            <div>
-              <span className="text-gray-500">Payment Date:</span>
-              <span className="ml-2">{new Date(payment.paymentDate).toLocaleDateString()}</span>
+            <div className="col-sm-6">
+              <span className="text-muted-brand" style={{ fontSize: ".8rem" }}>Payment Date:</span>
+              <span className="ms-2">{new Date(payment.paymentDate).toLocaleDateString()}</span>
             </div>
           </div>
         </div>
 
         {/* Refund Form */}
         <form onSubmit={handleRefund}>
-          <div className="mb-4">
-            <label htmlFor="refundAmount" className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="mb-3">
+            <label htmlFor="refundAmount" className="form-label fw-medium text-navy">
               Refund Amount *
             </label>
             <input
               type="number"
               id="refundAmount"
+              className="form-control"
               value={refundAmount}
               onChange={(e) => setRefundAmount(e.target.value)}
               step="0.01"
               min="0.01"
               max={payment.amount}
               required
-              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            <div className="mt-1 text-sm text-gray-500">
-              Maximum refundable amount: ${payment.amount.toFixed(2)}
+            <div className="form-text">
+              Maximum refundable amount: LKR {payment.amount.toFixed(2)}
             </div>
           </div>
 
-          <div className="mb-6">
-            <label htmlFor="refundReason" className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="mb-4">
+            <label htmlFor="refundReason" className="form-label fw-medium text-navy">
               Refund Reason
             </label>
             <textarea
               id="refundReason"
+              className="form-control"
               value={refundReason}
               onChange={(e) => setRefundReason(e.target.value)}
               rows={4}
-              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter the reason for this refund..."
             />
           </div>
 
-          <div className="flex gap-3">
+          <div className="d-flex gap-3">
             <button
               type="submit"
               disabled={processing}
-              className="px-6 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 disabled:bg-gray-400"
+              className="btn-amber d-inline-flex align-items-center gap-2"
             >
+              <RotateCcw size={16} />
               {processing ? "Processing..." : "Process Refund"}
             </button>
             <Link
               href={`/dashboard/payments/${payment.paymentId}`}
-              className="px-6 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+              className="btn-steel"
             >
               Cancel
             </Link>

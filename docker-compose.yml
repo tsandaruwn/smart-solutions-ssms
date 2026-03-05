@@ -1,0 +1,186 @@
+services:
+
+  # ───────────────────────────── PostgreSQL ─────────────────────────────
+  postgres:
+    image: postgres:17
+    container_name: ssms-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker/init-databases.sh:/docker-entrypoint-initdb.d/init-databases.sh
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ───────────────────────────── Backend Services ─────────────────────────────
+
+  user-management:
+    build: ./ssms/user-management
+    container_name: ssms-user-management
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ssms_user_management
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  product-management:
+    build: ./ssms/product-management
+    container_name: ssms-product-management
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ssms_product
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+      SERVER_PORT: 8082
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  inventory-management:
+    build: ./ssms/inventory-management
+    container_name: ssms-inventory-management
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ssms_inventory
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  order-management:
+    build: ./ssms/order-management
+    container_name: ssms-order-management
+    ports:
+      - "8084:8084"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ssms_order
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  payment-management:
+    build: ./ssms/payment-management
+    container_name: ssms-payment-management
+    ports:
+      - "8086:8086"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ssms_payment
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  digital-marketing:
+    build: ./ssms/digital-marketing
+    container_name: ssms-digital-marketing
+    ports:
+      - "8087:8087"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ssms_digital_marketing
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  supplier-management:
+    build: ./ssms/supplier-management
+    container_name: ssms-supplier-management
+    ports:
+      - "8088:8088"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ssms_supplier
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  installation-management:
+    build: ./ssms/installation-management
+    container_name: ssms-installation-management
+    ports:
+      - "8089:8089"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ssms_installation
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # Dependent services (need order-management running)
+  customer-service:
+    build: ./ssms/customer-service
+    container_name: ssms-customer-service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ssms_customer
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+      SERVICES_ORDER_SERVICE_URL: http://order-management:8084
+    depends_on:
+      postgres:
+        condition: service_healthy
+      order-management:
+        condition: service_started
+
+  billing-and-invoice:
+    build: ./ssms/billing-and-invoice
+    container_name: ssms-billing-and-invoice
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ssms_billing
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+      CUSTOMER_SERVICE_URL: http://customer-service:8081
+      ORDER_SERVICE_URL: http://order-management:8084
+    depends_on:
+      postgres:
+        condition: service_healthy
+      order-management:
+        condition: service_started
+      customer-service:
+        condition: service_started
+
+  # ───────────────────────────── Frontend ─────────────────────────────
+  frontend:
+    build: ./frontend
+    container_name: ssms-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      DOCKER: "true"
+    depends_on:
+      - user-management
+      - customer-service
+      - product-management
+      - inventory-management
+      - order-management
+      - billing-and-invoice
+      - payment-management
+      - digital-marketing
+      - supplier-management
+      - installation-management
+
+volumes:
+  pgdata:

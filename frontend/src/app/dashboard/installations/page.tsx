@@ -3,11 +3,17 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   installationApi,
+  customerApi,
+  orderApi,
+  technicianApi,
   type InstallationResponse,
   type InstallationRequest,
   type InstallationStatus,
   type StatusUpdate,
   type TechnicianAssignment,
+  type CustomerResponse,
+  type OrderResponse,
+  type TechnicianResponse,
 } from "@/lib/api";
 import {
   Plus,
@@ -84,6 +90,17 @@ export default function InstallationsPage() {
 
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
+
+  // Dropdown data
+  const [customers, setCustomers] = useState<CustomerResponse[]>([]);
+  const [orders, setOrders] = useState<OrderResponse[]>([]);
+  const [technicians, setTechnicians] = useState<TechnicianResponse[]>([]);
+
+  useEffect(() => {
+    customerApi.getAll(0, 1000).then((res) => setCustomers(res.content)).catch(() => {});
+    orderApi.getAll().then(setOrders).catch(() => {});
+    technicianApi.getActive().then(setTechnicians).catch(() => {});
+  }, []);
 
   const loadInstallations = async () => {
     setLoading(true);
@@ -466,39 +483,54 @@ export default function InstallationsPage() {
                       />
                     </div>
                     <div className="col-md-4">
-                      <label className="form-label fw-medium">Order ID *</label>
-                      <input
-                        type="number"
+                      <label className="form-label fw-medium">Order *</label>
+                      <select
                         className="input-brand w-100"
                         required
-                        min="1"
                         value={form.orderId || ""}
                         onChange={(e) => setForm({ ...form, orderId: parseInt(e.target.value) || 0 })}
-                      />
+                      >
+                        <option value="">Select order</option>
+                        {orders.map((o) => (
+                          <option key={o.orderId} value={o.orderId}>
+                            {o.orderNumber} (#{o.orderId})
+                          </option>
+                        ))}
+                      </select>
                     </div>
                     <div className="col-md-4">
-                      <label className="form-label fw-medium">Customer ID *</label>
-                      <input
-                        type="number"
+                      <label className="form-label fw-medium">Customer *</label>
+                      <select
                         className="input-brand w-100"
                         required
-                        min="1"
                         value={form.customerId || ""}
                         onChange={(e) => setForm({ ...form, customerId: parseInt(e.target.value) || 0 })}
-                      />
+                      >
+                        <option value="">Select customer</option>
+                        {customers.map((c) => (
+                          <option key={c.customerId} value={c.customerId}>
+                            {c.firstName} {c.lastName} ({c.email})
+                          </option>
+                        ))}
+                      </select>
                     </div>
                     <div className="col-md-4">
-                      <label className="form-label fw-medium">Technician ID *</label>
-                      <input
-                        type="number"
+                      <label className="form-label fw-medium">Technician *</label>
+                      <select
                         className="input-brand w-100"
                         required
-                        min="1"
                         value={form.technicianId || ""}
                         onChange={(e) =>
                           setForm({ ...form, technicianId: parseInt(e.target.value) || 0 })
                         }
-                      />
+                      >
+                        <option value="">Select technician</option>
+                        {technicians.map((t) => (
+                          <option key={t.id} value={t.id}>
+                            #{t.id} – {t.specialization} ({t.availabilityStatus})
+                          </option>
+                        ))}
+                      </select>
                     </div>
                     <div className="col-12">
                       <label className="form-label fw-medium">Installation Address *</label>
@@ -605,13 +637,23 @@ export default function InstallationsPage() {
               </div>
               <div className="card-body">
                 <div className="mb-3">
-                  <label className="form-label fw-medium">Technician ID *</label>
-                  <input
-                    type="number"
+                  <label className="form-label fw-medium">Technician *</label>
+                  <select
                     className="input-brand w-100"
                     value={assignTechId}
-                    onChange={(e) => setAssignTechId(e.target.value)}
-                  />
+                    onChange={(e) => {
+                      setAssignTechId(e.target.value);
+                      const tech = technicians.find((t) => String(t.id) === e.target.value);
+                      if (tech) setAssignTechName(`Tech #${tech.id} – ${tech.specialization}`);
+                    }}
+                  >
+                    <option value="">Select technician</option>
+                    {technicians.map((t) => (
+                      <option key={t.id} value={t.id}>
+                        #{t.id} – {t.specialization} ({t.availabilityStatus})
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="form-label fw-medium">Technician Name *</label>

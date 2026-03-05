@@ -445,7 +445,7 @@ export default function SuppliersPage() {
                                       </div>
                                     )}
                                   </td>
-                                  <td>${p.unitPrice.toFixed(2)}</td>
+                                  <td>LKR {p.unitPrice.toFixed(2)}</td>
                                   <td>{p.quantityInStock}</td>
                                   <td>
                                     <span

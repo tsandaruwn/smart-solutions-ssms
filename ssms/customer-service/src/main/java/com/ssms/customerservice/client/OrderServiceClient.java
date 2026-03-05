@@ -9,7 +9,7 @@ import java.util.Map;
 
 @FeignClient(
     name = "order-service",
-    url = "${services.order-service.url:http://localhost:8082}"
+    url = "${services.order-service.url:http://localhost:8084}"
 )
 public interface OrderServiceClient {
 
