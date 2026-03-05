@@ -2,6 +2,8 @@ server:
   port: 6543
 
 # URLs for downstream microservices
+customer-service:
+  url: http://localhost:8081
 order-service:
   url: http://localhost:8085
 

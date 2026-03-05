@@ -47,7 +47,7 @@ public class BillingService {
         OrderDto order = orderClient.getOrderById(orderId);
         // customerId comes directly from the order-management service response
         CustomerDto customer = customerClient.getCustomerById(
-                order.getCustomerId() != null ? order.getCustomerId().longValue() : 0L);
+                order.getCustomerId() != null ? order.getCustomerId().longValue() : 0L).getData();
 
         BigDecimal subtotal = priceCalculator.calculateSubtotal(order);
         BigDecimal tax = priceCalculator.calculateTax(subtotal);
@@ -100,7 +100,7 @@ public class BillingService {
 
     public CustomerDto getInvoiceCustomer(Long invoiceId) {
         Bill bill = billRepository.findById(invoiceId).orElseThrow();
-        return customerClient.getCustomerById(bill.getCustomerId());
+        return customerClient.getCustomerById(bill.getCustomerId()).getData();
     }
 
     public List<PaymentDto> getPaymentsForInvoice(Long invoiceId) {

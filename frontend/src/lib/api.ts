@@ -319,7 +319,12 @@ const PAYMENT_BASE = "/api/payments";
 const PAYMENT_METHOD_BASE = "/api/payment-methods";
 
 export type PaymentTransactionStatus = "Pending" | "Success" | "Failed";
-export type PaymentMethodType = "Card" | "Bank_Transfer" | "Mobile_Wallet" | "Cash" | "Online_Banking";
+export type PaymentMethodType =
+  | "Card"
+  | "Bank_Transfer"
+  | "Mobile_Wallet"
+  | "Cash"
+  | "Online_Banking";
 
 export interface PaymentMethodResponse {
   paymentMethodId: number;
@@ -392,8 +397,12 @@ export const paymentApi = {
   },
 
   /** GET /api/payments/transaction/{transactionReference} – get payment by transaction reference */
-  getByTransactionReference: async (transactionReference: string): Promise<PaymentResponse> => {
-    const res = await fetch(`${PAYMENT_BASE}/transaction/${transactionReference}`);
+  getByTransactionReference: async (
+    transactionReference: string,
+  ): Promise<PaymentResponse> => {
+    const res = await fetch(
+      `${PAYMENT_BASE}/transaction/${transactionReference}`,
+    );
     return handleResponse<PaymentResponse>(res);
   },
 
@@ -410,7 +419,10 @@ export const paymentApi = {
   },
 
   /** PUT /api/payments/{id} – update payment */
-  update: async (id: number, payment: PaymentRequest): Promise<PaymentResponse> => {
+  update: async (
+    id: number,
+    payment: PaymentRequest,
+  ): Promise<PaymentResponse> => {
     const res = await fetch(`${PAYMENT_BASE}/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -420,7 +432,10 @@ export const paymentApi = {
   },
 
   /** PATCH /api/payments/{id}/status – update payment status */
-  updateStatus: async (id: number, status: PaymentTransactionStatus): Promise<PaymentResponse> => {
+  updateStatus: async (
+    id: number,
+    status: PaymentTransactionStatus,
+  ): Promise<PaymentResponse> => {
     const res = await fetch(`${PAYMENT_BASE}/${id}/status?status=${status}`, {
       method: "PATCH",
     });
@@ -429,14 +444,15 @@ export const paymentApi = {
 
   /** POST /api/payments/{id}/refund – process refund */
   processRefund: async (
-    id: number, 
-    refundReason?: string, 
-    refundAmount?: number
+    id: number,
+    refundReason?: string,
+    refundAmount?: number,
   ): Promise<PaymentResponse> => {
     const params = new URLSearchParams();
     if (refundReason) params.append("refundReason", refundReason);
-    if (refundAmount !== undefined) params.append("refundAmount", refundAmount.toString());
-    
+    if (refundAmount !== undefined)
+      params.append("refundAmount", refundAmount.toString());
+
     const url = `${PAYMENT_BASE}/${id}/refund${params.toString() ? `?${params.toString()}` : ""}`;
     const res = await fetch(url, { method: "POST" });
     return handleResponse<PaymentResponse>(res);
@@ -453,7 +469,9 @@ export const paymentApi = {
 
 export const paymentMethodApi = {
   /** POST /api/payment-methods – create a new payment method */
-  create: async (method: PaymentMethodRequest): Promise<PaymentMethodResponse> => {
+  create: async (
+    method: PaymentMethodRequest,
+  ): Promise<PaymentMethodResponse> => {
     const res = await fetch(PAYMENT_METHOD_BASE, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -487,7 +505,10 @@ export const paymentMethodApi = {
   },
 
   /** PUT /api/payment-methods/{id} – update payment method */
-  update: async (id: number, method: PaymentMethodRequest): Promise<PaymentMethodResponse> => {
+  update: async (
+    id: number,
+    method: PaymentMethodRequest,
+  ): Promise<PaymentMethodResponse> => {
     const res = await fetch(`${PAYMENT_METHOD_BASE}/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -510,5 +531,498 @@ export const paymentMethodApi = {
       method: "DELETE",
     });
     if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
+  },
+};
+
+// ============================================
+// Inventory Management API Service
+// Proxied to http://localhost:8084 via Next.js rewrite
+// ============================================
+
+const INVENTORY_BASE = "/api/v1/inventory";
+const WAREHOUSE_BASE = "/api/v1/warehouses";
+
+// -- Envelope used by inventory service --
+export interface InventoryApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T | null;
+  timestamp: string;
+}
+
+// -- Warehouse --
+
+export interface WarehouseResponse {
+  warehouseId: number;
+  name: string;
+  address: string | null;
+  city: string | null;
+  country: string | null;
+  managerUserId: number | null;
+  contactPhone: string | null;
+  capacity: number | null;
+  isActive: boolean;
+}
+
+export interface WarehouseRequest {
+  name: string;
+  address?: string;
+  city?: string;
+  country?: string;
+  managerUserId?: number;
+  contactPhone?: string;
+  capacity?: number;
+  isActive?: boolean;
+}
+
+// -- Inventory --
+
+export interface InventoryResponse {
+  inventoryId: number;
+  productId: number;
+  warehouse: WarehouseResponse;
+  quantityOnHand: number;
+  reorderLevel: number;
+  reorderQuantity: number;
+  lowStockAlertSent: boolean;
+  lowStock: boolean;
+  lastRestockedAt: string | null;
+  updatedAt: string | null;
+}
+
+export interface InventoryRequest {
+  productId: number;
+  warehouseId: number;
+  quantityOnHand: number;
+  reorderLevel?: number;
+  reorderQuantity?: number;
+}
+
+export type StockOperation = "INCREASE" | "DECREASE" | "SET";
+
+export interface StockUpdateRequest {
+  quantity: number;
+  operation: StockOperation;
+  reason?: string;
+}
+
+/** Helper to unwrap the ApiResponse<T> envelope from the inventory service */
+async function handleInventoryResponse<T>(response: Response): Promise<T> {
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({
+      success: false,
+      message: response.statusText,
+    }));
+    throw new Error(body.message || "An error occurred");
+  }
+  const envelope: InventoryApiResponse<T> = await response.json();
+  if (!envelope.success) {
+    throw new Error(envelope.message || "An error occurred");
+  }
+  return envelope.data as T;
+}
+
+export const inventoryApi = {
+  /** POST /api/v1/inventory – create inventory record */
+  create: async (req: InventoryRequest): Promise<InventoryResponse> => {
+    const res = await fetch(INVENTORY_BASE, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(req),
+    });
+    return handleInventoryResponse<InventoryResponse>(res);
+  },
+
+  /** GET /api/v1/inventory – get all inventory records */
+  getAll: async (): Promise<InventoryResponse[]> => {
+    const res = await fetch(INVENTORY_BASE);
+    return handleInventoryResponse<InventoryResponse[]>(res);
+  },
+
+  /** GET /api/v1/inventory/{id} – get by ID */
+  getById: async (id: number): Promise<InventoryResponse> => {
+    const res = await fetch(`${INVENTORY_BASE}/${id}`);
+    return handleInventoryResponse<InventoryResponse>(res);
+  },
+
+  /** GET /api/v1/inventory/product/{productId} – get by product */
+  getByProduct: async (productId: number): Promise<InventoryResponse[]> => {
+    const res = await fetch(`${INVENTORY_BASE}/product/${productId}`);
+    return handleInventoryResponse<InventoryResponse[]>(res);
+  },
+
+  /** GET /api/v1/inventory/warehouse/{warehouseId} – get by warehouse */
+  getByWarehouse: async (warehouseId: number): Promise<InventoryResponse[]> => {
+    const res = await fetch(`${INVENTORY_BASE}/warehouse/${warehouseId}`);
+    return handleInventoryResponse<InventoryResponse[]>(res);
+  },
+
+  /** PUT /api/v1/inventory/{id} – update inventory */
+  update: async (
+    id: number,
+    req: InventoryRequest,
+  ): Promise<InventoryResponse> => {
+    const res = await fetch(`${INVENTORY_BASE}/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(req),
+    });
+    return handleInventoryResponse<InventoryResponse>(res);
+  },
+
+  /** PATCH /api/v1/inventory/{id}/stock – update stock */
+  updateStock: async (
+    id: number,
+    req: StockUpdateRequest,
+  ): Promise<InventoryResponse> => {
+    const res = await fetch(`${INVENTORY_BASE}/${id}/stock`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(req),
+    });
+    return handleInventoryResponse<InventoryResponse>(res);
+  },
+
+  /** GET /api/v1/inventory/alerts/low-stock – all low-stock alerts */
+  getLowStockAlerts: async (): Promise<InventoryResponse[]> => {
+    const res = await fetch(`${INVENTORY_BASE}/alerts/low-stock`);
+    return handleInventoryResponse<InventoryResponse[]>(res);
+  },
+
+  /** GET /api/v1/inventory/alerts/low-stock/warehouse/{warehouseId} */
+  getLowStockByWarehouse: async (
+    warehouseId: number,
+  ): Promise<InventoryResponse[]> => {
+    const res = await fetch(
+      `${INVENTORY_BASE}/alerts/low-stock/warehouse/${warehouseId}`,
+    );
+    return handleInventoryResponse<InventoryResponse[]>(res);
+  },
+
+  /** DELETE /api/v1/inventory/{id} – soft-delete */
+  delete: async (id: number): Promise<void> => {
+    const res = await fetch(`${INVENTORY_BASE}/${id}`, { method: "DELETE" });
+    if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
+  },
+};
+
+export const warehouseApi = {
+  /** POST /api/v1/warehouses – create warehouse */
+  create: async (req: WarehouseRequest): Promise<WarehouseResponse> => {
+    const res = await fetch(WAREHOUSE_BASE, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(req),
+    });
+    return handleInventoryResponse<WarehouseResponse>(res);
+  },
+
+  /** GET /api/v1/warehouses – get all active warehouses */
+  getAll: async (): Promise<WarehouseResponse[]> => {
+    const res = await fetch(WAREHOUSE_BASE);
+    return handleInventoryResponse<WarehouseResponse[]>(res);
+  },
+
+  /** GET /api/v1/warehouses/{id} – get by ID */
+  getById: async (id: number): Promise<WarehouseResponse> => {
+    const res = await fetch(`${WAREHOUSE_BASE}/${id}`);
+    return handleInventoryResponse<WarehouseResponse>(res);
+  },
+
+  /** PUT /api/v1/warehouses/{id} – update warehouse */
+  update: async (
+    id: number,
+    req: WarehouseRequest,
+  ): Promise<WarehouseResponse> => {
+    const res = await fetch(`${WAREHOUSE_BASE}/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(req),
+    });
+    return handleInventoryResponse<WarehouseResponse>(res);
+  },
+
+  /** DELETE /api/v1/warehouses/{id} – soft-deactivate */
+  delete: async (id: number): Promise<void> => {
+    const res = await fetch(`${WAREHOUSE_BASE}/${id}`, { method: "DELETE" });
+    if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
+  },
+};
+
+// ============================================
+// Product Management API Service
+// Proxied to http://localhost:8080 via Next.js rewrite
+// ============================================
+
+const PRODUCT_BASE = "/api/products";
+const CATEGORY_BASE = "/api/categories";
+
+export interface ProductCategory {
+  id: number;
+  name: string;
+  description?: string;
+  createdAt?: string;
+}
+
+export interface ProductResponse {
+  id: number;
+  sku: string;
+  name: string;
+  categoryId: number;
+  categoryName?: string;
+  supplierId: number;
+  price: number;
+  description?: string;
+  imageUrl?: string;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  discontinuedAt?: string;
+}
+
+export interface ProductRequest {
+  sku: string;
+  name: string;
+  categoryId: number;
+  supplierId: number;
+  price: number;
+  description?: string;
+  imageUrl?: string;
+}
+
+export interface CategoryRequest {
+  name: string;
+  description?: string;
+}
+
+export const categoryApi = {
+  getAll: async (): Promise<ProductCategory[]> => {
+    const res = await fetch(CATEGORY_BASE);
+    return handleResponse<ProductCategory[]>(res);
+  },
+
+  create: async (data: CategoryRequest): Promise<ProductCategory> => {
+    const res = await fetch(CATEGORY_BASE, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return handleResponse<ProductCategory>(res);
+  },
+};
+
+export const productApi = {
+  getAll: async (): Promise<ProductResponse[]> => {
+    const res = await fetch(PRODUCT_BASE);
+    return handleResponse<ProductResponse[]>(res);
+  },
+
+  getAvailable: async (): Promise<ProductResponse[]> => {
+    const res = await fetch(`${PRODUCT_BASE}/available`);
+    return handleResponse<ProductResponse[]>(res);
+  },
+
+  getById: async (id: number): Promise<ProductResponse> => {
+    const res = await fetch(`${PRODUCT_BASE}/${id}`);
+    return handleResponse<ProductResponse>(res);
+  },
+
+  create: async (data: ProductRequest): Promise<ProductResponse> => {
+    const res = await fetch(PRODUCT_BASE, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return handleResponse<ProductResponse>(res);
+  },
+
+  update: async (
+    id: number,
+    data: ProductRequest,
+  ): Promise<ProductResponse> => {
+    const res = await fetch(`${PRODUCT_BASE}/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return handleResponse<ProductResponse>(res);
+  },
+
+  discontinue: async (id: number): Promise<ProductResponse> => {
+    const res = await fetch(`${PRODUCT_BASE}/${id}/discontinue`, {
+      method: "PATCH",
+    });
+    return handleResponse<ProductResponse>(res);
+  },
+
+  delete: async (id: number): Promise<void> => {
+    const res = await fetch(`${PRODUCT_BASE}/${id}`, { method: "DELETE" });
+    if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
+  },
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Digital Marketing API
+// Connects to the Spring Boot Digital Marketing service at localhost:8088
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type CampaignStatus =
+  | "DRAFT"
+  | "ACTIVE"
+  | "PAUSED"
+  | "COMPLETED"
+  | "CANCELLED";
+export type CampaignType =
+  | "EMAIL"
+  | "SOCIAL_MEDIA"
+  | "SEO"
+  | "PPC"
+  | "CONTENT"
+  | "INFLUENCER"
+  | "AFFILIATE"
+  | "OTHER";
+
+export interface CampaignResponse {
+  campaignId: number;
+  createdByUserId: number;
+  name: string;
+  type: CampaignType | null;
+  description: string | null;
+  targetAudience: string | null;
+  startDate: string;
+  endDate: string;
+  budget: number | null;
+  status: CampaignStatus;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface CreateCampaignRequest {
+  createdByUserId: number;
+  name: string;
+  type?: CampaignType;
+  description?: string;
+  targetAudience?: string;
+  startDate: string;
+  endDate: string;
+  budget?: number;
+  status?: CampaignStatus;
+}
+
+export interface UpdateCampaignRequest {
+  name?: string;
+  type?: CampaignType;
+  description?: string;
+  targetAudience?: string;
+  startDate?: string;
+  endDate?: string;
+  budget?: number;
+  status?: CampaignStatus;
+}
+
+export interface PerformanceResponse {
+  perfId: number;
+  campaignId: number;
+  campaignName: string;
+  recordedDate: string;
+  impressions: number;
+  clicks: number;
+  conversions: number;
+  revenueGenerated: number;
+  costIncurred: number;
+  clickThroughRate: number;
+  conversionRate: number;
+  roas: number;
+}
+
+export interface RecordPerformanceRequest {
+  recordedDate: string;
+  impressions?: number;
+  clicks?: number;
+  conversions?: number;
+  revenueGenerated?: number;
+  costIncurred?: number;
+}
+
+export interface CampaignApiSuccessResponse {
+  success: boolean;
+  message: string;
+  campaign?: CampaignResponse;
+}
+
+const CAMPAIGN_BASE = "/api/campaigns";
+
+export const campaignApi = {
+  getAll: async (): Promise<CampaignResponse[]> => {
+    const res = await fetch(CAMPAIGN_BASE);
+    return handleResponse<CampaignResponse[]>(res);
+  },
+
+  getById: async (id: number): Promise<CampaignResponse> => {
+    const res = await fetch(`${CAMPAIGN_BASE}/${id}`);
+    return handleResponse<CampaignResponse>(res);
+  },
+
+  getByStatus: async (status: CampaignStatus): Promise<CampaignResponse[]> => {
+    const res = await fetch(`${CAMPAIGN_BASE}/status/${status}`);
+    return handleResponse<CampaignResponse[]>(res);
+  },
+
+  create: async (
+    data: CreateCampaignRequest,
+  ): Promise<CampaignApiSuccessResponse> => {
+    const res = await fetch(CAMPAIGN_BASE, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return handleResponse<CampaignApiSuccessResponse>(res);
+  },
+
+  update: async (
+    id: number,
+    data: UpdateCampaignRequest,
+  ): Promise<CampaignApiSuccessResponse> => {
+    const res = await fetch(`${CAMPAIGN_BASE}/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return handleResponse<CampaignApiSuccessResponse>(res);
+  },
+
+  delete: async (id: number): Promise<void> => {
+    const res = await fetch(`${CAMPAIGN_BASE}/${id}`, { method: "DELETE" });
+    if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
+  },
+};
+
+export const performanceApi = {
+  getByCampaign: async (campaignId: number): Promise<PerformanceResponse[]> => {
+    const res = await fetch(`${CAMPAIGN_BASE}/${campaignId}/performance`);
+    return handleResponse<PerformanceResponse[]>(res);
+  },
+
+  getSummary: async (campaignId: number): Promise<Record<string, number>> => {
+    const res = await fetch(
+      `${CAMPAIGN_BASE}/${campaignId}/performance/summary`,
+    );
+    return handleResponse<Record<string, number>>(res);
+  },
+
+  record: async (
+    campaignId: number,
+    data: RecordPerformanceRequest,
+  ): Promise<{
+    success: boolean;
+    message: string;
+    performance?: PerformanceResponse;
+  }> => {
+    const res = await fetch(`${CAMPAIGN_BASE}/${campaignId}/performance`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return handleResponse(res);
   },
 };

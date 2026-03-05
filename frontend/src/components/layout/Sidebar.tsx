@@ -17,21 +17,41 @@ import {
   Zap,
   Receipt,
   CreditCard,
+  Warehouse,
   UserCog,
+  Megaphone,
+  Wrench,
+  Building2,
 } from "lucide-react";
 
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Orders", href: "/dashboard/orders", icon: ShoppingCart },
   { label: "Create Order", href: "/dashboard/orders/create", icon: Plus },
+  { label: "Products", href: "/dashboard/products", icon: Package },
+  { label: "Inventory", href: "/dashboard/inventory", icon: Package },
+  {
+    label: "Warehouses",
+    href: "/dashboard/inventory/warehouses",
+    icon: Warehouse,
+  },
+  { label: "Suppliers", href: "/dashboard/suppliers", icon: Building2 },
   { label: "Billing", href: "/dashboard/billing", icon: Receipt },
   { label: "Payments", href: "/dashboard/payments", icon: CreditCard },
-  // 👤 USER MANAGEMENT MODULE - Created by [Your Name]
   { label: "User Management", href: "/dashboard/users", icon: UserCog },
+  {
+    label: "Digital Marketing",
+    href: "/dashboard/digital-marketing",
+    icon: Megaphone,
+  },
+  {
+    label: "Installation Management",
+    href: "/dashboard/installation-management",
+    icon: Wrench,
+  },
 ];
 
 const futureModules = [
-  { label: "Products", icon: Package },
   { label: "Customers", icon: Users },
   { label: "Settings", icon: Settings },
 ];

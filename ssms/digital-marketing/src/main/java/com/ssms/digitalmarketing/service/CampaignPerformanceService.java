@@ -5,7 +5,6 @@ import com.ssms.digitalmarketing.dto.RecordPerformanceRequest;
 import com.ssms.digitalmarketing.entity.Campaign;
 import com.ssms.digitalmarketing.entity.CampaignPerformance;
 import com.ssms.digitalmarketing.exception.CampaignNotFoundException;
-import com.ssms.digitalmarketing.exception.DuplicatePerformanceEntryException;
 import com.ssms.digitalmarketing.repository.CampaignPerformanceRepository;
 import com.ssms.digitalmarketing.repository.CampaignRepository;
 import lombok.RequiredArgsConstructor;
@@ -98,7 +97,10 @@ public class CampaignPerformanceService {
     @Transactional(readOnly = true)
     public Map<String, Object> getCampaignSummary(Integer campaignId) {
         Campaign campaign = findCampaignOrThrow(campaignId);
-        Object[] row = performanceRepository.aggregateByCampaignId(campaignId);
+        List<Object[]> rows = performanceRepository.aggregateByCampaignId(campaignId);
+        Object[] row = (rows != null && !rows.isEmpty() && rows.get(0) != null)
+                ? rows.get(0)
+                : new Object[] { null, null, null, null, null };
 
         long totalImpressions = toLong(row[0]);
         long totalClicks = toLong(row[1]);

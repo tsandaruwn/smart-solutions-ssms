@@ -2,8 +2,9 @@ spring:
   application:
     name: supplier-management
 
+  # PostgreSQL Database Configuration
   datasource:
-    url: jdbc:postgresql://localhost:5432/ssms_supplier_db
+    url: jdbc:postgresql://localhost:5432/supplier-management
     username: postgres
     password: admin123
     driver-class-name: org.postgresql.Driver
@@ -19,3 +20,12 @@ spring:
 
 server:
   port: 8085
+
+# Logging configuration
+logging:
+  level:
+    com.ssms.suppliermanagement: DEBUG
+    org.springframework.web: INFO
+    org.hibernate: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"

@@ -1,19 +1,27 @@
 package com.ssms.billinginvoice.dto;
 
+import lombok.Data;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+/**
+ * Mirrors com.ssms.customerservice.dto.CustomerResponseDto
+ * returned by the customer-service at GET /api/v1/customers/{id}.
+ */
+@Data
 public class CustomerDto {
     private Long customerId;
-    private String name;
     private String email;
-
-    public Long getCustomerId() {
-        return customerId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
+    private String firstName;
+    private String lastName;
+    private String phone;
+    private String addressLine1;
+    private String addressLine2;
+    private String city;
+    private String state;
+    private String country;
+    private String postalCode;
+    private LocalDate dateOfBirth;
+    private LocalDateTime registrationDate;
 }

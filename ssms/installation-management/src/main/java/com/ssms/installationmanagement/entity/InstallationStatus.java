@@ -4,6 +4,5 @@ public enum InstallationStatus {
     SCHEDULED,
     IN_PROGRESS,
     COMPLETED,
-    CANCELLED,
-    FAILED
+    CANCELLED
 }
