@@ -21,6 +21,7 @@ import {
   UserCog,
   Megaphone,
   Wrench,
+  Building2,
 } from "lucide-react";
 
 const navItems = [
@@ -34,6 +35,7 @@ const navItems = [
     href: "/dashboard/inventory/warehouses",
     icon: Warehouse,
   },
+  { label: "Suppliers", href: "/dashboard/suppliers", icon: Building2 },
   { label: "Billing", href: "/dashboard/billing", icon: Receipt },
   { label: "Payments", href: "/dashboard/payments", icon: CreditCard },
   { label: "User Management", href: "/dashboard/users", icon: UserCog },
