@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM node:18-alpine AS build
+FROM node:22-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm ci
@@ -7,7 +7,7 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Run
-FROM node:18-alpine
+FROM node:22-alpine
 WORKDIR /app
 COPY --from=build /app/.next ./.next
 COPY --from=build /app/node_modules ./node_modules

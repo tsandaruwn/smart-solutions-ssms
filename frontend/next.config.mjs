@@ -1,8 +1,26 @@
 const nextConfig = {
   async rewrites() {
     const isDocker = process.env.DOCKER === "true";
-    const host = (service, port) =>
-      isDocker ? `http://${service}:${port}` : `http://localhost:${port}`;
+
+    // For Vercel/production: use environment variables for each service URL
+    // For Docker: use container names
+    // For local dev: use localhost
+    const host = (service, port) => {
+      if (isDocker) return `http://${service}:${port}`;
+      const envMap = {
+        "user-management": process.env.USER_MANAGEMENT_URL,
+        "customer-service": process.env.CUSTOMER_SERVICE_URL,
+        "product-management": process.env.PRODUCT_MANAGEMENT_URL,
+        "inventory-management": process.env.INVENTORY_MANAGEMENT_URL,
+        "order-management": process.env.ORDER_MANAGEMENT_URL,
+        "billing-and-invoice": process.env.BILLING_SERVICE_URL,
+        "payment-management": process.env.PAYMENT_MANAGEMENT_URL,
+        "digital-marketing": process.env.DIGITAL_MARKETING_URL,
+        "supplier-management": process.env.SUPPLIER_MANAGEMENT_URL,
+        "installation-management": process.env.INSTALLATION_MANAGEMENT_URL,
+      };
+      return envMap[service] || `http://localhost:${port}`;
+    };
 
     return [
       // User Management → 8080
