@@ -42,9 +42,10 @@ export default function CreateOrderPage() {
   const addItem    = () => setItems([...items, { ...emptyItem }]);
   const removeItem = (index: number) => { if (items.length > 1) setItems(items.filter((_, i) => i !== index)); };
   const updateItem = (index: number, field: keyof OrderItemForm, value: string) => {
-    const updated = [...items];
-    updated[index] = { ...updated[index], [field]: value };
-    setItems(updated);
+    setItems(prev => prev.map((item, i) => i === index ? { ...item, [field]: value } : item));
+  };
+  const updateItemFields = (index: number, fields: Partial<OrderItemForm>) => {
+    setItems(prev => prev.map((item, i) => i === index ? { ...item, ...fields } : item));
   };
   const calcLineTotal = (item: OrderItemForm) =>
     (Number(item.quantity) || 0) * (Number(item.unitPriceAtOrder) || 0) * (1 - (Number(item.discountPercent) || 0) / 100);
@@ -183,9 +184,12 @@ export default function CreateOrderPage() {
                       </label>
                       <select required value={item.productId}
                         onChange={(e) => {
-                          updateItem(index, "productId", e.target.value);
-                          const prod = products.find((p) => String(p.id) === e.target.value);
-                          if (prod) updateItem(index, "unitPriceAtOrder", String(prod.price));
+                          const val = e.target.value;
+                          const prod = products.find((p) => String(p.id) === val);
+                          updateItemFields(index, {
+                            productId: val,
+                            ...(prod ? { unitPriceAtOrder: String(prod.price) } : {}),
+                          });
                         }} className="input-sm">
                         <option value="">Select product</option>
                         {products.map((p) => (
