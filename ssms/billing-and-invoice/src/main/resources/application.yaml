@@ -2,10 +2,12 @@ server:
   port: 8085
 
 # URLs for downstream microservices
-customer-service:
-  url: http://localhost:8081
-order-service:
-  url: http://localhost:8084
+customer:
+  service:
+    url: http://localhost:8081
+order:
+  service:
+    url: http://localhost:8084
 
 spring:
   datasource:
