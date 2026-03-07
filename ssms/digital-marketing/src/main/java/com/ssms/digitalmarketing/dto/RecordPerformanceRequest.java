@@ -6,9 +6,6 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-/**
- * Request DTO for recording a daily performance snapshot for a campaign.
- */
 @Data
 public class RecordPerformanceRequest {
 

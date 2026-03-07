@@ -15,11 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * REST controller for Order Management operations.
- *
- * Base path: /api/orders
- */
 @RestController
 @RequestMapping("/api/orders")
 @RequiredArgsConstructor
@@ -28,12 +23,6 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    // ─── CREATE ─────────────────────────────────────────────────
-
-    /**
-     * Place a new order.
-     * POST /api/orders
-     */
     @PostMapping
     public ResponseEntity<Map<String, Object>> placeOrder(@Valid @RequestBody CreateOrderRequest request) {
         OrderResponse order = orderService.placeOrder(request);
@@ -47,57 +36,31 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // ─── READ ───────────────────────────────────────────────────
-
-    /**
-     * Get all orders.
-     * GET /api/orders
-     */
     @GetMapping
     public ResponseEntity<List<OrderResponse>> getAllOrders() {
         return ResponseEntity.ok(orderService.getAllOrders());
     }
 
-    /**
-     * Get order by primary key (order_id).
-     * GET /api/orders/{orderId}
-     */
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderResponse> getOrderById(@PathVariable Integer orderId) {
         return ResponseEntity.ok(orderService.getOrderById(orderId));
     }
 
-    /**
-     * Get order by order_number.
-     * GET /api/orders/number/{orderNumber}
-     */
     @GetMapping("/number/{orderNumber}")
     public ResponseEntity<OrderResponse> getOrderByOrderNumber(@PathVariable String orderNumber) {
         return ResponseEntity.ok(orderService.getOrderByOrderNumber(orderNumber));
     }
 
-    /**
-     * Get order history for a customer.
-     * GET /api/orders/customer/{customerId}/history
-     */
     @GetMapping("/customer/{customerId}/history")
     public ResponseEntity<List<OrderResponse>> getOrderHistory(@PathVariable Integer customerId) {
         return ResponseEntity.ok(orderService.getOrderHistory(customerId));
     }
 
-    /**
-     * Get orders by status.
-     * GET /api/orders/status/{status}
-     */
     @GetMapping("/status/{status}")
     public ResponseEntity<List<OrderResponse>> getOrdersByStatus(@PathVariable OrderStatus status) {
         return ResponseEntity.ok(orderService.getOrdersByStatus(status));
     }
 
-    /**
-     * Get orders by date range.
-     * GET /api/orders/date-range?startDate=...&endDate=...
-     */
     @GetMapping("/date-range")
     public ResponseEntity<List<OrderResponse>> getOrdersByDateRange(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
@@ -105,21 +68,11 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrdersByDateRange(startDate, endDate));
     }
 
-    /**
-     * Get recent orders (last 30 days).
-     * GET /api/orders/recent
-     */
     @GetMapping("/recent")
     public ResponseEntity<List<OrderResponse>> getRecentOrders() {
         return ResponseEntity.ok(orderService.getRecentOrders());
     }
 
-    // ─── UPDATE ─────────────────────────────────────────────────
-
-    /**
-     * Update an existing order (only PENDING orders).
-     * PUT /api/orders/{orderId}
-     */
     @PutMapping("/{orderId}")
     public ResponseEntity<Map<String, Object>> updateOrder(
             @PathVariable Integer orderId,
@@ -134,10 +87,6 @@ public class OrderController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Update order status (Pending → Shipped → Delivered).
-     * PUT /api/orders/{orderId}/status
-     */
     @PutMapping("/{orderId}/status")
     public ResponseEntity<Map<String, Object>> updateOrderStatus(
             @PathVariable Integer orderId,
@@ -152,12 +101,6 @@ public class OrderController {
         return ResponseEntity.ok(response);
     }
 
-    // ─── CANCEL ─────────────────────────────────────────────────
-
-    /**
-     * Cancel an order.
-     * POST /api/orders/{orderId}/cancel
-     */
     @PostMapping("/{orderId}/cancel")
     public ResponseEntity<Map<String, Object>> cancelOrder(
             @PathVariable Integer orderId,
@@ -175,12 +118,6 @@ public class OrderController {
         return ResponseEntity.ok(response);
     }
 
-    // ─── DELETE ─────────────────────────────────────────────────
-
-    /**
-     * Delete an order (admin).
-     * DELETE /api/orders/{orderId}
-     */
     @DeleteMapping("/{orderId}")
     public ResponseEntity<Map<String, Object>> deleteOrder(@PathVariable Integer orderId) {
         orderService.deleteOrder(orderId);
@@ -192,12 +129,6 @@ public class OrderController {
         return ResponseEntity.ok(response);
     }
 
-    // ─── HEALTH ─────────────────────────────────────────────────
-
-    /**
-     * Health check.
-     * GET /api/orders/health
-     */
     @GetMapping("/health")
     public ResponseEntity<Map<String, String>> healthCheck() {
         Map<String, String> response = new HashMap<>();
@@ -207,4 +138,3 @@ public class OrderController {
         return ResponseEntity.ok(response);
     }
 }
-

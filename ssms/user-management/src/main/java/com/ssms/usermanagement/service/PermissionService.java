@@ -13,9 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Service layer for Permission management
- */
 @Service
 @Transactional
 public class PermissionService {
@@ -23,47 +20,32 @@ public class PermissionService {
     @Autowired
     private PermissionRepository permissionRepository;
 
-    /**
-     * Get all permissions
-     */
     public List<PermissionResponseDTO> getAllPermissions() {
         return permissionRepository.findAll().stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Get permission by ID
-     */
     public PermissionResponseDTO getPermissionById(Integer id) {
         Permission permission = permissionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Permission not found with id: " + id));
         return toResponseDTO(permission);
     }
 
-    /**
-     * Get permissions by module
-     */
     public List<PermissionResponseDTO> getPermissionsByModule(String module) {
         return permissionRepository.findByModule(module).stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Get permissions by action
-     */
     public List<PermissionResponseDTO> getPermissionsByAction(Permission.Action action) {
         return permissionRepository.findByAction(action).stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Create new permission
-     */
     public PermissionResponseDTO createPermission(PermissionRequestDTO requestDTO) {
-        // Check for duplicate permission name
+        
         if (permissionRepository.existsByPermissionName(requestDTO.getPermissionName())) {
             throw new DuplicateResourceException("Permission already exists with name: " + requestDTO.getPermissionName());
         }
@@ -77,14 +59,10 @@ public class PermissionService {
         return toResponseDTO(savedPermission);
     }
 
-    /**
-     * Update existing permission
-     */
     public PermissionResponseDTO updatePermission(Integer id, PermissionRequestDTO requestDTO) {
         Permission permission = permissionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Permission not found with id: " + id));
 
-        // Check for duplicate permission name if updating
         if (requestDTO.getPermissionName() != null && !requestDTO.getPermissionName().equals(permission.getPermissionName())) {
             if (permissionRepository.existsByPermissionName(requestDTO.getPermissionName())) {
                 throw new DuplicateResourceException("Permission already exists with name: " + requestDTO.getPermissionName());
@@ -104,18 +82,12 @@ public class PermissionService {
         return toResponseDTO(updatedPermission);
     }
 
-    /**
-     * Delete permission by ID
-     */
     public void deletePermission(Integer id) {
         Permission permission = permissionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Permission not found with id: " + id));
         permissionRepository.delete(permission);
     }
 
-    /**
-     * Convert Permission entity to PermissionResponseDTO
-     */
     private PermissionResponseDTO toResponseDTO(Permission permission) {
         return new PermissionResponseDTO(
                 permission.getPermissionId(),

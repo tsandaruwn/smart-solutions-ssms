@@ -98,7 +98,7 @@ export default function InvoiceDetailPage() {
 
   return (
     <div>
-      {/* Back + header */}
+      {}
       <div className="d-flex align-items-center gap-3 mb-4">
         <button onClick={() => router.back()} className="btn-icon">
           <ArrowLeft size={18} />
@@ -117,7 +117,7 @@ export default function InvoiceDetailPage() {
       </div>
 
       <div className="row g-4">
-        {/* Invoice summary */}
+        {}
         <div className="col-12 col-lg-6">
           <div className="card-brand p-4">
             <div className="d-flex align-items-center gap-2 mb-3">
@@ -204,7 +204,7 @@ export default function InvoiceDetailPage() {
               </span>
             </div>
 
-            {/* Action buttons */}
+            {}
             <div className="d-flex gap-2 mt-3">
               {bill.status !== "PAID" && (
                 <>
@@ -259,7 +259,7 @@ export default function InvoiceDetailPage() {
           </div>
         </div>
 
-        {/* Customer info */}
+        {}
         <div className="col-12 col-lg-6">
           <div className="card-brand p-4 mb-4">
             <div className="d-flex align-items-center gap-2 mb-3">
@@ -298,7 +298,7 @@ export default function InvoiceDetailPage() {
           </div>
         </div>
 
-        {/* Payments table */}
+        {}
         <div className="col-12">
           <div className="card-brand">
             <div

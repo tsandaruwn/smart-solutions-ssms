@@ -1,10 +1,3 @@
-// ====================================
-// LOGIN PAGE
-// Created by: [Your Name]
-// Purpose: User authentication and login
-// Color Palette: Navy(#1A3263), Slate(#547792), Orange(#FAB95B), Cream(#E8E2DB)
-// ====================================
-
 "use client";
 
 import { useState } from "react";
@@ -27,21 +20,18 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      // In a real app, you would validate credentials against the backend
-      // For now, we'll do a simple check and redirect
+      
       if (formData.username && formData.password) {
-        // Simulate API call - In production, add proper authentication endpoint
+        
         const users = await userApi.getAllUsers();
         const user = users.find((u) => u.username === formData.username && u.isActive);
 
         if (user) {
-          // Update last login
+          
           await userApi.updateLastLogin(user.userId);
           
-          // Store user data in localStorage (in production, use proper session management)
           localStorage.setItem("currentUser", JSON.stringify(user));
           
-          // Redirect to dashboard
           router.push("/dashboard/users");
         } else {
           setError("Invalid username or password. User may be inactive.");
@@ -67,7 +57,7 @@ export default function LoginPage() {
   return (
     <div style={styles.container}>
       <div style={styles.loginCard}>
-        {/* Header */}
+        {}
         <div style={styles.header}>
           <div style={styles.logoCircle}>
             <LogIn size={40} color="#FAB95B" />
@@ -76,7 +66,7 @@ export default function LoginPage() {
           <p style={styles.subtitle}>User Management System</p>
         </div>
 
-        {/* Login Form */}
+        {}
         <form onSubmit={handleSubmit} style={styles.form}>
           {error && (
             <div style={styles.errorBox}>
@@ -130,7 +120,7 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* Footer Note */}
+        {}
         <div style={styles.footer}>
           <p style={styles.footerText}>
             Demo: Use any existing username from the system
@@ -138,7 +128,7 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Developer Signature */}
+      {}
       <div style={styles.signature}>
         <p>🔐 Login Module - Developed by [Your Name]</p>
       </div>

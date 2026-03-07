@@ -8,10 +8,6 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-/**
- * Request DTO for updating an existing Campaign.
- * All fields are optional – only non-null values are applied.
- */
 @Data
 public class UpdateCampaignRequest {
 

@@ -27,4 +27,3 @@ public interface CustomerService {
 
     List<Map<String, Object>> getCustomerOrderHistory(Long customerId);
 }
-

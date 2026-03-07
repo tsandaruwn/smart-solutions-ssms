@@ -13,7 +13,6 @@ import java.util.Map;
 @Component
 public class PaymentClient {
 
-    // mock storage keyed by invoiceId
     private final Map<Long, List<PaymentDto>> payments = new HashMap<>();
     private long nextId = 1;
 

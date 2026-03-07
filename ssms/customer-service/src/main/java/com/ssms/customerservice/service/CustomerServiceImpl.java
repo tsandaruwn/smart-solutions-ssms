@@ -138,7 +138,6 @@ public class CustomerServiceImpl implements CustomerService {
     public List<Map<String, Object>> getCustomerOrderHistory(Long customerId) {
         log.info("Fetching order history for customer id: {}", customerId);
 
-        // Verify customer exists
         customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException(customerId));
 
@@ -153,7 +152,6 @@ public class CustomerServiceImpl implements CustomerService {
         }
     }
 
-    // ── Mapper ──────────────────────────────────────────────────────────────
     private CustomerResponseDto mapToResponseDto(Customer customer) {
         return CustomerResponseDto.builder()
                 .customerId(customer.getCustomerId())

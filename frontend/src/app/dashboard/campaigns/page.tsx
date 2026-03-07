@@ -79,12 +79,10 @@ export default function CampaignsPage() {
 
   const [statusFilter, setStatusFilter] = useState<CampaignStatus | "ALL">("ALL");
 
-  // Create / Edit
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<CreateCampaignRequest>(emptyForm);
 
-  // Performance
   const [expandedCampaign, setExpandedCampaign] = useState<number | null>(null);
   const [perfData, setPerfData] = useState<PerformanceResponse[]>([]);
   const [perfSummary, setPerfSummary] = useState<CampaignSummary | null>(null);
@@ -102,7 +100,6 @@ export default function CampaignsPage() {
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
 
-  // Dropdown data
   const [users, setUsers] = useState<UserType[]>([]);
 
   useEffect(() => {
@@ -171,7 +168,6 @@ export default function CampaignsPage() {
     (currentPage + 1) * ITEMS_PER_PAGE
   );
 
-  // CRUD
   const openCreateForm = () => {
     setEditingId(null);
     setForm(emptyForm);
@@ -246,7 +242,6 @@ export default function CampaignsPage() {
     }
   };
 
-  // Performance
   const handleAddPerformance = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!expandedCampaign) return;
@@ -280,7 +275,7 @@ export default function CampaignsPage() {
 
   return (
     <div>
-      {/* Header */}
+      {}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h2 className="fw-bold text-navy mb-1">Campaigns</h2>
@@ -292,7 +287,7 @@ export default function CampaignsPage() {
         </button>
       </div>
 
-      {/* Stats */}
+      {}
       <div className="row g-3 mb-4">
         <div className="col-md-3">
           <StatCard title="Total Campaigns" value={stats.total} icon={Megaphone} color="navy" />
@@ -313,11 +308,11 @@ export default function CampaignsPage() {
         </div>
       </div>
 
-      {/* Messages */}
+      {}
       {success && <div className="alert alert-success mb-3">{success}</div>}
       {error && <ErrorMessage message={error} onRetry={loadCampaigns} />}
 
-      {/* Filters */}
+      {}
       <div className="card card-brand mb-4">
         <div className="card-body py-3">
           <div className="d-flex align-items-center gap-2 flex-wrap">
@@ -341,7 +336,7 @@ export default function CampaignsPage() {
         </div>
       </div>
 
-      {/* Campaign Cards */}
+      {}
       {loading ? (
         <LoadingSpinner />
       ) : (
@@ -384,7 +379,7 @@ export default function CampaignsPage() {
                       </div>
                     </div>
                     <div className="d-flex gap-1 align-items-center">
-                      {/* Status quick actions */}
+                      {}
                       {c.status === "DRAFT" && (
                         <button
                           className="btn btn-sm btn-navy"
@@ -447,14 +442,14 @@ export default function CampaignsPage() {
                     </div>
                   </div>
 
-                  {/* Expanded Performance */}
+                  {}
                   {expandedCampaign === c.campaignId && (
                     <div className="mt-3 pt-3" style={{ borderTop: "1px solid var(--border)" }}>
                       {perfLoading ? (
                         <LoadingSpinner />
                       ) : (
                         <>
-                          {/* Summary Cards */}
+                          {}
                           {perfSummary && (
                             <div className="row g-2 mb-3">
                               <div className="col-md-3">
@@ -520,7 +515,7 @@ export default function CampaignsPage() {
                             </div>
                           )}
 
-                          {/* Performance Table */}
+                          {}
                           <div className="d-flex justify-content-between align-items-center mb-2">
                             <h6 className="mb-0 fw-bold text-navy d-flex align-items-center gap-2">
                               <BarChart3 size={16} />
@@ -586,7 +581,7 @@ export default function CampaignsPage() {
             ))
           )}
 
-          {/* Pagination */}
+          {}
           {totalPages > 1 && (
             <div className="d-flex justify-content-center gap-1 mt-3">
               <button
@@ -617,7 +612,7 @@ export default function CampaignsPage() {
         </div>
       )}
 
-      {/* Campaign Form Modal */}
+      {}
       {showForm && (
         <>
           <div className="modal-backdrop-custom" onClick={() => setShowForm(false)} />
@@ -759,7 +754,7 @@ export default function CampaignsPage() {
         </>
       )}
 
-      {/* Performance Record Modal */}
+      {}
       {showPerfForm && (
         <>
           <div className="modal-backdrop-custom" onClick={() => setShowPerfForm(false)} />

@@ -6,11 +6,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
-/**
- * Security Configuration
- * Currently disables security for testing purposes
- * In production, implement proper authentication and authorization
- */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {

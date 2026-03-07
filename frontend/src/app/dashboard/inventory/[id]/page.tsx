@@ -31,7 +31,6 @@ export default function InventoryDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Stock update form
   const [showStockForm, setShowStockForm] = useState(false);
   const [stockQty, setStockQty] = useState(0);
   const [stockOp, setStockOp] = useState<StockOperation>("INCREASE");
@@ -96,7 +95,7 @@ export default function InventoryDetailPage() {
 
   return (
     <div>
-      {/* Back link */}
+      {}
       <Link
         href="/dashboard/inventory"
         className="d-inline-flex align-items-center gap-2 text-decoration-none text-muted-brand mb-3"
@@ -106,7 +105,7 @@ export default function InventoryDetailPage() {
         Back to Inventory
       </Link>
 
-      {/* Header */}
+      {}
       <div className="d-flex flex-column flex-sm-row align-items-sm-center justify-content-sm-between gap-3 mb-4">
         <div>
           <h1
@@ -160,7 +159,7 @@ export default function InventoryDetailPage() {
         </div>
       </div>
 
-      {/* Stock Update Form */}
+      {}
       {showStockForm && (
         <div className="card-brand mb-4">
           <div className="p-4">
@@ -244,9 +243,9 @@ export default function InventoryDetailPage() {
         </div>
       )}
 
-      {/* Details grid */}
+      {}
       <div className="row g-4">
-        {/* Product & Stock info */}
+        {}
         <div className="col-12 col-lg-6">
           <div className="card-brand h-100">
             <div className="p-4">
@@ -309,7 +308,7 @@ export default function InventoryDetailPage() {
           </div>
         </div>
 
-        {/* Warehouse info */}
+        {}
         <div className="col-12 col-lg-6">
           <div className="card-brand h-100">
             <div className="p-4">

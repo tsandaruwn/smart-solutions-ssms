@@ -28,7 +28,6 @@ public class PaymentRequest {
     
     private String refundReason;
 
-    // Getters and Setters
     public String getTransactionReference() {
         return transactionReference;
     }

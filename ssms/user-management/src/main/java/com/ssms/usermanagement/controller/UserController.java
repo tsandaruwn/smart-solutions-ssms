@@ -1,4 +1,3 @@
-
 package com.ssms.usermanagement.controller;
 
 import com.ssms.usermanagement.dto.UserRequestDTO;
@@ -16,10 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * REST Controller for User Management
- * All endpoints use DTOs and standardized responses
- */
 @RestController
 @RequestMapping(value = "/api/users", produces = "application/json")
 @CrossOrigin(origins = "*")
@@ -28,10 +23,6 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
-	/**
-	 * Get all users
-	 * GET /api/users
-	 */
 	@GetMapping
 	public ResponseEntity<ApiResponse<List<UserResponseDTO>>> getAllUsers() {
 		List<UserResponseDTO> users = userService.getAllUsers();
@@ -42,10 +33,6 @@ public class UserController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	/**
-	 * Get user by ID
-	 * GET /api/users/{id}
-	 */
 	@GetMapping("/{id}")
 	public ResponseEntity<ApiResponse<UserResponseDTO>> getUserById(@PathVariable Integer id) {
 		UserResponseDTO user = userService.getUserById(id);
@@ -56,10 +43,6 @@ public class UserController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	/**
-	 * Create new user
-	 * POST /api/users
-	 */
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ApiResponse<UserResponseDTO>> createUser(@Valid @RequestBody UserRequestDTO requestDTO) {
 		UserResponseDTO createdUser = userService.createUser(requestDTO);
@@ -70,10 +53,6 @@ public class UserController {
 		return new ResponseEntity<>(response, HttpStatus.CREATED);
 	}
 
-	/**
-	 * Update existing user
-	 * PUT /api/users/{id}
-	 */
 	@PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ApiResponse<UserResponseDTO>> updateUser(
 			@PathVariable Integer id, 
@@ -86,10 +65,6 @@ public class UserController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	/**
-	 * Soft delete user
-	 * DELETE /api/users/{id}
-	 */
 	@DeleteMapping("/{id}")
 	public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable Integer id) {
 		userService.deleteUser(id);
@@ -97,10 +72,6 @@ public class UserController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	/**
-	 * Hard delete user (permanent deletion)
-	 * DELETE /api/users/{id}/hard
-	 */
 	@DeleteMapping("/{id}/hard")
 	public ResponseEntity<ApiResponse<Void>> hardDeleteUser(@PathVariable Integer id) {
 		userService.hardDeleteUser(id);
@@ -108,10 +79,6 @@ public class UserController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	/**
-	 * Update last login time
-	 * POST /api/users/{id}/login
-	 */
 	@PostMapping("/{id}/login")
 	public ResponseEntity<ApiResponse<Void>> updateLastLogin(@PathVariable Integer id) {
 		userService.updateLastLogin(id);
@@ -119,4 +86,3 @@ public class UserController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 }
-

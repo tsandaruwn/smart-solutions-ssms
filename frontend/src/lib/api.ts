@@ -1,6 +1,3 @@
-// Order Management API Service
-// Connects to the Spring Boot backend at localhost:8085 via Next.js rewrites
-
 export type OrderStatus = "PENDING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
 
 export interface OrderItemRequest {
@@ -83,37 +80,32 @@ async function handleResponse<T>(response: Response): Promise<T> {
 }
 
 export const orderApi = {
-  // Get all orders
+  
   getAll: async (): Promise<OrderResponse[]> => {
     const res = await fetch(BASE_URL);
     return handleResponse<OrderResponse[]>(res);
   },
 
-  // Get order by ID
   getById: async (orderId: number): Promise<OrderResponse> => {
     const res = await fetch(`${BASE_URL}/${orderId}`);
     return handleResponse<OrderResponse>(res);
   },
 
-  // Get order by order number
   getByOrderNumber: async (orderNumber: string): Promise<OrderResponse> => {
     const res = await fetch(`${BASE_URL}/number/${orderNumber}`);
     return handleResponse<OrderResponse>(res);
   },
 
-  // Get orders by customer ID
   getByCustomer: async (customerId: number): Promise<OrderResponse[]> => {
     const res = await fetch(`${BASE_URL}/customer/${customerId}/history`);
     return handleResponse<OrderResponse[]>(res);
   },
 
-  // Get orders by status
   getByStatus: async (status: OrderStatus): Promise<OrderResponse[]> => {
     const res = await fetch(`${BASE_URL}/status/${status}`);
     return handleResponse<OrderResponse[]>(res);
   },
 
-  // Get orders in date range
   getByDateRange: async (
     startDate: string,
     endDate: string,
@@ -124,13 +116,11 @@ export const orderApi = {
     return handleResponse<OrderResponse[]>(res);
   },
 
-  // Get recent orders
   getRecent: async (): Promise<OrderResponse[]> => {
     const res = await fetch(`${BASE_URL}/recent`);
     return handleResponse<OrderResponse[]>(res);
   },
 
-  // Create a new order
   create: async (order: CreateOrderRequest): Promise<ApiSuccessResponse> => {
     const res = await fetch(BASE_URL, {
       method: "POST",
@@ -140,7 +130,6 @@ export const orderApi = {
     return handleResponse<ApiSuccessResponse>(res);
   },
 
-  // Update an existing order (only PENDING)
   update: async (orderId: number, order: CreateOrderRequest): Promise<ApiSuccessResponse> => {
     const res = await fetch(`${BASE_URL}/${orderId}`, {
       method: "PUT",
@@ -150,7 +139,6 @@ export const orderApi = {
     return handleResponse<ApiSuccessResponse>(res);
   },
 
-  // Update order status
   updateStatus: async (
     orderId: number,
     request: UpdateOrderStatusRequest,
@@ -163,7 +151,6 @@ export const orderApi = {
     return handleResponse<ApiSuccessResponse>(res);
   },
 
-  // Cancel order
   cancel: async (
     orderId: number,
     request?: CancelOrderRequest,
@@ -176,7 +163,6 @@ export const orderApi = {
     return handleResponse<ApiSuccessResponse>(res);
   },
 
-  // Delete order
   delete: async (orderId: number): Promise<ApiSuccessResponse> => {
     const res = await fetch(`${BASE_URL}/${orderId}`, {
       method: "DELETE",
@@ -184,7 +170,6 @@ export const orderApi = {
     return handleResponse<ApiSuccessResponse>(res);
   },
 
-  // Health check
   health: async (): Promise<{
     status: string;
     service: string;
@@ -199,11 +184,6 @@ export const orderApi = {
   },
 };
 
-// ---------------------------------------------------------------------------
-// Billing & Invoice API
-// Proxied to http://localhost:6543 via Next.js rewrite /api/billing → 6543
-// ---------------------------------------------------------------------------
-
 export type PaymentStatus = "SUCCESS" | "FAILED" | "PENDING";
 
 export interface BillDto {
@@ -215,7 +195,6 @@ export interface BillDto {
   status: string;
 }
 
-/** Raw entity returned from GET /invoices/{id} and CRUD endpoints */
 export interface Bill {
   id: number;
   orderId: number;
@@ -254,7 +233,7 @@ export interface UpdateBillRequest {
 const BILLING_BASE = "/api/billing";
 
 export const billingApi = {
-  /** POST /api/billing/orders/{orderId} – generate an invoice for an order */
+  
   generateInvoice: async (orderId: number): Promise<BillDto> => {
     const res = await fetch(`${BILLING_BASE}/orders/${orderId}`, {
       method: "POST",
@@ -262,19 +241,16 @@ export const billingApi = {
     return handleResponse<BillDto>(res);
   },
 
-  /** GET /api/billing/invoices/{invoiceId} – fetch a single invoice */
   getById: async (invoiceId: number): Promise<Bill> => {
     const res = await fetch(`${BILLING_BASE}/invoices/${invoiceId}`);
     return handleResponse<Bill>(res);
   },
 
-  /** GET /api/billing/customers/{customerId} – list all invoices for a customer */
   getByCustomer: async (customerId: number): Promise<Bill[]> => {
     const res = await fetch(`${BILLING_BASE}/customers/${customerId}`);
     return handleResponse<Bill[]>(res);
   },
 
-  /** PUT /api/billing/invoices/{invoiceId} – update an invoice */
   update: async (
     invoiceId: number,
     updates: UpdateBillRequest,
@@ -287,7 +263,6 @@ export const billingApi = {
     return handleResponse<Bill>(res);
   },
 
-  /** DELETE /api/billing/invoices/{invoiceId} – delete an invoice */
   delete: async (invoiceId: number): Promise<void> => {
     const res = await fetch(`${BILLING_BASE}/invoices/${invoiceId}`, {
       method: "DELETE",
@@ -295,19 +270,16 @@ export const billingApi = {
     if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
   },
 
-  /** GET /api/billing/invoices/{invoiceId}/customer – customer info linked to invoice */
   getCustomer: async (invoiceId: number): Promise<BillingCustomerDto> => {
     const res = await fetch(`${BILLING_BASE}/invoices/${invoiceId}/customer`);
     return handleResponse<BillingCustomerDto>(res);
   },
 
-  /** GET /api/billing/invoices/{invoiceId}/payments – payments recorded on invoice */
   getPayments: async (invoiceId: number): Promise<BillingPaymentDto[]> => {
     const res = await fetch(`${BILLING_BASE}/invoices/${invoiceId}/payments`);
     return handleResponse<BillingPaymentDto[]>(res);
   },
 
-  /** POST /api/billing/invoices/{invoiceId}/payments – record a payment */
   addPayment: async (
     invoiceId: number,
     payment: RecordPaymentRequest,
@@ -320,10 +292,6 @@ export const billingApi = {
     return handleResponse<BillingPaymentDto>(res);
   },
 };
-
-// ============================================
-// Payment Management API Service
-// ============================================
 
 const PAYMENT_BASE = "/api/payments";
 const PAYMENT_METHOD_BASE = "/api/payment-methods";
@@ -379,7 +347,7 @@ export interface ProcessRefundRequest {
 }
 
 export const paymentApi = {
-  /** POST /api/payments – create a new payment */
+  
   create: async (payment: PaymentRequest): Promise<PaymentResponse> => {
     const res = await fetch(PAYMENT_BASE, {
       method: "POST",
@@ -389,37 +357,31 @@ export const paymentApi = {
     return handleResponse<PaymentResponse>(res);
   },
 
-  /** GET /api/payments – get all payments */
   getAll: async (): Promise<PaymentResponse[]> => {
     const res = await fetch(PAYMENT_BASE);
     return handleResponse<PaymentResponse[]>(res);
   },
 
-  /** GET /api/payments/{id} – get payment by ID */
   getById: async (id: number): Promise<PaymentResponse> => {
     const res = await fetch(`${PAYMENT_BASE}/${id}`);
     return handleResponse<PaymentResponse>(res);
   },
 
-  /** GET /api/payments/transaction/{transactionReference} – get payment by transaction reference */
   getByTransactionReference: async (transactionReference: string): Promise<PaymentResponse> => {
     const res = await fetch(`${PAYMENT_BASE}/transaction/${transactionReference}`);
     return handleResponse<PaymentResponse>(res);
   },
 
-  /** GET /api/payments/customer/{customerId} – get payment history by customer */
   getByCustomerId: async (customerId: number): Promise<PaymentResponse[]> => {
     const res = await fetch(`${PAYMENT_BASE}/customer/${customerId}`);
     return handleResponse<PaymentResponse[]>(res);
   },
 
-  /** GET /api/payments/invoice/{invoiceId} – get payments by invoice */
   getByInvoiceId: async (invoiceId: number): Promise<PaymentResponse[]> => {
     const res = await fetch(`${PAYMENT_BASE}/invoice/${invoiceId}`);
     return handleResponse<PaymentResponse[]>(res);
   },
 
-  /** PUT /api/payments/{id} – update payment */
   update: async (id: number, payment: PaymentRequest): Promise<PaymentResponse> => {
     const res = await fetch(`${PAYMENT_BASE}/${id}`, {
       method: "PUT",
@@ -429,7 +391,6 @@ export const paymentApi = {
     return handleResponse<PaymentResponse>(res);
   },
 
-  /** PATCH /api/payments/{id}/status – update payment status */
   updateStatus: async (id: number, status: PaymentTransactionStatus): Promise<PaymentResponse> => {
     const res = await fetch(`${PAYMENT_BASE}/${id}/status?status=${status}`, {
       method: "PATCH",
@@ -437,7 +398,6 @@ export const paymentApi = {
     return handleResponse<PaymentResponse>(res);
   },
 
-  /** POST /api/payments/{id}/refund – process refund */
   processRefund: async (
     id: number, 
     refundReason?: string, 
@@ -452,7 +412,6 @@ export const paymentApi = {
     return handleResponse<PaymentResponse>(res);
   },
 
-  /** DELETE /api/payments/{id} – delete payment */
   delete: async (id: number): Promise<void> => {
     const res = await fetch(`${PAYMENT_BASE}/${id}`, {
       method: "DELETE",
@@ -462,7 +421,7 @@ export const paymentApi = {
 };
 
 export const paymentMethodApi = {
-  /** POST /api/payment-methods – create a new payment method */
+  
   create: async (method: PaymentMethodRequest): Promise<PaymentMethodResponse> => {
     const res = await fetch(PAYMENT_METHOD_BASE, {
       method: "POST",
@@ -472,31 +431,26 @@ export const paymentMethodApi = {
     return handleResponse<PaymentMethodResponse>(res);
   },
 
-  /** GET /api/payment-methods – get all payment methods */
   getAll: async (): Promise<PaymentMethodResponse[]> => {
     const res = await fetch(PAYMENT_METHOD_BASE);
     return handleResponse<PaymentMethodResponse[]>(res);
   },
 
-  /** GET /api/payment-methods/active – get active payment methods */
   getActive: async (): Promise<PaymentMethodResponse[]> => {
     const res = await fetch(`${PAYMENT_METHOD_BASE}/active`);
     return handleResponse<PaymentMethodResponse[]>(res);
   },
 
-  /** GET /api/payment-methods/{id} – get payment method by ID */
   getById: async (id: number): Promise<PaymentMethodResponse> => {
     const res = await fetch(`${PAYMENT_METHOD_BASE}/${id}`);
     return handleResponse<PaymentMethodResponse>(res);
   },
 
-  /** GET /api/payment-methods/name/{methodName} – get payment method by name */
   getByName: async (methodName: string): Promise<PaymentMethodResponse> => {
     const res = await fetch(`${PAYMENT_METHOD_BASE}/name/${methodName}`);
     return handleResponse<PaymentMethodResponse>(res);
   },
 
-  /** PUT /api/payment-methods/{id} – update payment method */
   update: async (id: number, method: PaymentMethodRequest): Promise<PaymentMethodResponse> => {
     const res = await fetch(`${PAYMENT_METHOD_BASE}/${id}`, {
       method: "PUT",
@@ -506,7 +460,6 @@ export const paymentMethodApi = {
     return handleResponse<PaymentMethodResponse>(res);
   },
 
-  /** PATCH /api/payment-methods/{id}/toggle-status – toggle payment method active status */
   toggleStatus: async (id: number): Promise<PaymentMethodResponse> => {
     const res = await fetch(`${PAYMENT_METHOD_BASE}/${id}/toggle-status`, {
       method: "PATCH",
@@ -514,7 +467,6 @@ export const paymentMethodApi = {
     return handleResponse<PaymentMethodResponse>(res);
   },
 
-  /** DELETE /api/payment-methods/{id} – delete payment method */
   delete: async (id: number): Promise<void> => {
     const res = await fetch(`${PAYMENT_METHOD_BASE}/${id}`, {
       method: "DELETE",
@@ -523,23 +475,15 @@ export const paymentMethodApi = {
   },
 };
 
-// ============================================
-// Inventory Management API Service
-// Proxied to http://localhost:8084 via Next.js rewrite
-// ============================================
-
 const INVENTORY_BASE = "/api/v1/inventory";
 const WAREHOUSE_BASE = "/api/v1/warehouses";
 
-// -- Envelope used by inventory service --
 export interface InventoryApiResponse<T> {
   success: boolean;
   message: string;
   data: T | null;
   timestamp: string;
 }
-
-// -- Warehouse --
 
 export interface WarehouseResponse {
   warehouseId: number;
@@ -563,8 +507,6 @@ export interface WarehouseRequest {
   capacity?: number;
   isActive?: boolean;
 }
-
-// -- Inventory --
 
 export interface InventoryResponse {
   inventoryId: number;
@@ -595,7 +537,6 @@ export interface StockUpdateRequest {
   reason?: string;
 }
 
-/** Helper to unwrap the ApiResponse<T> envelope from the inventory service */
 async function handleInventoryResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
     const body = await response.json().catch(() => ({
@@ -612,7 +553,7 @@ async function handleInventoryResponse<T>(response: Response): Promise<T> {
 }
 
 export const inventoryApi = {
-  /** POST /api/v1/inventory – create inventory record */
+  
   create: async (req: InventoryRequest): Promise<InventoryResponse> => {
     const res = await fetch(INVENTORY_BASE, {
       method: "POST",
@@ -622,31 +563,26 @@ export const inventoryApi = {
     return handleInventoryResponse<InventoryResponse>(res);
   },
 
-  /** GET /api/v1/inventory – get all inventory records */
   getAll: async (): Promise<InventoryResponse[]> => {
     const res = await fetch(INVENTORY_BASE);
     return handleInventoryResponse<InventoryResponse[]>(res);
   },
 
-  /** GET /api/v1/inventory/{id} – get by ID */
   getById: async (id: number): Promise<InventoryResponse> => {
     const res = await fetch(`${INVENTORY_BASE}/${id}`);
     return handleInventoryResponse<InventoryResponse>(res);
   },
 
-  /** GET /api/v1/inventory/product/{productId} – get by product */
   getByProduct: async (productId: number): Promise<InventoryResponse[]> => {
     const res = await fetch(`${INVENTORY_BASE}/product/${productId}`);
     return handleInventoryResponse<InventoryResponse[]>(res);
   },
 
-  /** GET /api/v1/inventory/warehouse/{warehouseId} – get by warehouse */
   getByWarehouse: async (warehouseId: number): Promise<InventoryResponse[]> => {
     const res = await fetch(`${INVENTORY_BASE}/warehouse/${warehouseId}`);
     return handleInventoryResponse<InventoryResponse[]>(res);
   },
 
-  /** PUT /api/v1/inventory/{id} – update inventory */
   update: async (id: number, req: InventoryRequest): Promise<InventoryResponse> => {
     const res = await fetch(`${INVENTORY_BASE}/${id}`, {
       method: "PUT",
@@ -656,7 +592,6 @@ export const inventoryApi = {
     return handleInventoryResponse<InventoryResponse>(res);
   },
 
-  /** PATCH /api/v1/inventory/{id}/stock – update stock */
   updateStock: async (id: number, req: StockUpdateRequest): Promise<InventoryResponse> => {
     const res = await fetch(`${INVENTORY_BASE}/${id}/stock`, {
       method: "PATCH",
@@ -666,19 +601,16 @@ export const inventoryApi = {
     return handleInventoryResponse<InventoryResponse>(res);
   },
 
-  /** GET /api/v1/inventory/alerts/low-stock – all low-stock alerts */
   getLowStockAlerts: async (): Promise<InventoryResponse[]> => {
     const res = await fetch(`${INVENTORY_BASE}/alerts/low-stock`);
     return handleInventoryResponse<InventoryResponse[]>(res);
   },
 
-  /** GET /api/v1/inventory/alerts/low-stock/warehouse/{warehouseId} */
   getLowStockByWarehouse: async (warehouseId: number): Promise<InventoryResponse[]> => {
     const res = await fetch(`${INVENTORY_BASE}/alerts/low-stock/warehouse/${warehouseId}`);
     return handleInventoryResponse<InventoryResponse[]>(res);
   },
 
-  /** DELETE /api/v1/inventory/{id} – soft-delete */
   delete: async (id: number): Promise<void> => {
     const res = await fetch(`${INVENTORY_BASE}/${id}`, { method: "DELETE" });
     if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
@@ -686,7 +618,7 @@ export const inventoryApi = {
 };
 
 export const warehouseApi = {
-  /** POST /api/v1/warehouses – create warehouse */
+  
   create: async (req: WarehouseRequest): Promise<WarehouseResponse> => {
     const res = await fetch(WAREHOUSE_BASE, {
       method: "POST",
@@ -696,19 +628,16 @@ export const warehouseApi = {
     return handleInventoryResponse<WarehouseResponse>(res);
   },
 
-  /** GET /api/v1/warehouses – get all active warehouses */
   getAll: async (): Promise<WarehouseResponse[]> => {
     const res = await fetch(WAREHOUSE_BASE);
     return handleInventoryResponse<WarehouseResponse[]>(res);
   },
 
-  /** GET /api/v1/warehouses/{id} – get by ID */
   getById: async (id: number): Promise<WarehouseResponse> => {
     const res = await fetch(`${WAREHOUSE_BASE}/${id}`);
     return handleInventoryResponse<WarehouseResponse>(res);
   },
 
-  /** PUT /api/v1/warehouses/{id} – update warehouse */
   update: async (id: number, req: WarehouseRequest): Promise<WarehouseResponse> => {
     const res = await fetch(`${WAREHOUSE_BASE}/${id}`, {
       method: "PUT",
@@ -718,17 +647,11 @@ export const warehouseApi = {
     return handleInventoryResponse<WarehouseResponse>(res);
   },
 
-  /** DELETE /api/v1/warehouses/{id} – soft-deactivate */
   delete: async (id: number): Promise<void> => {
     const res = await fetch(`${WAREHOUSE_BASE}/${id}`, { method: "DELETE" });
     if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
   },
 };
-
-// ============================================
-// Product Management API Service
-// Proxied to http://localhost:8080 via Next.js rewrite
-// ============================================
 
 const PRODUCT_BASE = "/api/products";
 const CATEGORY_BASE = "/api/categories";
@@ -834,11 +757,6 @@ export const productApi = {
   },
 };
 
-// ============================================
-// Customer Service API
-// Proxied to http://localhost:8082 via Next.js rewrite
-// ============================================
-
 const CUSTOMER_BASE = "/api/v1/customers";
 
 export interface CustomerResponse {
@@ -908,7 +826,7 @@ async function handleCustomerResponse<T>(response: Response): Promise<T> {
 }
 
 export const customerApi = {
-  /** GET /api/v1/customers – list customers (paginated) */
+  
   getAll: async (page = 0, size = 20, search?: string): Promise<{ content: CustomerResponse[]; totalElements: number; totalPages: number }> => {
     const params = new URLSearchParams({ page: String(page), size: String(size) });
     if (search) params.append("search", search);
@@ -916,19 +834,16 @@ export const customerApi = {
     return handleCustomerResponse(res);
   },
 
-  /** GET /api/v1/customers/{id} */
   getById: async (id: number): Promise<CustomerResponse> => {
     const res = await fetch(`${CUSTOMER_BASE}/${id}`);
     return handleCustomerResponse<CustomerResponse>(res);
   },
 
-  /** GET /api/v1/customers/email/{email} */
   getByEmail: async (email: string): Promise<CustomerResponse> => {
     const res = await fetch(`${CUSTOMER_BASE}/email/${email}`);
     return handleCustomerResponse<CustomerResponse>(res);
   },
 
-  /** POST /api/v1/customers */
   create: async (data: CustomerRequest): Promise<CustomerResponse> => {
     const res = await fetch(CUSTOMER_BASE, {
       method: "POST",
@@ -938,7 +853,6 @@ export const customerApi = {
     return handleCustomerResponse<CustomerResponse>(res);
   },
 
-  /** PUT /api/v1/customers/{id} */
   update: async (id: number, data: CustomerUpdateRequest): Promise<CustomerResponse> => {
     const res = await fetch(`${CUSTOMER_BASE}/${id}`, {
       method: "PUT",
@@ -948,17 +862,11 @@ export const customerApi = {
     return handleCustomerResponse<CustomerResponse>(res);
   },
 
-  /** DELETE /api/v1/customers/{id} */
   delete: async (id: number): Promise<void> => {
     const res = await fetch(`${CUSTOMER_BASE}/${id}`, { method: "DELETE" });
     if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
   },
 };
-
-// ============================================
-// Supplier Management API
-// Proxied to http://localhost:8087 via Next.js rewrite
-// ============================================
 
 const SUPPLIER_BASE = "/api/v1/suppliers";
 const SUPPLIER_PRODUCT_BASE = "/api/v1/supplier-products";
@@ -1036,25 +944,22 @@ async function handleSupplierResponse<T>(response: Response): Promise<T> {
 }
 
 export const supplierApi = {
-  /** GET /api/v1/suppliers – get all suppliers */
+  
   getAll: async (): Promise<SupplierResponse[]> => {
     const res = await fetch(SUPPLIER_BASE);
     return handleSupplierResponse<SupplierResponse[]>(res);
   },
 
-  /** GET /api/v1/suppliers/active */
   getActive: async (): Promise<SupplierResponse[]> => {
     const res = await fetch(`${SUPPLIER_BASE}/active`);
     return handleSupplierResponse<SupplierResponse[]>(res);
   },
 
-  /** GET /api/v1/suppliers/{id} */
   getById: async (id: number): Promise<SupplierResponse> => {
     const res = await fetch(`${SUPPLIER_BASE}/${id}`);
     return handleSupplierResponse<SupplierResponse>(res);
   },
 
-  /** POST /api/v1/suppliers */
   create: async (data: SupplierRequest): Promise<SupplierResponse> => {
     const res = await fetch(SUPPLIER_BASE, {
       method: "POST",
@@ -1064,7 +969,6 @@ export const supplierApi = {
     return handleSupplierResponse<SupplierResponse>(res);
   },
 
-  /** PUT /api/v1/suppliers/{id} */
   update: async (id: number, data: SupplierRequest): Promise<SupplierResponse> => {
     const res = await fetch(`${SUPPLIER_BASE}/${id}`, {
       method: "PUT",
@@ -1074,31 +978,26 @@ export const supplierApi = {
     return handleSupplierResponse<SupplierResponse>(res);
   },
 
-  /** DELETE /api/v1/suppliers/{id} – soft delete */
   delete: async (id: number): Promise<void> => {
     const res = await fetch(`${SUPPLIER_BASE}/${id}`, { method: "DELETE" });
     if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
   },
 
-  /** PATCH /api/v1/suppliers/{id}/activate */
   activate: async (id: number): Promise<SupplierResponse> => {
     const res = await fetch(`${SUPPLIER_BASE}/${id}/activate`, { method: "PATCH" });
     return handleSupplierResponse<SupplierResponse>(res);
   },
 
-  /** PATCH /api/v1/suppliers/{id}/deactivate */
   deactivate: async (id: number): Promise<SupplierResponse> => {
     const res = await fetch(`${SUPPLIER_BASE}/${id}/deactivate`, { method: "PATCH" });
     return handleSupplierResponse<SupplierResponse>(res);
   },
 
-  /** GET /api/v1/suppliers/search?companyName= */
   search: async (companyName: string): Promise<SupplierResponse[]> => {
     const res = await fetch(`${SUPPLIER_BASE}/search?companyName=${encodeURIComponent(companyName)}`);
     return handleSupplierResponse<SupplierResponse[]>(res);
   },
 
-  /** GET /api/v1/suppliers/{id}/products */
   getProducts: async (id: number): Promise<SupplierProductResponse[]> => {
     const res = await fetch(`${SUPPLIER_BASE}/${id}/products`);
     return handleSupplierResponse<SupplierProductResponse[]>(res);
@@ -1106,13 +1005,12 @@ export const supplierApi = {
 };
 
 export const supplierProductApi = {
-  /** GET /api/v1/supplier-products – all products */
+  
   getAll: async (): Promise<SupplierProductResponse[]> => {
     const res = await fetch(SUPPLIER_PRODUCT_BASE);
     return handleSupplierResponse<SupplierProductResponse[]>(res);
   },
 
-  /** POST /api/v1/supplier-products */
   create: async (data: SupplierProductRequest): Promise<SupplierProductResponse> => {
     const res = await fetch(SUPPLIER_PRODUCT_BASE, {
       method: "POST",
@@ -1122,7 +1020,6 @@ export const supplierProductApi = {
     return handleSupplierResponse<SupplierProductResponse>(res);
   },
 
-  /** PUT /api/v1/supplier-products/{id} */
   update: async (id: number, data: SupplierProductRequest): Promise<SupplierProductResponse> => {
     const res = await fetch(`${SUPPLIER_PRODUCT_BASE}/${id}`, {
       method: "PUT",
@@ -1132,17 +1029,11 @@ export const supplierProductApi = {
     return handleSupplierResponse<SupplierProductResponse>(res);
   },
 
-  /** DELETE /api/v1/supplier-products/{id} */
   delete: async (id: number): Promise<void> => {
     const res = await fetch(`${SUPPLIER_PRODUCT_BASE}/${id}`, { method: "DELETE" });
     if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
   },
 };
-
-// ============================================
-// Installation Management API
-// Proxied to http://localhost:8083 via Next.js rewrite
-// ============================================
 
 const INSTALLATION_BASE = "/api/installations";
 
@@ -1190,37 +1081,32 @@ export interface StatusUpdate {
 }
 
 export const installationApi = {
-  /** GET /api/installations – get all */
+  
   getAll: async (): Promise<InstallationResponse[]> => {
     const res = await fetch(INSTALLATION_BASE);
     return handleResponse<InstallationResponse[]>(res);
   },
 
-  /** GET /api/installations/{id} */
   getById: async (id: number): Promise<InstallationResponse> => {
     const res = await fetch(`${INSTALLATION_BASE}/${id}`);
     return handleResponse<InstallationResponse>(res);
   },
 
-  /** GET /api/installations/status/{status} */
   getByStatus: async (status: InstallationStatus): Promise<InstallationResponse[]> => {
     const res = await fetch(`${INSTALLATION_BASE}/status/${status}`);
     return handleResponse<InstallationResponse[]>(res);
   },
 
-  /** GET /api/installations/technician/{technicianId} */
   getByTechnician: async (technicianId: number): Promise<InstallationResponse[]> => {
     const res = await fetch(`${INSTALLATION_BASE}/technician/${technicianId}`);
     return handleResponse<InstallationResponse[]>(res);
   },
 
-  /** GET /api/installations/date-range?start=&end= */
   getByDateRange: async (start: string, end: string): Promise<InstallationResponse[]> => {
     const res = await fetch(`${INSTALLATION_BASE}/date-range?start=${start}&end=${end}`);
     return handleResponse<InstallationResponse[]>(res);
   },
 
-  /** POST /api/installations */
   create: async (data: InstallationRequest): Promise<InstallationResponse> => {
     const res = await fetch(INSTALLATION_BASE, {
       method: "POST",
@@ -1230,7 +1116,6 @@ export const installationApi = {
     return handleResponse<InstallationResponse>(res);
   },
 
-  /** PUT /api/installations/{id}/assign-technician */
   assignTechnician: async (id: number, data: TechnicianAssignment): Promise<InstallationResponse> => {
     const res = await fetch(`${INSTALLATION_BASE}/${id}/assign-technician`, {
       method: "PUT",
@@ -1240,7 +1125,6 @@ export const installationApi = {
     return handleResponse<InstallationResponse>(res);
   },
 
-  /** PATCH /api/installations/{id}/status */
   updateStatus: async (id: number, data: StatusUpdate): Promise<InstallationResponse> => {
     const res = await fetch(`${INSTALLATION_BASE}/${id}/status`, {
       method: "PATCH",
@@ -1250,7 +1134,6 @@ export const installationApi = {
     return handleResponse<InstallationResponse>(res);
   },
 
-  /** PATCH /api/installations/{id}/cancel */
   cancel: async (id: number): Promise<InstallationResponse> => {
     const res = await fetch(`${INSTALLATION_BASE}/${id}/cancel`, {
       method: "PATCH",
@@ -1258,16 +1141,11 @@ export const installationApi = {
     return handleResponse<InstallationResponse>(res);
   },
 
-  /** DELETE /api/installations/{id} */
   delete: async (id: number): Promise<void> => {
     const res = await fetch(`${INSTALLATION_BASE}/${id}`, { method: "DELETE" });
     if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
   },
 };
-
-// ============================================
-// Technician API (part of Installation Management)
-// ============================================
 
 const TECHNICIAN_BASE = "/api/technicians";
 
@@ -1286,29 +1164,22 @@ export interface TechnicianResponse {
 }
 
 export const technicianApi = {
-  /** GET /api/technicians – all technicians */
+  
   getAll: async (): Promise<TechnicianResponse[]> => {
     const res = await fetch(TECHNICIAN_BASE);
     return handleResponse<TechnicianResponse[]>(res);
   },
 
-  /** GET /api/technicians/active – active technicians only */
   getActive: async (): Promise<TechnicianResponse[]> => {
     const res = await fetch(`${TECHNICIAN_BASE}/active`);
     return handleResponse<TechnicianResponse[]>(res);
   },
 
-  /** GET /api/technicians/{id} */
   getById: async (id: number): Promise<TechnicianResponse> => {
     const res = await fetch(`${TECHNICIAN_BASE}/${id}`);
     return handleResponse<TechnicianResponse>(res);
   },
 };
-
-// ============================================
-// Digital Marketing / Campaign API
-// Proxied to http://localhost:8089 via Next.js rewrite
-// ============================================
 
 const CAMPAIGN_BASE = "/api/campaigns";
 
@@ -1391,31 +1262,27 @@ export interface CampaignSummary {
 }
 
 export const campaignApi = {
-  /** GET /api/campaigns – get all */
+  
   getAll: async (): Promise<CampaignResponse[]> => {
     const res = await fetch(CAMPAIGN_BASE);
     return handleResponse<CampaignResponse[]>(res);
   },
 
-  /** GET /api/campaigns/{id} */
   getById: async (id: number): Promise<CampaignResponse> => {
     const res = await fetch(`${CAMPAIGN_BASE}/${id}`);
     return handleResponse<CampaignResponse>(res);
   },
 
-  /** GET /api/campaigns/user/{userId} */
   getByUser: async (userId: number): Promise<CampaignResponse[]> => {
     const res = await fetch(`${CAMPAIGN_BASE}/user/${userId}`);
     return handleResponse<CampaignResponse[]>(res);
   },
 
-  /** GET /api/campaigns/status/{status} */
   getByStatus: async (status: CampaignStatus): Promise<CampaignResponse[]> => {
     const res = await fetch(`${CAMPAIGN_BASE}/status/${status}`);
     return handleResponse<CampaignResponse[]>(res);
   },
 
-  /** POST /api/campaigns */
   create: async (data: CreateCampaignRequest): Promise<{ success: boolean; campaign: CampaignResponse }> => {
     const res = await fetch(CAMPAIGN_BASE, {
       method: "POST",
@@ -1425,7 +1292,6 @@ export const campaignApi = {
     return handleResponse<{ success: boolean; campaign: CampaignResponse }>(res);
   },
 
-  /** PUT /api/campaigns/{id} */
   update: async (id: number, data: UpdateCampaignRequest): Promise<{ success: boolean; campaign: CampaignResponse }> => {
     const res = await fetch(`${CAMPAIGN_BASE}/${id}`, {
       method: "PUT",
@@ -1435,7 +1301,6 @@ export const campaignApi = {
     return handleResponse<{ success: boolean; campaign: CampaignResponse }>(res);
   },
 
-  /** PATCH /api/campaigns/{id}/status?status= */
   updateStatus: async (id: number, status: CampaignStatus): Promise<{ success: boolean; campaign: CampaignResponse }> => {
     const res = await fetch(`${CAMPAIGN_BASE}/${id}/status?status=${status}`, {
       method: "PATCH",
@@ -1443,13 +1308,11 @@ export const campaignApi = {
     return handleResponse<{ success: boolean; campaign: CampaignResponse }>(res);
   },
 
-  /** DELETE /api/campaigns/{id} */
   delete: async (id: number): Promise<void> => {
     const res = await fetch(`${CAMPAIGN_BASE}/${id}`, { method: "DELETE" });
     if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
   },
 
-  /** POST /api/campaigns/{id}/performance – add performance data */
   addPerformance: async (campaignId: number, data: RecordPerformanceRequest): Promise<{ success: boolean; performance: PerformanceResponse }> => {
     const res = await fetch(`${CAMPAIGN_BASE}/${campaignId}/performance`, {
       method: "POST",
@@ -1459,19 +1322,16 @@ export const campaignApi = {
     return handleResponse<{ success: boolean; performance: PerformanceResponse }>(res);
   },
 
-  /** GET /api/campaigns/{id}/performance */
   getPerformance: async (campaignId: number): Promise<PerformanceResponse[]> => {
     const res = await fetch(`${CAMPAIGN_BASE}/${campaignId}/performance`);
     return handleResponse<PerformanceResponse[]>(res);
   },
 
-  /** GET /api/campaigns/{id}/performance/summary */
   getPerformanceSummary: async (campaignId: number): Promise<CampaignSummary> => {
     const res = await fetch(`${CAMPAIGN_BASE}/${campaignId}/performance/summary`);
     return handleResponse<CampaignSummary>(res);
   },
 
-  /** DELETE /api/campaigns/{id}/performance/{perfId} */
   deletePerformance: async (campaignId: number, perfId: number): Promise<void> => {
     const res = await fetch(`${CAMPAIGN_BASE}/${campaignId}/performance/${perfId}`, { method: "DELETE" });
     if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);

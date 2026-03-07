@@ -29,7 +29,6 @@ export default function WarehousesPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
 
-  // Create form
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState<WarehouseRequest>({
@@ -121,7 +120,7 @@ export default function WarehousesPage() {
 
   return (
     <div>
-      {/* Back link */}
+      {}
       <Link
         href="/dashboard/inventory"
         className="d-inline-flex align-items-center gap-2 text-decoration-none text-muted-brand mb-3"
@@ -131,7 +130,7 @@ export default function WarehousesPage() {
         Back to Inventory
       </Link>
 
-      {/* Backend warning */}
+      {}
       {error && (
         <div className="warning-banner mb-4">
           <span
@@ -155,7 +154,7 @@ export default function WarehousesPage() {
         </div>
       )}
 
-      {/* Page header */}
+      {}
       <div className="d-flex flex-column flex-sm-row align-items-sm-center justify-content-sm-between gap-3 mb-4">
         <div>
           <h1
@@ -181,7 +180,7 @@ export default function WarehousesPage() {
         </button>
       </div>
 
-      {/* Create Form */}
+      {}
       {showForm && (
         <div className="card-brand mb-4">
           <div className="p-4">
@@ -328,7 +327,7 @@ export default function WarehousesPage() {
         </div>
       )}
 
-      {/* Search */}
+      {}
       <div className="mb-4">
         <div className="search-wrapper">
           <Search className="search-icon" size={16} />
@@ -342,7 +341,7 @@ export default function WarehousesPage() {
         </div>
       </div>
 
-      {/* Table */}
+      {}
       <div className="card-brand">
         {paginatedWarehouses.length === 0 ? (
           <div className="d-flex flex-column align-items-center justify-content-center py-5 gap-2">
@@ -516,7 +515,7 @@ export default function WarehousesPage() {
           </div>
         )}
 
-        {/* Pagination */}
+        {}
         {totalPages > 1 && (
           <div
             className="d-flex align-items-center justify-content-between px-4 py-3"

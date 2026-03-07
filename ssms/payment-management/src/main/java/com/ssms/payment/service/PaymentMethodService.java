@@ -19,7 +19,6 @@ public class PaymentMethodService {
         this.paymentMethodRepository = paymentMethodRepository;
     }
 
-    // Create a new payment method
     @Transactional
     public PaymentMethodResponse createPaymentMethod(PaymentMethodRequest request) {
         if (paymentMethodRepository.existsByMethodName(request.getMethodName())) {
@@ -37,14 +36,12 @@ public class PaymentMethodService {
         return mapToResponse(savedPaymentMethod);
     }
 
-    // Get payment method by ID
     public PaymentMethodResponse getPaymentMethodById(Long id) {
         PaymentMethod paymentMethod = paymentMethodRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Payment method not found with id: " + id));
         return mapToResponse(paymentMethod);
     }
 
-    // Get all payment methods
     public List<PaymentMethodResponse> getAllPaymentMethods() {
         return paymentMethodRepository.findAll()
                 .stream()
@@ -52,7 +49,6 @@ public class PaymentMethodService {
                 .collect(Collectors.toList());
     }
 
-    // Get all active payment methods
     public List<PaymentMethodResponse> getActivePaymentMethods() {
         return paymentMethodRepository.findByIsActiveTrue()
                 .stream()
@@ -60,20 +56,17 @@ public class PaymentMethodService {
                 .collect(Collectors.toList());
     }
 
-    // Get payment method by name
     public PaymentMethodResponse getPaymentMethodByName(String methodName) {
         PaymentMethod paymentMethod = paymentMethodRepository.findByMethodName(methodName)
                 .orElseThrow(() -> new RuntimeException("Payment method not found with name: " + methodName));
         return mapToResponse(paymentMethod);
     }
 
-    // Update payment method
     @Transactional
     public PaymentMethodResponse updatePaymentMethod(Long id, PaymentMethodRequest request) {
         PaymentMethod paymentMethod = paymentMethodRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Payment method not found with id: " + id));
 
-        // Check if method name is being changed and if new name already exists
         if (!paymentMethod.getMethodName().equals(request.getMethodName()) &&
                 paymentMethodRepository.existsByMethodName(request.getMethodName())) {
             throw new RuntimeException("Payment method with name '" + request.getMethodName() + "' already exists");
@@ -90,7 +83,6 @@ public class PaymentMethodService {
         return mapToResponse(updatedPaymentMethod);
     }
 
-    // Toggle payment method active status
     @Transactional
     public PaymentMethodResponse togglePaymentMethodStatus(Long id) {
         PaymentMethod paymentMethod = paymentMethodRepository.findById(id)
@@ -102,7 +94,6 @@ public class PaymentMethodService {
         return mapToResponse(updatedPaymentMethod);
     }
 
-    // Delete payment method
     @Transactional
     public void deletePaymentMethod(Long id) {
         PaymentMethod paymentMethod = paymentMethodRepository.findById(id)
@@ -110,7 +101,6 @@ public class PaymentMethodService {
         paymentMethodRepository.delete(paymentMethod);
     }
 
-    // Helper method to map PaymentMethod entity to PaymentMethodResponse DTO
     private PaymentMethodResponse mapToResponse(PaymentMethod paymentMethod) {
         return new PaymentMethodResponse(
                 paymentMethod.getPaymentMethodId(),

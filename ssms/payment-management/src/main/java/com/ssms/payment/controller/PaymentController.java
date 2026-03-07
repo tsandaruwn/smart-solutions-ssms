@@ -22,49 +22,42 @@ public class PaymentController {
         this.paymentService = paymentService;
     }
 
-    // Create a new payment
     @PostMapping
     public ResponseEntity<PaymentResponse> createPayment(@Valid @RequestBody PaymentRequest request) {
         PaymentResponse response = paymentService.createPayment(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // Get all payments
     @GetMapping
     public ResponseEntity<List<PaymentResponse>> getAllPayments() {
         List<PaymentResponse> payments = paymentService.getAllPayments();
         return ResponseEntity.ok(payments);
     }
 
-    // Get payment by ID
     @GetMapping("/{id}")
     public ResponseEntity<PaymentResponse> getPaymentById(@PathVariable Long id) {
         PaymentResponse response = paymentService.getPaymentById(id);
         return ResponseEntity.ok(response);
     }
 
-    // Get payment by transaction reference
     @GetMapping("/transaction/{transactionReference}")
     public ResponseEntity<PaymentResponse> getPaymentByTransactionReference(@PathVariable String transactionReference) {
         PaymentResponse response = paymentService.getPaymentByTransactionReference(transactionReference);
         return ResponseEntity.ok(response);
     }
 
-    // Get payment history by customer ID
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<List<PaymentResponse>> getPaymentsByCustomerId(@PathVariable Long customerId) {
         List<PaymentResponse> payments = paymentService.getPaymentsByCustomerId(customerId);
         return ResponseEntity.ok(payments);
     }
 
-    // Get payments by invoice ID
     @GetMapping("/invoice/{invoiceId}")
     public ResponseEntity<List<PaymentResponse>> getPaymentsByInvoiceId(@PathVariable Long invoiceId) {
         List<PaymentResponse> payments = paymentService.getPaymentsByInvoiceId(invoiceId);
         return ResponseEntity.ok(payments);
     }
 
-    // Update payment
     @PutMapping("/{id}")
     public ResponseEntity<PaymentResponse> updatePayment(
             @PathVariable Long id,
@@ -73,7 +66,6 @@ public class PaymentController {
         return ResponseEntity.ok(response);
     }
 
-    // Update payment status (Pending, Success, Failed)
     @PatchMapping("/{id}/status")
     public ResponseEntity<PaymentResponse> updatePaymentStatus(
             @PathVariable Long id,
@@ -82,7 +74,6 @@ public class PaymentController {
         return ResponseEntity.ok(response);
     }
 
-    // Process refund
     @PostMapping("/{id}/refund")
     public ResponseEntity<PaymentResponse> processRefund(
             @PathVariable Long id,
@@ -92,7 +83,6 @@ public class PaymentController {
         return ResponseEntity.ok(response);
     }
 
-    // Delete payment
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePayment(@PathVariable Long id) {
         paymentService.deletePayment(id);

@@ -10,9 +10,6 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
-/**
- * Request DTO for an individual order line item.
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

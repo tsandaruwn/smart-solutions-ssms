@@ -1,15 +1,9 @@
-// ====================================
-// USER MANAGEMENT API
-// Purpose: API utilities for user management operations
-// Proxied via Next.js rewrites → localhost:8081
-// ====================================
-
 import type { User, CreateUserRequest, UpdateUserRequest, Role, ApiResponse } from "@/types/user";
 
 const BASE_URL = "/api";
 
 class UserManagementAPI {
-  // ============ USER ENDPOINTS ============
+  
   async getAllUsers(): Promise<User[]> {
     const response = await fetch(`${BASE_URL}/users`);
     if (!response.ok) throw new Error("Failed to fetch users");
@@ -66,7 +60,6 @@ class UserManagementAPI {
     if (!response.ok) throw new Error("Failed to update last login");
   }
 
-  // ============ ROLE ENDPOINTS ============
   async getAllRoles(): Promise<Role[]> {
     const response = await fetch(`${BASE_URL}/roles`);
     if (!response.ok) throw new Error("Failed to fetch roles");

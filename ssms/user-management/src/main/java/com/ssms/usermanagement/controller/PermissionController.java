@@ -13,9 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * REST Controller for Permission management
- */
 @RestController
 @RequestMapping("/api/permissions")
 public class PermissionController {
@@ -23,9 +20,6 @@ public class PermissionController {
     @Autowired
     private PermissionService permissionService;
 
-    /**
-     * Get all permissions
-     */
     @GetMapping
     public ResponseEntity<ApiResponse<List<PermissionResponseDTO>>> getAllPermissions() {
         List<PermissionResponseDTO> permissions = permissionService.getAllPermissions();
@@ -34,9 +28,6 @@ public class PermissionController {
         );
     }
 
-    /**
-     * Get permission by ID
-     */
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<PermissionResponseDTO>> getPermissionById(@PathVariable Integer id) {
         PermissionResponseDTO permission = permissionService.getPermissionById(id);
@@ -45,9 +36,6 @@ public class PermissionController {
         );
     }
 
-    /**
-     * Get permissions by module
-     */
     @GetMapping("/module/{module}")
     public ResponseEntity<ApiResponse<List<PermissionResponseDTO>>> getPermissionsByModule(@PathVariable String module) {
         List<PermissionResponseDTO> permissions = permissionService.getPermissionsByModule(module);
@@ -56,9 +44,6 @@ public class PermissionController {
         );
     }
 
-    /**
-     * Get permissions by action
-     */
     @GetMapping("/action/{action}")
     public ResponseEntity<ApiResponse<List<PermissionResponseDTO>>> getPermissionsByAction(@PathVariable Permission.Action action) {
         List<PermissionResponseDTO> permissions = permissionService.getPermissionsByAction(action);
@@ -67,9 +52,6 @@ public class PermissionController {
         );
     }
 
-    /**
-     * Create new permission
-     */
     @PostMapping
     public ResponseEntity<ApiResponse<PermissionResponseDTO>> createPermission(@Valid @RequestBody PermissionRequestDTO requestDTO) {
         PermissionResponseDTO permission = permissionService.createPermission(requestDTO);
@@ -78,9 +60,6 @@ public class PermissionController {
         );
     }
 
-    /**
-     * Update existing permission
-     */
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<PermissionResponseDTO>> updatePermission(
             @PathVariable Integer id,
@@ -91,9 +70,6 @@ public class PermissionController {
         );
     }
 
-    /**
-     * Delete permission
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deletePermission(@PathVariable Integer id) {
         permissionService.deletePermission(id);

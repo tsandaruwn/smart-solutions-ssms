@@ -79,7 +79,6 @@ class CustomerServiceImplTest {
                 .build();
     }
 
-    // ── CREATE ───────────────────────────────────────────────────────────────
     @Nested
     @DisplayName("createCustomer")
     class CreateCustomer {
@@ -115,7 +114,6 @@ class CustomerServiceImplTest {
         }
     }
 
-    // ── READ ─────────────────────────────────────────────────────────────────
     @Nested
     @DisplayName("getCustomerById")
     class GetCustomerById {
@@ -197,7 +195,6 @@ class CustomerServiceImplTest {
         }
     }
 
-    // ── UPDATE ───────────────────────────────────────────────────────────────
     @Nested
     @DisplayName("updateCustomer")
     class UpdateCustomer {
@@ -254,7 +251,6 @@ class CustomerServiceImplTest {
         }
     }
 
-    // ── DELETE ───────────────────────────────────────────────────────────────
     @Nested
     @DisplayName("deleteCustomer")
     class DeleteCustomer {
@@ -284,7 +280,6 @@ class CustomerServiceImplTest {
         }
     }
 
-    // ── ORDER HISTORY ────────────────────────────────────────────────────────
     @Nested
     @DisplayName("getCustomerOrderHistory")
     class GetCustomerOrderHistory {

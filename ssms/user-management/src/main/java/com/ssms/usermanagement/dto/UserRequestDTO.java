@@ -5,10 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-/**
- * DTO for user registration/creation requests
- * Does not expose sensitive data
- */
 public class UserRequestDTO {
 
     @NotBlank(message = "Username is required")
@@ -32,11 +28,9 @@ public class UserRequestDTO {
     @NotNull(message = "Role ID is required")
     private Integer roleId;
 
-    // Empty constructor
     public UserRequestDTO() {
     }
 
-    // Constructor with all fields
     public UserRequestDTO(String username, String email, String password, String firstName, String lastName, String phone, Integer roleId) {
         this.username = username;
         this.email = email;
@@ -47,7 +41,6 @@ public class UserRequestDTO {
         this.roleId = roleId;
     }
 
-    // Getters and Setters
     public String getUsername() {
         return username;
     }

@@ -5,10 +5,6 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-/**
- * Mirrors com.ssms.customerservice.dto.CustomerResponseDto
- * returned by the customer-service at GET /api/v1/customers/{id}.
- */
 @Data
 public class CustomerDto {
     private Long customerId;

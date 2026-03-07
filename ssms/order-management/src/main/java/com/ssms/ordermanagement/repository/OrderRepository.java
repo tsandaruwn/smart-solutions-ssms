@@ -34,4 +34,3 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     @Query("SELECT COALESCE(MAX(o.orderId), 0) FROM Order o")
     Integer findMaxOrderId();
 }
-

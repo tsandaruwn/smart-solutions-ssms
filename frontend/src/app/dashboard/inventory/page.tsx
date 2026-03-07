@@ -96,7 +96,7 @@ export default function InventoryPage() {
 
   return (
     <div>
-      {/* Backend warning */}
+      {}
       {error && (
         <div className="warning-banner mb-4">
           <span
@@ -120,7 +120,7 @@ export default function InventoryPage() {
         </div>
       )}
 
-      {/* Page header */}
+      {}
       <div className="d-flex flex-column flex-sm-row align-items-sm-center justify-content-sm-between gap-3 mb-4">
         <div>
           <h1
@@ -159,7 +159,7 @@ export default function InventoryPage() {
         </div>
       </div>
 
-      {/* Stat cards row */}
+      {}
       <div className="row g-3 mb-4">
         <div className="col-12 col-sm-4">
           <div className="stat-card">
@@ -235,7 +235,7 @@ export default function InventoryPage() {
         </div>
       </div>
 
-      {/* Filters */}
+      {}
       <div className="d-flex flex-column flex-sm-row gap-3 mb-4">
         <div className="search-wrapper flex-grow-1">
           <Search className="search-icon" size={16} />
@@ -264,7 +264,7 @@ export default function InventoryPage() {
         </div>
       </div>
 
-      {/* Table */}
+      {}
       <div className="card-brand">
         {paginatedInventory.length === 0 ? (
           <div className="d-flex flex-column align-items-center justify-content-center py-5 gap-2">
@@ -455,7 +455,7 @@ export default function InventoryPage() {
           </div>
         )}
 
-        {/* Pagination */}
+        {}
         {totalPages > 1 && (
           <div
             className="d-flex align-items-center justify-content-between px-4 py-3"

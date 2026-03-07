@@ -7,7 +7,7 @@ public class PaymentDto {
     private Long paymentId;
     private Long invoiceId;
     private BigDecimal amount;
-    private String status; // SUCCESS, FAILED, PENDING
+    private String status; 
     private LocalDateTime timestamp;
 
     public Long getPaymentId() {

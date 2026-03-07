@@ -16,19 +16,14 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         
-        // Allow credentials
         config.setAllowCredentials(true);
         
-        // Allow specific origins (update with your frontend URL)
         config.setAllowedOriginPatterns(Arrays.asList("*"));
         
-        // Allow all headers
         config.setAllowedHeaders(Arrays.asList("*"));
         
-        // Allow all HTTP methods
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         
-        // Expose headers
         config.setExposedHeaders(Arrays.asList("Authorization", "Content-Type"));
         
         source.registerCorsConfiguration("/**", config);

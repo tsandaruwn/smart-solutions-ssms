@@ -46,7 +46,6 @@ class CustomerRepositoryTest {
                 .build());
     }
 
-    // ── findByEmail ───────────────────────────────────────────────────────────
     @Nested
     @DisplayName("findByEmail")
     class FindByEmail {
@@ -81,7 +80,6 @@ class CustomerRepositoryTest {
         }
     }
 
-    // ── existsByEmail ─────────────────────────────────────────────────────────
     @Nested
     @DisplayName("existsByEmail")
     class ExistsByEmail {
@@ -99,7 +97,6 @@ class CustomerRepositoryTest {
         }
     }
 
-    // ── findAll (with soft-delete filter) ────────────────────────────────────
     @Nested
     @DisplayName("findAll with @SQLRestriction")
     class FindAll {
@@ -125,7 +122,6 @@ class CustomerRepositoryTest {
         }
     }
 
-    // ── searchCustomers ───────────────────────────────────────────────────────
     @Nested
     @DisplayName("searchCustomers")
     class SearchCustomers {
@@ -165,7 +161,6 @@ class CustomerRepositoryTest {
         }
     }
 
-    // ── save / persist ────────────────────────────────────────────────────────
     @Nested
     @DisplayName("save customer")
     class SaveCustomer {

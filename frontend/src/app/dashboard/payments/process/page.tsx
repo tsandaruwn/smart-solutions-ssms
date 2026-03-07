@@ -28,7 +28,7 @@ export default function ProcessPaymentPage() {
   useEffect(() => {
     loadPaymentMethods();
     customerApi.getAll(0, 1000).then((res) => setCustomers(res.content)).catch(() => {});
-    // Generate a default transaction reference
+    
     const txnRef = `TXN-${new Date().getFullYear()}-${Date.now().toString().slice(-8)}`;
     setFormData((prev) => ({ ...prev, transactionReference: txnRef }));
   }, []);
@@ -52,7 +52,6 @@ export default function ProcessPaymentPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    // Validation
     if (formData.amount <= 0) {
       alert("Amount must be greater than 0");
       return;
@@ -87,7 +86,7 @@ export default function ProcessPaymentPage() {
 
   return (
     <div>
-      {/* Page header */}
+      {}
       <div className="mb-4">
         <Link
           href="/dashboard/payments"
@@ -137,7 +136,7 @@ export default function ProcessPaymentPage() {
 
         <form onSubmit={handleSubmit}>
           <div className="row g-3">
-            {/* Transaction Reference */}
+            {}
             <div className="col-12">
               <label htmlFor="transactionReference" className="form-label-brand">
                 Transaction Reference
@@ -156,7 +155,7 @@ export default function ProcessPaymentPage() {
               </small>
             </div>
 
-            {/* Customer & Invoice */}
+            {}
             <div className="col-md-6">
               <label htmlFor="customerId" className="form-label-brand">
                 Customer <span className="text-danger">*</span>
@@ -206,7 +205,7 @@ export default function ProcessPaymentPage() {
               </select>
             </div>
 
-            {/* Amount & Payment Method */}
+            {}
             <div className="col-md-6">
               <label htmlFor="amount" className="form-label-brand">
                 Payment Amount <span className="text-danger">*</span>
@@ -250,7 +249,7 @@ export default function ProcessPaymentPage() {
               </select>
             </div>
 
-            {/* Gateway Response */}
+            {}
             <div className="col-12">
               <label htmlFor="gatewayResponse" className="form-label-brand">
                 Gateway Response (Optional)
@@ -266,7 +265,7 @@ export default function ProcessPaymentPage() {
               />
             </div>
 
-            {/* Submit Buttons */}
+            {}
             <div className="col-12 d-flex gap-2 pt-2">
               <button
                 type="submit"

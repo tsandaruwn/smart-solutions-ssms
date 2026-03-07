@@ -10,12 +10,9 @@ import java.util.List;
 @Repository
 public interface CampaignRepository extends JpaRepository<Campaign, Integer> {
 
-    /** Active (non-deleted) campaigns only. */
     List<Campaign> findAllByDeletedAtIsNull();
 
-    /** Campaigns by a specific marketing manager. */
     List<Campaign> findByCreatedByUserIdAndDeletedAtIsNull(Integer createdByUserId);
 
-    /** Campaigns by status (active only). */
     List<Campaign> findByStatusAndDeletedAtIsNull(CampaignStatus status);
 }

@@ -1,4 +1,3 @@
-
 package com.ssms.billinginvoice.service;
 
 import com.ssms.billinginvoice.Calculator.PriceCalculator;
@@ -39,13 +38,12 @@ public class BillingService {
 
     public BillDto generateBill(Long orderId) {
 
-        // ensure only one invoice per order
         if (billRepository.findByOrderId(orderId) != null) {
             throw new IllegalStateException("Invoice already exists for order " + orderId);
         }
 
         OrderDto order = orderClient.getOrderById(orderId);
-        // customerId comes directly from the order-management service response
+        
         CustomerDto customer = customerClient.getCustomerById(
                 order.getCustomerId() != null ? order.getCustomerId().longValue() : 0L).getData();
 
@@ -75,14 +73,13 @@ public class BillingService {
         return billRepository.findByCustomerId(customerId);
     }
 
-    // ---------- basic CRUD on bills ----------
     public Bill getBill(Long invoiceId) {
         return billRepository.findById(invoiceId).orElseThrow();
     }
 
     public Bill updateBill(Long invoiceId, Bill updates) {
         Bill existing = getBill(invoiceId);
-        // only allow select fields to change; ignore order/customer/created fields
+        
         if (updates.getSubtotal() != null)
             existing.setSubtotal(updates.getSubtotal());
         if (updates.getTax() != null)
@@ -110,7 +107,7 @@ public class BillingService {
     public PaymentDto recordPayment(Long invoiceId, PaymentDto payment) {
         payment.setInvoiceId(invoiceId);
         PaymentDto recorded = paymentClient.createPayment(payment);
-        // update status if fully paid
+        
         Bill bill = billRepository.findById(invoiceId).orElseThrow();
         BigDecimal totalPaid = paymentClient.getTotalPaidForInvoice(invoiceId);
         if (totalPaid.compareTo(bill.getTotalAmount()) >= 0) {

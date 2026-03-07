@@ -59,10 +59,6 @@ class WarehouseServiceImplTest {
                 .build();
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // createWarehouse
-    // ──────────────────────────────────────────────────────────────
-
     @Nested
     @DisplayName("createWarehouse")
     class CreateWarehouse {
@@ -120,10 +116,6 @@ class WarehouseServiceImplTest {
         }
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // getAllWarehouses
-    // ──────────────────────────────────────────────────────────────
-
     @Nested
     @DisplayName("getAllWarehouses")
     class GetAllWarehouses {
@@ -160,10 +152,6 @@ class WarehouseServiceImplTest {
         }
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // getWarehouseById
-    // ──────────────────────────────────────────────────────────────
-
     @Nested
     @DisplayName("getWarehouseById")
     class GetWarehouseById {
@@ -192,10 +180,6 @@ class WarehouseServiceImplTest {
         }
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // updateWarehouse
-    // ──────────────────────────────────────────────────────────────
-
     @Nested
     @DisplayName("updateWarehouse")
     class UpdateWarehouse {
@@ -204,7 +188,7 @@ class WarehouseServiceImplTest {
         @DisplayName("should update warehouse successfully with same name")
         void shouldUpdateWithSameName() {
             WarehouseRequest updateReq = WarehouseRequest.builder()
-                    .name("Main Warehouse") // same name
+                    .name("Main Warehouse") 
                     .address("456 Updated St")
                     .city("Quezon City")
                     .country("Philippines")
@@ -231,7 +215,7 @@ class WarehouseServiceImplTest {
             assertThat(result.getAddress()).isEqualTo("456 Updated St");
             assertThat(result.getCity()).isEqualTo("Quezon City");
             assertThat(result.getCapacity()).isEqualTo(15000);
-            // existsByName should NOT be checked when name doesn't change
+            
             verify(warehouseRepository, never()).existsByName(any());
         }
 
@@ -295,10 +279,6 @@ class WarehouseServiceImplTest {
                     .isInstanceOf(ResourceNotFoundException.class);
         }
     }
-
-    // ──────────────────────────────────────────────────────────────
-    // deactivateWarehouse
-    // ──────────────────────────────────────────────────────────────
 
     @Nested
     @DisplayName("deactivateWarehouse")

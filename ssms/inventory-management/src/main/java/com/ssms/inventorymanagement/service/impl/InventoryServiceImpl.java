@@ -22,18 +22,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Default implementation of {@link InventoryService}.
- *
- * <p>Core responsibilities addressed:
- * <ul>
- *   <li>Track stock quantities per product per warehouse</li>
- *   <li>Update inventory on order placement (DECREASE operation)</li>
- *   <li>Generate low-stock alerts (flag + query)</li>
- *   <li>Manage warehouse stock records (CRUD)</li>
- *   <li>Allow inventory record soft-deletion</li>
- * </ul>
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -42,16 +30,6 @@ public class InventoryServiceImpl implements InventoryService {
     private final InventoryRepository inventoryRepository;
     private final WarehouseRepository warehouseRepository;
 
-    // ─────────────────────────────────────────────────────────────────────
-    // Create
-    // ─────────────────────────────────────────────────────────────────────
-
-    /**
-     * {@inheritDoc}
-     *
-     * @throws BusinessException         if the product already has a record in the warehouse
-     * @throws ResourceNotFoundException if the warehouse does not exist or is inactive
-     */
     @Override
     @Transactional
     public InventoryResponse createInventory(InventoryRequest request) {
@@ -59,7 +37,6 @@ public class InventoryServiceImpl implements InventoryService {
         log.info("Creating inventory record — productId={}, warehouseId={}",
                 request.getProductId(), request.getWarehouseId());
 
-        // Guard: unique (product, warehouse) combination
         if (inventoryRepository.existsByProductIdAndWarehouse_WarehouseId(
                 request.getProductId(), request.getWarehouseId())) {
             throw new BusinessException(ResponseMessages.INVENTORY_ALREADY_EXISTS);
@@ -84,11 +61,6 @@ public class InventoryServiceImpl implements InventoryService {
         return mapToResponse(saved);
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    // Read
-    // ─────────────────────────────────────────────────────────────────────
-
-    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
     public List<InventoryResponse> getAllInventory() {
@@ -99,7 +71,6 @@ public class InventoryServiceImpl implements InventoryService {
                 .collect(Collectors.toList());
     }
 
-    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
     public InventoryResponse getInventoryById(Long inventoryId) {
@@ -107,7 +78,6 @@ public class InventoryServiceImpl implements InventoryService {
         return mapToResponse(findActiveOrThrow(inventoryId));
     }
 
-    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
     public List<InventoryResponse> getInventoryByProductId(Long productId) {
@@ -118,7 +88,6 @@ public class InventoryServiceImpl implements InventoryService {
                 .collect(Collectors.toList());
     }
 
-    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
     public List<InventoryResponse> getInventoryByWarehouseId(Long warehouseId) {
@@ -129,16 +98,6 @@ public class InventoryServiceImpl implements InventoryService {
                 .collect(Collectors.toList());
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    // Update metadata
-    // ─────────────────────────────────────────────────────────────────────
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>Note: this method updates reorder thresholds only. To adjust the
-     * physical count, use {@link #updateStock(Long, StockUpdateRequest)}.
-     */
     @Override
     @Transactional
     public InventoryResponse updateInventory(Long inventoryId, InventoryRequest request) {
@@ -164,22 +123,6 @@ public class InventoryServiceImpl implements InventoryService {
         return mapToResponse(updated);
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    // Stock update (order placement / restock / correction)
-    // ─────────────────────────────────────────────────────────────────────
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>Supported operations:
-     * <ul>
-     *   <li>{@code INCREASE} — adds units; marks restock timestamp</li>
-     *   <li>{@code DECREASE} — removes units; guards against going negative</li>
-     *   <li>{@code SET}      — overrides to an exact quantity</li>
-     * </ul>
-     *
-     * @throws BusinessException if a DECREASE would push the stock below zero
-     */
     @Override
     @Transactional
     public InventoryResponse updateStock(Long inventoryId, StockUpdateRequest request) {
@@ -195,7 +138,7 @@ public class InventoryServiceImpl implements InventoryService {
             case AppConstants.STOCK_OP_INCREASE -> {
                 inventory.setQuantityOnHand(inventory.getQuantityOnHand() + quantity);
                 inventory.setLastRestockedAt(LocalDateTime.now());
-                // Reset alert flag so a future low-stock event re-triggers the alert
+                
                 inventory.setLowStockAlertSent(Boolean.FALSE);
                 log.debug("Stock increased by {} for inventoryId={}", quantity, inventoryId);
             }
@@ -220,11 +163,6 @@ public class InventoryServiceImpl implements InventoryService {
         return mapToResponse(updated);
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    // Low-stock alerts
-    // ─────────────────────────────────────────────────────────────────────
-
-    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
     public List<InventoryResponse> getLowStockAlerts() {
@@ -235,7 +173,6 @@ public class InventoryServiceImpl implements InventoryService {
                 .collect(Collectors.toList());
     }
 
-    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
     public List<InventoryResponse> getLowStockAlertsByWarehouse(Long warehouseId) {
@@ -246,11 +183,6 @@ public class InventoryServiceImpl implements InventoryService {
                 .collect(Collectors.toList());
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    // Soft delete
-    // ─────────────────────────────────────────────────────────────────────
-
-    /** {@inheritDoc} */
     @Override
     @Transactional
     public void deleteInventory(Long inventoryId) {
@@ -261,38 +193,18 @@ public class InventoryServiceImpl implements InventoryService {
         log.info("Inventory record soft-deleted: {}", inventoryId);
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    // Private helpers
-    // ─────────────────────────────────────────────────────────────────────
-
-    /**
-     * Looks up a non-deleted inventory record or throws {@link ResourceNotFoundException}.
-     */
     private Inventory findActiveOrThrow(Long inventoryId) {
         return inventoryRepository.findByInventoryIdAndIsDeletedFalse(inventoryId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         ResponseMessages.INVENTORY_NOT_FOUND + inventoryId));
     }
 
-    /**
-     * Looks up an active warehouse or throws {@link ResourceNotFoundException}.
-     */
     private Warehouse findActiveWarehouseOrThrow(Long warehouseId) {
         return warehouseRepository.findByWarehouseIdAndIsActiveTrue(warehouseId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         ResponseMessages.WAREHOUSE_NOT_FOUND + warehouseId));
     }
 
-    /**
-     * Evaluates the low-stock condition and sets the {@code lowStockAlertSent}
-     * flag to {@code true} when the condition is first met, so duplicate
-     * notifications are not dispatched.
-     *
-     * <p>The flag is reset to {@code false} after a successful INCREASE so
-     * future depletion can retrigger the alert.
-     *
-     * @param inventory the inventory record to evaluate (must already be saved)
-     */
     private void checkAndFlagLowStock(Inventory inventory) {
         if (inventory.isLowStock() && Boolean.FALSE.equals(inventory.getLowStockAlertSent())) {
             inventory.setLowStockAlertSent(Boolean.TRUE);
@@ -305,10 +217,6 @@ public class InventoryServiceImpl implements InventoryService {
         }
     }
 
-    /**
-     * Maps an {@link Inventory} entity to an {@link InventoryResponse} DTO,
-     * including an embedded {@link WarehouseResponse} summary.
-     */
     private InventoryResponse mapToResponse(Inventory inventory) {
         WarehouseResponse warehouseResponse = null;
         if (inventory.getWarehouse() != null) {

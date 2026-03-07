@@ -13,17 +13,13 @@ import java.util.Optional;
 @Repository
 public interface CampaignPerformanceRepository extends JpaRepository<CampaignPerformance, Integer> {
 
-    /** All snapshots for a given campaign. */
     List<CampaignPerformance> findByCampaignCampaignIdOrderByRecordedDateAsc(Integer campaignId);
 
-    /** Snapshot for a specific campaign + date (unique constraint). */
     Optional<CampaignPerformance> findByCampaignCampaignIdAndRecordedDate(Integer campaignId, LocalDate recordedDate);
 
-    /** Snapshots for a campaign within a date range. */
     List<CampaignPerformance> findByCampaignCampaignIdAndRecordedDateBetweenOrderByRecordedDateAsc(
             Integer campaignId, LocalDate from, LocalDate to);
 
-    /** Aggregate totals for a campaign. */
     @Query("""
             SELECT
               SUM(p.impressions)       AS totalImpressions,

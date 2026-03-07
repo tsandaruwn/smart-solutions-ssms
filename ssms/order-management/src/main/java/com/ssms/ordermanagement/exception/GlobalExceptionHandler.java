@@ -12,9 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * Global exception handler for the Order Management microservice.
- */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 

@@ -26,11 +26,6 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
 
-    // ─── CREATE ─────────────────────────────────────────────────
-
-    /**
-     * Place a new order from a CreateOrderRequest DTO.
-     */
     @Transactional
     public OrderResponse placeOrder(CreateOrderRequest request) {
         Order order = Order.builder()
@@ -44,7 +39,6 @@ public class OrderService {
                 .orderDate(LocalDateTime.now())
                 .build();
 
-        // Map request items → entity items
         for (OrderItemRequest itemReq : request.getItems()) {
             OrderItem item = OrderItem.builder()
                     .productId(itemReq.getProductId())
@@ -56,7 +50,6 @@ public class OrderService {
             order.addItem(item);
         }
 
-        // Calculate total
         order.recalculateTotalAmount();
 
         Order saved = orderRepository.save(order);
@@ -64,20 +57,12 @@ public class OrderService {
         return OrderResponse.fromEntity(saved);
     }
 
-    // ─── READ ───────────────────────────────────────────────────
-
-    /**
-     * Get order by primary key (order_id).
-     */
     @Transactional(readOnly = true)
     public OrderResponse getOrderById(Integer orderId) {
         Order order = findOrderOrThrow(orderId);
         return OrderResponse.fromEntity(order);
     }
 
-    /**
-     * Get order by order_number.
-     */
     @Transactional(readOnly = true)
     public OrderResponse getOrderByOrderNumber(String orderNumber) {
         Order order = orderRepository.findByOrderNumber(orderNumber)
@@ -85,9 +70,6 @@ public class OrderService {
         return OrderResponse.fromEntity(order);
     }
 
-    /**
-     * Get all orders.
-     */
     @Transactional(readOnly = true)
     public List<OrderResponse> getAllOrders() {
         return orderRepository.findAll().stream()
@@ -95,9 +77,6 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Get order history for a given customer.
-     */
     @Transactional(readOnly = true)
     public List<OrderResponse> getOrderHistory(Integer customerId) {
         return orderRepository.findByCustomerIdOrderByOrderDateDesc(customerId).stream()
@@ -105,9 +84,6 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Get orders by status.
-     */
     @Transactional(readOnly = true)
     public List<OrderResponse> getOrdersByStatus(OrderStatus status) {
         return orderRepository.findByStatus(status).stream()
@@ -115,9 +91,6 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Get orders by date range.
-     */
     @Transactional(readOnly = true)
     public List<OrderResponse> getOrdersByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
         return orderRepository.findByOrderDateBetween(startDate, endDate).stream()
@@ -125,9 +98,6 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Get recent orders (last 30 days).
-     */
     @Transactional(readOnly = true)
     public List<OrderResponse> getRecentOrders() {
         LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
@@ -136,12 +106,6 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    // ─── UPDATE ─────────────────────────────────────────────────
-
-    /**
-     * Update an existing order's editable fields (shipping, notes, items).
-     * Only PENDING orders can be fully edited.
-     */
     @Transactional
     public OrderResponse updateOrder(Integer orderId, CreateOrderRequest request) {
         Order order = findOrderOrThrow(orderId);
@@ -154,7 +118,6 @@ public class OrderService {
         order.setShippingCity(request.getShippingCity());
         order.setNotes(request.getNotes());
 
-        // Replace items
         order.getItems().clear();
         for (OrderItemRequest itemReq : request.getItems()) {
             OrderItem item = OrderItem.builder()
@@ -174,9 +137,6 @@ public class OrderService {
         return OrderResponse.fromEntity(saved);
     }
 
-    /**
-     * Update order status (Pending → Shipped → Delivered).
-     */
     @Transactional
     public OrderResponse updateOrderStatus(Integer orderId, UpdateOrderStatusRequest request) {
         Order order = findOrderOrThrow(orderId);
@@ -188,11 +148,6 @@ public class OrderService {
         return OrderResponse.fromEntity(saved);
     }
 
-    // ─── CANCEL ─────────────────────────────────────────────────
-
-    /**
-     * Cancel an order. Only orders that are PENDING can be cancelled.
-     */
     @Transactional
     public OrderResponse cancelOrder(Integer orderId, CancelOrderRequest request) {
         Order order = findOrderOrThrow(orderId);
@@ -219,11 +174,6 @@ public class OrderService {
         return OrderResponse.fromEntity(saved);
     }
 
-    // ─── DELETE ─────────────────────────────────────────────────
-
-    /**
-     * Delete an order (admin use).
-     */
     @Transactional
     public void deleteOrder(Integer orderId) {
         Order order = findOrderOrThrow(orderId);
@@ -231,16 +181,11 @@ public class OrderService {
         log.info("Order {} deleted", order.getOrderNumber());
     }
 
-    // ─── Private helpers ────────────────────────────────────────
-
     private Order findOrderOrThrow(Integer orderId) {
         return orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException(orderId));
     }
 
-    /**
-     * Generate a unique order number: ORD-YYYYMMDD-XXXX
-     */
     private String generateUniqueOrderNumber() {
         String orderNumber;
         do {
@@ -251,10 +196,6 @@ public class OrderService {
         return orderNumber;
     }
 
-    /**
-     * Validate that the requested status transition is legal.
-     * Allowed transitions: PENDING → SHIPPED → DELIVERED
-     */
     private void validateStatusTransition(OrderStatus currentStatus, OrderStatus newStatus) {
         if (currentStatus == OrderStatus.CANCELLED) {
             throw new InvalidOrderStateException("Cannot update status of a cancelled order");
@@ -275,4 +216,3 @@ public class OrderService {
         }
     }
 }
-

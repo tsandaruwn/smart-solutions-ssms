@@ -12,9 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * Global exception handler for the Digital Marketing microservice.
- */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 

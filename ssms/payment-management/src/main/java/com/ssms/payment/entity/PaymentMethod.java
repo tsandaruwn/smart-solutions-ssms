@@ -33,7 +33,6 @@ public class PaymentMethod {
         this.isActive = isActive != null ? isActive : true;
     }
 
-    // Getters and Setters
     public Long getPaymentMethodId() {
         return paymentMethodId;
     }
@@ -74,4 +73,3 @@ public class PaymentMethod {
         this.isActive = isActive;
     }
 }
-

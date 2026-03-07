@@ -28,7 +28,6 @@ export default function CreateOrderPage() {
   const [notes, setNotes] = useState("");
   const [items, setItems] = useState<OrderItemForm[]>([{ ...emptyItem }]);
 
-  // Dropdown data
   const [customers, setCustomers] = useState<CustomerResponse[]>([]);
   const [users, setUsers] = useState<UserType[]>([]);
   const [products, setProducts] = useState<ProductResponse[]>([]);
@@ -95,7 +94,7 @@ export default function CreateOrderPage() {
       )}
 
       <form onSubmit={handleSubmit}>
-        {/* Customer Info */}
+        {}
         <div className="card-brand mb-4">
           <div className="card-brand-header">
             <h2 className="fw-semibold text-navy mb-0 d-flex align-items-center gap-2" style={{ fontSize: ".9375rem" }}>
@@ -136,7 +135,7 @@ export default function CreateOrderPage() {
           </div>
         </div>
 
-        {/* Shipping Info */}
+        {}
         <div className="card-brand mb-4">
           <div className="card-brand-header">
             <h2 className="fw-semibold text-navy mb-0 d-flex align-items-center gap-2" style={{ fontSize: ".9375rem" }}>
@@ -163,7 +162,7 @@ export default function CreateOrderPage() {
           </div>
         </div>
 
-        {/* Order Items */}
+        {}
         <div className="card-brand mb-4">
           <div className="card-brand-header">
             <h2 className="fw-semibold text-navy mb-0 d-flex align-items-center gap-2" style={{ fontSize: ".9375rem" }}>
@@ -242,7 +241,7 @@ export default function CreateOrderPage() {
           </div>
         </div>
 
-        {/* Notes */}
+        {}
         <div className="card-brand mb-4">
           <div className="card-brand-header">
             <h2 className="fw-semibold text-navy mb-0 d-flex align-items-center gap-2" style={{ fontSize: ".9375rem" }}>
@@ -255,7 +254,7 @@ export default function CreateOrderPage() {
           </div>
         </div>
 
-        {/* Actions */}
+        {}
         <div className="d-flex align-items-center justify-content-end gap-3">
           <Link href="/dashboard/orders" className="btn-ghost">Cancel</Link>
           <button type="submit" disabled={loading} className="btn-amber">

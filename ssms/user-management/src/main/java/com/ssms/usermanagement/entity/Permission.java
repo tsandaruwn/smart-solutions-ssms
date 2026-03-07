@@ -5,9 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Permission Entity - Represents permissions in the RBAC system
- */
 @Entity
 @Table(name = "permission")
 public class Permission {
@@ -31,23 +28,19 @@ public class Permission {
     @OneToMany(mappedBy = "permission", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RolePermission> rolePermissions = new HashSet<>();
 
-    // Empty constructor
     public Permission() {
     }
 
-    // Constructor with permission name
     public Permission(String permissionName) {
         this.permissionName = permissionName;
     }
 
-    // Constructor with all fields
     public Permission(String permissionName, String module, Action action) {
         this.permissionName = permissionName;
         this.module = module;
         this.action = action;
     }
 
-    // Getters and Setters
     public Integer getPermissionId() {
         return permissionId;
     }
@@ -88,7 +81,6 @@ public class Permission {
         this.rolePermissions = rolePermissions;
     }
 
-    // Enum for Actions
     public enum Action {
         CREATE,
         READ,

@@ -11,9 +11,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-/**
- * Request DTO for placing a new order.
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

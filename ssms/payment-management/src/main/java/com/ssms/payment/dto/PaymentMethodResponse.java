@@ -21,7 +21,6 @@ public class PaymentMethodResponse {
         this.isActive = isActive;
     }
 
-    // Getters and Setters
     public Long getPaymentMethodId() {
         return paymentMethodId;
     }

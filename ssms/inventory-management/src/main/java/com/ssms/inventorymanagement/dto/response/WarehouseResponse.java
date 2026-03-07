@@ -3,12 +3,6 @@ package com.ssms.inventorymanagement.dto.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
-/**
- * Response DTO returned to API consumers for {@code Warehouse} resources.
- *
- * <p>Only the fields needed by the client are exposed here; internal
- * implementation details (e.g. JPA proxies, audit columns) are excluded.
- */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @Setter

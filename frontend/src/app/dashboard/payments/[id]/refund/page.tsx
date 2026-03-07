@@ -124,7 +124,7 @@ export default function RefundPage({ params }: { params: Promise<{ id: string }>
 
   return (
     <div style={{ padding: "2rem", maxWidth: "720px", margin: "0 auto" }}>
-      {/* Back Link */}
+      {}
       <div className="mb-4">
         <Link
           href={`/dashboard/payments/${payment.paymentId}`}
@@ -142,7 +142,7 @@ export default function RefundPage({ params }: { params: Promise<{ id: string }>
           Process Refund
         </h1>
 
-        {/* Payment Summary */}
+        {}
         <div className="bg-cream-light rounded-3 p-3 mb-4">
           <h3 className="text-navy mb-3" style={{ fontSize: "1rem", fontWeight: 600 }}>
             Payment Information
@@ -167,7 +167,7 @@ export default function RefundPage({ params }: { params: Promise<{ id: string }>
           </div>
         </div>
 
-        {/* Refund Form */}
+        {}
         <form onSubmit={handleRefund}>
           <div className="mb-3">
             <label htmlFor="refundAmount" className="form-label fw-medium text-navy">

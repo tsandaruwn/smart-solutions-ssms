@@ -9,18 +9,6 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-/**
- * ORDER_ITEM entity – represents a line item within an order.
- *
- * Columns:
- *   order_item_id  INT  PK
- *   order_id       INT  FK → ORDER
- *   product_id     INT  FK → PRODUCT
- *   quantity        INT NOT NULL
- *   unit_price_at_order  DECIMAL(10,2)
- *   discount_percent     DECIMAL(5,2) DEFAULT 0
- *   line_total           DECIMAL(12,2) COMPUTED
- */
 @Entity
 @Table(name = "order_item")
 @Data
@@ -54,10 +42,6 @@ public class OrderItem {
     @Column(name = "line_total", precision = 12, scale = 2, insertable = false, updatable = false)
     private BigDecimal lineTotal;
 
-    /**
-     * Compute line_total in Java for cases where the DB computed column
-     * is not yet available (e.g. before persist).
-     */
     public BigDecimal computeLineTotal() {
         if (unitPriceAtOrder == null || quantity == null) return BigDecimal.ZERO;
         BigDecimal gross = unitPriceAtOrder.multiply(BigDecimal.valueOf(quantity));

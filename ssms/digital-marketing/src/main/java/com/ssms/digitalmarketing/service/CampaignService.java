@@ -23,8 +23,6 @@ public class CampaignService {
 
     private final CampaignRepository campaignRepository;
 
-    // ─── CREATE ──────────────────────────────────────────────────
-
     @Transactional
     public CampaignResponse createCampaign(CreateCampaignRequest request) {
         validateDateRange(request.getStartDate(), request.getEndDate());
@@ -45,8 +43,6 @@ public class CampaignService {
         log.info("Campaign created: id={}, name={}", saved.getCampaignId(), saved.getName());
         return CampaignResponse.fromEntity(saved);
     }
-
-    // ─── READ ────────────────────────────────────────────────────
 
     @Transactional(readOnly = true)
     public CampaignResponse getCampaignById(Integer campaignId) {
@@ -73,8 +69,6 @@ public class CampaignService {
                 .map(CampaignResponse::fromEntity)
                 .collect(Collectors.toList());
     }
-
-    // ─── UPDATE ──────────────────────────────────────────────────
 
     @Transactional
     public CampaignResponse updateCampaign(Integer campaignId, UpdateCampaignRequest request) {
@@ -106,8 +100,6 @@ public class CampaignService {
         return CampaignResponse.fromEntity(saved);
     }
 
-    // ─── DELETE (soft) ───────────────────────────────────────────
-
     @Transactional
     public void deleteCampaign(Integer campaignId) {
         Campaign campaign = findActiveOrThrow(campaignId);
@@ -115,8 +107,6 @@ public class CampaignService {
         campaignRepository.save(campaign);
         log.info("Campaign soft-deleted: id={}", campaignId);
     }
-
-    // ─── STATUS transitions ──────────────────────────────────────
 
     @Transactional
     public CampaignResponse changeCampaignStatus(Integer campaignId, CampaignStatus newStatus) {
@@ -126,8 +116,6 @@ public class CampaignService {
         log.info("Campaign status changed: id={}, status={}", campaignId, newStatus);
         return CampaignResponse.fromEntity(saved);
     }
-
-    // ─── Helpers ─────────────────────────────────────────────────
 
     private Campaign findActiveOrThrow(Integer campaignId) {
         Campaign campaign = campaignRepository.findById(campaignId)

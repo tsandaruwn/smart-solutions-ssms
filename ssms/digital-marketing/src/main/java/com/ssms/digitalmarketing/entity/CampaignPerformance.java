@@ -6,19 +6,6 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-/**
- * CAMPAIGN_PERFORMANCE entity – time-series metrics snapshot per campaign day.
- *
- * Columns (from ER):
- * perf_id INT (AUTO_INCREMENT) PK
- * campaign_id INT FK → CAMPAIGN
- * recorded_date DATE
- * impressions INT DEFAULT 0
- * clicks INT DEFAULT 0
- * conversions INT DEFAULT 0
- * revenue_generated DECIMAL(12,2)
- * cost_incurred DECIMAL(12,2)
- */
 @Entity
 @Table(name = "campaign_performance", uniqueConstraints = @UniqueConstraint(name = "uq_campaign_date", columnNames = {
         "campaign_id", "recorded_date" }))
@@ -58,9 +45,6 @@ public class CampaignPerformance {
     @Column(name = "cost_incurred", precision = 12, scale = 2)
     private BigDecimal costIncurred;
 
-    // ─── Derived helpers ─────────────────────────────────────────
-
-    /** Click-through rate = clicks / impressions (0 if impressions == 0). */
     @Transient
     public double getClickThroughRate() {
         if (impressions == null || impressions == 0)
@@ -68,7 +52,6 @@ public class CampaignPerformance {
         return (double) clicks / impressions * 100;
     }
 
-    /** Conversion rate = conversions / clicks (0 if clicks == 0). */
     @Transient
     public double getConversionRate() {
         if (clicks == null || clicks == 0)
@@ -76,7 +59,6 @@ public class CampaignPerformance {
         return (double) conversions / clicks * 100;
     }
 
-    /** Return on ad spend = revenue / cost (0 if cost == 0). */
     @Transient
     public double getRoas() {
         if (costIncurred == null || costIncurred.compareTo(BigDecimal.ZERO) == 0)

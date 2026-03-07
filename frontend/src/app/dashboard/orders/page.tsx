@@ -71,7 +71,7 @@ export default function OrdersPage() {
 
   return (
     <div>
-      {/* Backend warning */}
+      {}
       {error && (
         <div className="warning-banner mb-4">
           <span className="animate-pulse rounded-circle bg-amber d-inline-block flex-shrink-0" style={{ width: 8, height: 8 }} />
@@ -82,7 +82,7 @@ export default function OrdersPage() {
         </div>
       )}
 
-      {/* Page header */}
+      {}
       <div className="d-flex flex-column flex-sm-row align-items-sm-center justify-content-sm-between gap-3 mb-4">
         <div>
           <h1 className="fw-bold text-navy mb-1" style={{ fontSize: "1.5rem" }}>Order Management</h1>
@@ -96,7 +96,7 @@ export default function OrdersPage() {
         </Link>
       </div>
 
-      {/* Filters */}
+      {}
       <div className="d-flex flex-column flex-sm-row gap-3 mb-4">
         <div className="search-wrapper flex-grow-1">
           <Search className="search-icon" size={16} />
@@ -121,7 +121,7 @@ export default function OrdersPage() {
         </div>
       </div>
 
-      {/* Table */}
+      {}
       <div className="card-brand">
         {paginatedOrders.length === 0 ? (
           <div className="d-flex flex-column align-items-center justify-content-center py-5 gap-2">
@@ -199,7 +199,7 @@ export default function OrdersPage() {
           </div>
         )}
 
-        {/* Pagination */}
+        {}
         {totalPages > 1 && (
           <div className="d-flex align-items-center justify-content-between px-4 py-3" style={{ borderTop: "1px solid var(--border-color)", background: "rgba(242,238,234,.3)" }}>
             <p className="mb-0 text-muted-brand" style={{ fontSize: ".875rem" }}>

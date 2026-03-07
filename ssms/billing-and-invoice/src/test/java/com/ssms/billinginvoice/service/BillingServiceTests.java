@@ -20,22 +20,19 @@ public class BillingServiceTests {
 
     @Test
     void fullCrudFlow() {
-        // generate invoice for an order
+        
         BillDto created = billingService.generateBill(123L);
         assertNotNull(created);
         Long id = created.getBillId();
         assertNotNull(id);
 
-        // read it back
         Bill fetched = billingService.getBill(id);
         assertEquals(created.getTotalAmount(), fetched.getTotalAmount());
 
-        // update status
         fetched.setStatus("PAID");
         Bill updated = billingService.updateBill(id, fetched);
         assertEquals("PAID", updated.getStatus());
 
-        // delete
         billingService.deleteBill(id);
         assertFalse(billRepository.findById(id).isPresent());
     }

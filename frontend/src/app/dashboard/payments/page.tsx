@@ -91,7 +91,7 @@ export default function PaymentsPage() {
 
   return (
     <div>
-      {/* Page header */}
+      {}
       <div className="d-flex flex-column flex-sm-row align-items-sm-center justify-content-sm-between gap-3 mb-4">
         <div>
           <h1 className="fw-bold text-navy mb-1" style={{ fontSize: "1.5rem" }}>
@@ -113,7 +113,7 @@ export default function PaymentsPage() {
         </div>
       </div>
 
-      {/* Error banner */}
+      {}
       {error && (
         <div className="warning-banner mb-4">
           <span className="animate-pulse rounded-circle bg-amber d-inline-block flex-shrink-0" style={{ width: 8, height: 8 }} />
@@ -123,7 +123,7 @@ export default function PaymentsPage() {
         </div>
       )}
 
-      {/* Filters */}
+      {}
       <div className="d-flex flex-column flex-sm-row gap-3 mb-4">
         <div className="search-wrapper flex-grow-1">
           <Search className="search-icon" size={16} />
@@ -163,7 +163,7 @@ export default function PaymentsPage() {
         </div>
       </div>
 
-      {/* Payments Table */}
+      {}
       <div className="card-brand">
         {filteredPayments.length === 0 ? (
           <div className="d-flex flex-column align-items-center justify-content-center py-5 gap-2">
@@ -311,7 +311,7 @@ export default function PaymentsPage() {
         )}
       </div>
 
-      {/* Summary Cards */}
+      {}
       <div className="row g-3 mt-4">
         <div className="col-6 col-md-3">
           <div className="card-brand p-3">

@@ -8,10 +8,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
-/**
- * Security configuration – permits all endpoints for development / testing.
- * Replace with proper JWT or OAuth2 authentication for production.
- */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {

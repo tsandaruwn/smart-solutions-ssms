@@ -74,10 +74,6 @@ class InventoryControllerTest {
                 .build();
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // POST /api/v1/inventory
-    // ──────────────────────────────────────────────────────────────
-
     @Nested
     @DisplayName("POST " + "/api/v1/inventory")
     class CreateInventory {
@@ -111,7 +107,7 @@ class InventoryControllerTest {
         @DisplayName("should return 400 for validation errors")
         void shouldReturn400ForValidationErrors() throws Exception {
             InventoryRequest invalid = InventoryRequest.builder()
-                    .productId(null) // required
+                    .productId(null) 
                     .warehouseId(null)
                     .quantityOnHand(null)
                     .build();
@@ -144,10 +140,6 @@ class InventoryControllerTest {
         }
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // GET /api/v1/inventory
-    // ──────────────────────────────────────────────────────────────
-
     @Nested
     @DisplayName("GET " + "/api/v1/inventory")
     class GetAllInventory {
@@ -177,10 +169,6 @@ class InventoryControllerTest {
                     .andExpect(jsonPath("$.data", hasSize(0)));
         }
     }
-
-    // ──────────────────────────────────────────────────────────────
-    // GET /api/v1/inventory/{id}
-    // ──────────────────────────────────────────────────────────────
 
     @Nested
     @DisplayName("GET " + "/api/v1/inventory/{id}")
@@ -212,10 +200,6 @@ class InventoryControllerTest {
         }
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // GET /api/v1/inventory/product/{productId}
-    // ──────────────────────────────────────────────────────────────
-
     @Test
     @DisplayName("GET /api/v1/inventory/product/{productId} should return 200")
     void shouldReturnInventoryByProduct() throws Exception {
@@ -228,10 +212,6 @@ class InventoryControllerTest {
                 .andExpect(jsonPath("$.data[0].productId").value(100));
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // GET /api/v1/inventory/warehouse/{warehouseId}
-    // ──────────────────────────────────────────────────────────────
-
     @Test
     @DisplayName("GET /api/v1/inventory/warehouse/{warehouseId} should return 200")
     void shouldReturnInventoryByWarehouse() throws Exception {
@@ -242,10 +222,6 @@ class InventoryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data", hasSize(1)));
     }
-
-    // ──────────────────────────────────────────────────────────────
-    // PUT /api/v1/inventory/{id}
-    // ──────────────────────────────────────────────────────────────
 
     @Test
     @DisplayName("PUT /api/v1/inventory/{id} should return 200 when updated")
@@ -280,10 +256,6 @@ class InventoryControllerTest {
                 .andExpect(jsonPath("$.data.quantityOnHand").value(75))
                 .andExpect(jsonPath("$.data.reorderLevel").value(20));
     }
-
-    // ──────────────────────────────────────────────────────────────
-    // PATCH /api/v1/inventory/{id}/stock
-    // ──────────────────────────────────────────────────────────────
 
     @Nested
     @DisplayName("PATCH " + "/api/v1/inventory/{id}/stock")
@@ -343,8 +315,8 @@ class InventoryControllerTest {
         @DisplayName("should return 400 for invalid stock request body")
         void shouldReturn400ForInvalidRequest() throws Exception {
             StockUpdateRequest invalid = StockUpdateRequest.builder()
-                    .quantity(null) // required
-                    .operation(null) // required
+                    .quantity(null) 
+                    .operation(null) 
                     .build();
 
             mockMvc.perform(patch(BASE_PATH + "/1/stock")
@@ -354,10 +326,6 @@ class InventoryControllerTest {
                     .andExpect(jsonPath("$.success").value(false));
         }
     }
-
-    // ──────────────────────────────────────────────────────────────
-    // GET /api/v1/inventory/alerts/low-stock
-    // ──────────────────────────────────────────────────────────────
 
     @Test
     @DisplayName("GET /api/v1/inventory/alerts/low-stock should return 200")
@@ -381,10 +349,6 @@ class InventoryControllerTest {
                 .andExpect(jsonPath("$.data[0].lowStock").value(true));
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // GET /api/v1/inventory/alerts/low-stock/warehouse/{warehouseId}
-    // ──────────────────────────────────────────────────────────────
-
     @Test
     @DisplayName("GET /api/v1/inventory/alerts/low-stock/warehouse/{id} should return 200")
     void shouldReturnLowStockByWarehouse() throws Exception {
@@ -395,10 +359,6 @@ class InventoryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data", hasSize(0)));
     }
-
-    // ──────────────────────────────────────────────────────────────
-    // DELETE /api/v1/inventory/{id}
-    // ──────────────────────────────────────────────────────────────
 
     @Nested
     @DisplayName("DELETE " + "/api/v1/inventory/{id}")

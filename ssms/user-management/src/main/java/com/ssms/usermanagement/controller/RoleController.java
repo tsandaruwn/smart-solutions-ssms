@@ -12,9 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * REST Controller for Role management
- */
 @RestController
 @RequestMapping("/api/roles")
 public class RoleController {
@@ -22,9 +19,6 @@ public class RoleController {
     @Autowired
     private RoleService roleService;
 
-    /**
-     * Get all roles
-     */
     @GetMapping
     public ResponseEntity<ApiResponse<List<RoleResponseDTO>>> getAllRoles() {
         List<RoleResponseDTO> roles = roleService.getAllRoles();
@@ -33,9 +27,6 @@ public class RoleController {
         );
     }
 
-    /**
-     * Get role by ID
-     */
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<RoleResponseDTO>> getRoleById(@PathVariable Integer id) {
         RoleResponseDTO role = roleService.getRoleById(id);
@@ -44,9 +35,6 @@ public class RoleController {
         );
     }
 
-    /**
-     * Create new role
-     */
     @PostMapping
     public ResponseEntity<ApiResponse<RoleResponseDTO>> createRole(@Valid @RequestBody RoleRequestDTO requestDTO) {
         RoleResponseDTO role = roleService.createRole(requestDTO);
@@ -55,9 +43,6 @@ public class RoleController {
         );
     }
 
-    /**
-     * Update existing role
-     */
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<RoleResponseDTO>> updateRole(
             @PathVariable Integer id,
@@ -68,9 +53,6 @@ public class RoleController {
         );
     }
 
-    /**
-     * Delete role
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteRole(@PathVariable Integer id) {
         roleService.deleteRole(id);
@@ -79,9 +61,6 @@ public class RoleController {
         );
     }
 
-    /**
-     * Assign permission to role
-     */
     @PostMapping("/{roleId}/permissions/{permissionId}")
     public ResponseEntity<ApiResponse<Void>> assignPermissionToRole(
             @PathVariable Integer roleId,
@@ -93,9 +72,6 @@ public class RoleController {
         );
     }
 
-    /**
-     * Remove permission from role
-     */
     @DeleteMapping("/{roleId}/permissions/{permissionId}")
     public ResponseEntity<ApiResponse<Void>> removePermissionFromRole(
             @PathVariable Integer roleId,
@@ -106,9 +82,6 @@ public class RoleController {
         );
     }
 
-    /**
-     * Get all permissions for a role
-     */
     @GetMapping("/{roleId}/permissions")
     public ResponseEntity<ApiResponse<List<String>>> getPermissionsForRole(@PathVariable Integer roleId) {
         List<String> permissions = roleService.getPermissionsForRole(roleId);

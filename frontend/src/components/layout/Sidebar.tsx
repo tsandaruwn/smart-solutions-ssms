@@ -50,7 +50,7 @@ export default function Sidebar() {
 
   const sidebarContent = (
     <div className="d-flex flex-column h-100">
-      {/* Logo */}
+      {}
       <div
         className="d-flex align-items-center gap-3 px-3 py-4"
         style={{ borderBottom: "1px solid var(--navy-light)" }}
@@ -83,7 +83,7 @@ export default function Sidebar() {
         )}
       </div>
 
-      {/* Nav */}
+      {}
       <nav className="flex-grow-1 px-2 py-3 overflow-y-auto">
         <p
           className="sidebar-section-label"
@@ -112,10 +112,9 @@ export default function Sidebar() {
           );
         })}
 
-
       </nav>
 
-      {/* Collapse toggle */}
+      {}
       <div
         className="px-2 py-3"
         style={{ borderTop: "1px solid var(--navy-light)" }}
@@ -156,7 +155,7 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Mobile toggle */}
+      {}
       <button
         onClick={() => setMobileOpen(true)}
         className="d-lg-none position-fixed btn-navy"
@@ -171,7 +170,7 @@ export default function Sidebar() {
         <Menu size={18} />
       </button>
 
-      {/* Mobile overlay */}
+      {}
       {mobileOpen && (
         <div
           className="d-lg-none position-fixed"
@@ -180,7 +179,7 @@ export default function Sidebar() {
         />
       )}
 
-      {/* Sidebar */}
+      {}
       <aside
         className={`sidebar ${collapsed ? "collapsed" : ""}`}
         style={{

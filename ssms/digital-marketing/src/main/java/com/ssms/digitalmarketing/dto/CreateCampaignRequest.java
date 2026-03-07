@@ -8,9 +8,6 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-/**
- * Request DTO for creating a new Campaign.
- */
 @Data
 public class CreateCampaignRequest {
 

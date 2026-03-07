@@ -6,10 +6,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 
-/**
- * User Entity - Represents a user in the system
- * All fields are private with proper getters and setters
- */
 @Entity
 @Table(name = "\"user\"")
 public class User {
@@ -62,11 +58,9 @@ public class User {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    // Empty constructor - Required by JPA
     public User() {
     }
 
-    // Constructor with required fields
     public User(String username, String email, String passwordHash, Role role) {
         this.username = username;
         this.email = email;
@@ -74,7 +68,6 @@ public class User {
         this.role = role;
     }
 
-    // PrePersist callback
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
@@ -84,13 +77,11 @@ public class User {
         }
     }
 
-    // PreUpdate callback
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
 
-    // Getters and Setters
     public Integer getUserId() {
         return userId;
     }
@@ -195,13 +186,11 @@ public class User {
         this.deletedAt = deletedAt;
     }
 
-    // Soft delete method
     public void softDelete() {
         this.deletedAt = LocalDateTime.now();
         this.isActive = false;
     }
 
-    // Check if user is deleted
     public boolean isDeleted() {
         return this.deletedAt != null;
     }

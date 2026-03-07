@@ -9,11 +9,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Spring Data JPA repository for {@link Inventory} entities.
- *
- * <p>All queries exclude soft-deleted records unless explicitly stated.
- */
 @Repository
 public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 
@@ -39,4 +34,3 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     @Query("SELECT i FROM Inventory i WHERE i.isDeleted = false AND i.warehouse.warehouseId = :warehouseId AND i.quantityOnHand <= i.reorderLevel")
     List<Inventory> findLowStockItemsByWarehouse(@Param("warehouseId") Long warehouseId);
 }
-

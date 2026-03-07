@@ -1,10 +1,3 @@
-// ====================================
-// USER MODAL COMPONENT
-// Created by: [Your Name]
-// Purpose: Create and edit user form in a modal dialog
-// Color Palette: Navy(#1A3263), Slate(#547792), Orange(#FAB95B), Cream(#E8E2DB)
-// ====================================
-
 import { useState, useEffect } from "react";
 import { X, Save, UserPlus } from "lucide-react";
 import { userApi } from "@/lib/userApi";
@@ -55,7 +48,7 @@ export default function UserModal({ user, roles, onClose, onSave }: UserModalPro
 
     try {
       if (isEditMode) {
-        // Update user
+        
         const updateData: UpdateUserRequest = {
           username: formData.username,
           email: formData.email,
@@ -65,13 +58,13 @@ export default function UserModal({ user, roles, onClose, onSave }: UserModalPro
           roleId: formData.roleId,
           isActive: formData.isActive,
         };
-        // Only include password if it's not empty
+        
         if (formData.password) {
           updateData.password = formData.password;
         }
         await userApi.updateUser(user.userId, updateData);
       } else {
-        // Create user
+        
         const createData: CreateUserRequest = {
           username: formData.username,
           email: formData.email,
@@ -94,7 +87,7 @@ export default function UserModal({ user, roles, onClose, onSave }: UserModalPro
   return (
     <div style={styles.overlay} onClick={onClose}>
       <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
-        {/* Header */}
+        {}
         <div style={styles.header}>
           <div style={styles.headerLeft}>
             <div style={styles.headerIcon}>
@@ -109,7 +102,7 @@ export default function UserModal({ user, roles, onClose, onSave }: UserModalPro
           </button>
         </div>
 
-        {/* Form */}
+        {}
         <form onSubmit={handleSubmit} style={styles.form}>
           {error && (
             <div style={styles.errorBox}>
@@ -118,7 +111,7 @@ export default function UserModal({ user, roles, onClose, onSave }: UserModalPro
           )}
 
           <div style={styles.formGrid}>
-            {/* Username */}
+            {}
             <div style={styles.formGroup}>
               <label htmlFor="username" style={styles.label}>
                 Username *
@@ -136,7 +129,7 @@ export default function UserModal({ user, roles, onClose, onSave }: UserModalPro
               />
             </div>
 
-            {/* Email */}
+            {}
             <div style={styles.formGroup}>
               <label htmlFor="email" style={styles.label}>
                 Email *
@@ -152,7 +145,7 @@ export default function UserModal({ user, roles, onClose, onSave }: UserModalPro
               />
             </div>
 
-            {/* Password */}
+            {}
             <div style={styles.formGroup}>
               <label htmlFor="password" style={styles.label}>
                 Password {isEditMode ? "(leave blank to keep current)" : "*"}
@@ -169,7 +162,7 @@ export default function UserModal({ user, roles, onClose, onSave }: UserModalPro
               />
             </div>
 
-            {/* Role */}
+            {}
             <div style={styles.formGroup}>
               <label htmlFor="roleId" style={styles.label}>
                 Role *
@@ -190,7 +183,7 @@ export default function UserModal({ user, roles, onClose, onSave }: UserModalPro
               </select>
             </div>
 
-            {/* First Name */}
+            {}
             <div style={styles.formGroup}>
               <label htmlFor="firstName" style={styles.label}>
                 First Name
@@ -205,7 +198,7 @@ export default function UserModal({ user, roles, onClose, onSave }: UserModalPro
               />
             </div>
 
-            {/* Last Name */}
+            {}
             <div style={styles.formGroup}>
               <label htmlFor="lastName" style={styles.label}>
                 Last Name
@@ -220,7 +213,7 @@ export default function UserModal({ user, roles, onClose, onSave }: UserModalPro
               />
             </div>
 
-            {/* Phone */}
+            {}
             <div style={styles.formGroup}>
               <label htmlFor="phone" style={styles.label}>
                 Phone
@@ -235,7 +228,7 @@ export default function UserModal({ user, roles, onClose, onSave }: UserModalPro
               />
             </div>
 
-            {/* Active Status (only in edit mode) */}
+            {}
             {isEditMode && (
               <div style={styles.formGroup}>
                 <label style={styles.checkboxLabel}>
@@ -252,7 +245,7 @@ export default function UserModal({ user, roles, onClose, onSave }: UserModalPro
             )}
           </div>
 
-          {/* Footer */}
+          {}
           <div style={styles.footer}>
             <button type="button" onClick={onClose} style={styles.cancelButton}>
               Cancel

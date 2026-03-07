@@ -9,4 +9,3 @@ public class ProductManagementApplication {
         SpringApplication.run(ProductManagementApplication.class, args);
     }
 }
-

@@ -12,24 +12,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * ORDER entity – represents a purchase record.
- *
- * Columns (from ER):
- *   order_id           INT (AUTO_INCREMENT) PK
- *   order_number       VARCHAR(30) AUTO-GENERATED UK
- *   customer_id        INT FK → CUSTOMER
- *   created_by_user_id INT FK → USER
- *   order_date         TIMESTAMP DEFAULT NOW()
- *   status             ENUM(Pending, Shipped, Delivered)
- *   shipping_address   TEXT
- *   shipping_city      VARCHAR(80)
- *   total_amount       DECIMAL(12,2)
- *   notes              TEXT
- *   cancelled_at       TIMESTAMP
- *   cancellation_reason TEXT
- *   updated_at         TIMESTAMP
- */
 @Entity
 @Table(name = "\"order\"")
 @Data
@@ -85,8 +67,6 @@ public class Order {
     @Builder.Default
     private List<OrderItem> items = new ArrayList<>();
 
-    // ─── Helpers ────────────────────────────────────────────────
-
     public void addItem(OrderItem item) {
         items.add(item);
         item.setOrder(this);
@@ -97,16 +77,11 @@ public class Order {
         item.setOrder(null);
     }
 
-    /**
-     * Recalculate total_amount from line items.
-     */
     public void recalculateTotalAmount() {
         this.totalAmount = items.stream()
                 .map(OrderItem::computeLineTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
-
-    // ─── JPA callbacks ──────────────────────────────────────────
 
     @PrePersist
     protected void onCreate() {
@@ -124,4 +99,3 @@ public class Order {
         updatedAt = LocalDateTime.now();
     }
 }
-

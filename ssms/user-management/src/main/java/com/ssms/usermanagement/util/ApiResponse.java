@@ -2,10 +2,6 @@ package com.ssms.usermanagement.util;
 
 import java.time.LocalDateTime;
 
-/**
- * Generic API Response wrapper
- * Provides consistent response structure across all endpoints
- */
 public class ApiResponse<T> {
 
     private boolean success;
@@ -13,12 +9,10 @@ public class ApiResponse<T> {
     private T data;
     private LocalDateTime timestamp;
 
-    // Empty constructor
     public ApiResponse() {
         this.timestamp = LocalDateTime.now();
     }
 
-    // Constructor for success response with data
     public ApiResponse(boolean success, String message, T data) {
         this.success = success;
         this.message = message;
@@ -26,14 +20,12 @@ public class ApiResponse<T> {
         this.timestamp = LocalDateTime.now();
     }
 
-    // Constructor for response without data
     public ApiResponse(boolean success, String message) {
         this.success = success;
         this.message = message;
         this.timestamp = LocalDateTime.now();
     }
 
-    // Static factory methods for cleaner code
     public static <T> ApiResponse<T> success(String message, T data) {
         return new ApiResponse<>(true, message, data);
     }
@@ -50,7 +42,6 @@ public class ApiResponse<T> {
         return new ApiResponse<>(false, message, data);
     }
 
-    // Getters and Setters
     public boolean isSuccess() {
         return success;
     }

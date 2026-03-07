@@ -16,12 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Default implementation of {@link WarehouseService}.
- *
- * <p>All write operations are wrapped in a transaction.
- * Read operations use {@code readOnly = true} for performance.
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -29,15 +23,6 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     private final WarehouseRepository warehouseRepository;
 
-    // ─────────────────────────────────────────────────────────────────────
-    // Create
-    // ─────────────────────────────────────────────────────────────────────
-
-    /**
-     * {@inheritDoc}
-     *
-     * @throws BusinessException if a warehouse with the same name already exists
-     */
     @Override
     @Transactional
     public WarehouseResponse createWarehouse(WarehouseRequest request) {
@@ -56,11 +41,6 @@ public class WarehouseServiceImpl implements WarehouseService {
         return mapToResponse(saved);
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    // Read
-    // ─────────────────────────────────────────────────────────────────────
-
-    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
     public List<WarehouseResponse> getAllWarehouses() {
@@ -71,7 +51,6 @@ public class WarehouseServiceImpl implements WarehouseService {
                 .collect(Collectors.toList());
     }
 
-    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
     public WarehouseResponse getWarehouseById(Long warehouseId) {
@@ -80,11 +59,6 @@ public class WarehouseServiceImpl implements WarehouseService {
         return mapToResponse(warehouse);
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    // Update
-    // ─────────────────────────────────────────────────────────────────────
-
-    /** {@inheritDoc} */
     @Override
     @Transactional
     public WarehouseResponse updateWarehouse(Long warehouseId, WarehouseRequest request) {
@@ -92,7 +66,6 @@ public class WarehouseServiceImpl implements WarehouseService {
 
         Warehouse warehouse = findActiveOrThrow(warehouseId);
 
-        // If the name changed, ensure the new name is not already taken
         if (!warehouse.getName().equals(request.getName())
                 && warehouseRepository.existsByName(request.getName())) {
             throw new BusinessException(
@@ -106,11 +79,6 @@ public class WarehouseServiceImpl implements WarehouseService {
         return mapToResponse(updated);
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    // Soft delete
-    // ─────────────────────────────────────────────────────────────────────
-
-    /** {@inheritDoc} */
     @Override
     @Transactional
     public void deactivateWarehouse(Long warehouseId) {
@@ -123,13 +91,6 @@ public class WarehouseServiceImpl implements WarehouseService {
         log.info("Warehouse deactivated: {}", warehouseId);
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    // Private helpers
-    // ─────────────────────────────────────────────────────────────────────
-
-    /**
-     * Looks up an active warehouse or throws {@link ResourceNotFoundException}.
-     */
     private Warehouse findActiveOrThrow(Long warehouseId) {
         return warehouseRepository
                 .findByWarehouseIdAndIsActiveTrue(warehouseId)
@@ -137,9 +98,6 @@ public class WarehouseServiceImpl implements WarehouseService {
                         ResponseMessages.WAREHOUSE_NOT_FOUND + warehouseId));
     }
 
-    /**
-     * Maps a {@link WarehouseRequest} to a new {@link Warehouse} entity.
-     */
     private Warehouse mapToEntity(WarehouseRequest request) {
         return Warehouse.builder()
                 .name(request.getName())
@@ -153,9 +111,6 @@ public class WarehouseServiceImpl implements WarehouseService {
                 .build();
     }
 
-    /**
-     * Applies values from a {@link WarehouseRequest} onto an existing entity.
-     */
     private void updateEntityFromRequest(Warehouse warehouse, WarehouseRequest request) {
         warehouse.setName(request.getName());
         warehouse.setAddress(request.getAddress());
@@ -169,9 +124,6 @@ public class WarehouseServiceImpl implements WarehouseService {
         }
     }
 
-    /**
-     * Maps a {@link Warehouse} entity to a {@link WarehouseResponse} DTO.
-     */
     private WarehouseResponse mapToResponse(Warehouse warehouse) {
         return WarehouseResponse.builder()
                 .warehouseId(warehouse.getWarehouseId())

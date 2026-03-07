@@ -7,9 +7,6 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-/**
- * Response DTO for a CampaignPerformance snapshot.
- */
 @Data
 @Builder
 public class PerformanceResponse {

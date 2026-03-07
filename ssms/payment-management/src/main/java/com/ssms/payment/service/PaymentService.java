@@ -26,10 +26,9 @@ public class PaymentService {
         this.paymentMethodRepository = paymentMethodRepository;
     }
 
-    // Create a new payment transaction
     @Transactional
     public PaymentResponse createPayment(PaymentRequest request) {
-        // Validate payment method exists
+        
         PaymentMethod paymentMethod = paymentMethodRepository.findById(request.getPaymentMethodId())
                 .orElseThrow(() -> new RuntimeException("Payment method not found with id: " + request.getPaymentMethodId()));
 
@@ -51,14 +50,12 @@ public class PaymentService {
         return mapToResponse(savedPayment);
     }
 
-    // Get payment by ID
     public PaymentResponse getPaymentById(Long id) {
         Payment payment = paymentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Payment not found with id: " + id));
         return mapToResponse(payment);
     }
 
-    // Get all payments
     public List<PaymentResponse> getAllPayments() {
         return paymentRepository.findAll()
                 .stream()
@@ -66,7 +63,6 @@ public class PaymentService {
                 .collect(Collectors.toList());
     }
 
-    // Get payment history by customer ID
     public List<PaymentResponse> getPaymentsByCustomerId(Long customerId) {
         return paymentRepository.findByCustomerId(customerId)
                 .stream()
@@ -74,7 +70,6 @@ public class PaymentService {
                 .collect(Collectors.toList());
     }
 
-    // Get payments by invoice ID
     public List<PaymentResponse> getPaymentsByInvoiceId(Long invoiceId) {
         return paymentRepository.findByInvoiceId(invoiceId)
                 .stream()
@@ -82,14 +77,12 @@ public class PaymentService {
                 .collect(Collectors.toList());
     }
 
-    // Get payment by transaction reference
     public PaymentResponse getPaymentByTransactionReference(String transactionReference) {
         Payment payment = paymentRepository.findByTransactionReference(transactionReference)
                 .orElseThrow(() -> new RuntimeException("Payment not found with transaction reference: " + transactionReference));
         return mapToResponse(payment);
     }
 
-    // Update payment status (Pending, Success, Failed)
     @Transactional
     public PaymentResponse updatePaymentStatus(Long id, PaymentStatus status) {
         Payment payment = paymentRepository.findById(id)
@@ -101,7 +94,6 @@ public class PaymentService {
         return mapToResponse(updatedPayment);
     }
 
-    // Process refund
     @Transactional
     public PaymentResponse processRefund(Long id, String refundReason, java.math.BigDecimal refundAmount) {
         Payment payment = paymentRepository.findById(id)
@@ -118,19 +110,17 @@ public class PaymentService {
         payment.setRefundAmount(refundAmount != null ? refundAmount : payment.getAmount());
         payment.setRefundDate(LocalDateTime.now());
         payment.setRefundReason(refundReason);
-        payment.setStatus(PaymentStatus.Failed); // Or keep as Success and track via refund fields
+        payment.setStatus(PaymentStatus.Failed); 
 
         Payment refundedPayment = paymentRepository.save(payment);
         return mapToResponse(refundedPayment);
     }
 
-    // Update payment
     @Transactional
     public PaymentResponse updatePayment(Long id, PaymentRequest request) {
         Payment payment = paymentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Payment not found with id: " + id));
 
-        // Validate payment method exists
         if (request.getPaymentMethodId() != null) {
             PaymentMethod paymentMethod = paymentMethodRepository.findById(request.getPaymentMethodId())
                     .orElseThrow(() -> new RuntimeException("Payment method not found with id: " + request.getPaymentMethodId()));
@@ -151,7 +141,6 @@ public class PaymentService {
         return mapToResponse(updatedPayment);
     }
 
-    // Delete payment
     @Transactional
     public void deletePayment(Long id) {
         Payment payment = paymentRepository.findById(id)
@@ -159,7 +148,6 @@ public class PaymentService {
         paymentRepository.delete(payment);
     }
 
-    // Helper method to map Payment entity to PaymentResponse DTO
     private PaymentResponse mapToResponse(Payment payment) {
         return new PaymentResponse(
                 payment.getPaymentId(),

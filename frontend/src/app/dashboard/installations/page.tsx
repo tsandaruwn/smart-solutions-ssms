@@ -73,17 +73,14 @@ export default function InstallationsPage() {
 
   const [statusFilter, setStatusFilter] = useState<InstallationStatus | "ALL">("ALL");
 
-  // Create / Edit
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<InstallationRequest>(emptyForm);
 
-  // Status update
   const [statusUpdateId, setStatusUpdateId] = useState<number | null>(null);
   const [statusUpdateValue, setStatusUpdateValue] = useState<InstallationStatus>("IN_PROGRESS");
   const [statusNotes, setStatusNotes] = useState("");
 
-  // Technician assignment
   const [assignId, setAssignId] = useState<number | null>(null);
   const [assignTechId, setAssignTechId] = useState("");
   const [assignTechName, setAssignTechName] = useState("");
@@ -91,7 +88,6 @@ export default function InstallationsPage() {
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
 
-  // Dropdown data
   const [customers, setCustomers] = useState<CustomerResponse[]>([]);
   const [orders, setOrders] = useState<OrderResponse[]>([]);
   const [technicians, setTechnicians] = useState<TechnicianResponse[]>([]);
@@ -141,7 +137,6 @@ export default function InstallationsPage() {
     (currentPage + 1) * ITEMS_PER_PAGE
   );
 
-  // CRUD
   const openCreateForm = () => {
     setEditingId(null);
     setForm(emptyForm);
@@ -227,7 +222,7 @@ export default function InstallationsPage() {
 
   return (
     <div>
-      {/* Header */}
+      {}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h2 className="fw-bold text-navy mb-1">Installations</h2>
@@ -239,7 +234,7 @@ export default function InstallationsPage() {
         </button>
       </div>
 
-      {/* Stats */}
+      {}
       <div className="row g-3 mb-4">
         <div className="col-md-3">
           <StatCard title="Total" value={stats.total} icon={Wrench} color="navy" />
@@ -255,11 +250,11 @@ export default function InstallationsPage() {
         </div>
       </div>
 
-      {/* Messages */}
+      {}
       {success && <div className="alert alert-success mb-3">{success}</div>}
       {error && <ErrorMessage message={error} onRetry={loadInstallations} />}
 
-      {/* Filters */}
+      {}
       <div className="card card-brand mb-4">
         <div className="card-body py-3">
           <div className="d-flex align-items-center gap-2">
@@ -283,7 +278,7 @@ export default function InstallationsPage() {
         </div>
       </div>
 
-      {/* Table */}
+      {}
       {loading ? (
         <LoadingSpinner />
       ) : (
@@ -408,7 +403,7 @@ export default function InstallationsPage() {
             </table>
           </div>
 
-          {/* Pagination */}
+          {}
           {totalPages > 1 && (
             <div className="card-footer d-flex justify-content-between align-items-center">
               <span className="text-steel" style={{ fontSize: ".875rem" }}>
@@ -444,7 +439,7 @@ export default function InstallationsPage() {
         </div>
       )}
 
-      {/* Create Installation Modal */}
+      {}
       {showForm && (
         <>
           <div className="modal-backdrop-custom" onClick={() => setShowForm(false)} />
@@ -567,7 +562,7 @@ export default function InstallationsPage() {
         </>
       )}
 
-      {/* Status Update Modal */}
+      {}
       {statusUpdateId && (
         <>
           <div className="modal-backdrop-custom" onClick={() => setStatusUpdateId(null)} />
@@ -620,7 +615,7 @@ export default function InstallationsPage() {
         </>
       )}
 
-      {/* Assign Technician Modal */}
+      {}
       {assignId && (
         <>
           <div className="modal-backdrop-custom" onClick={() => setAssignId(null)} />

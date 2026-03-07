@@ -75,10 +75,6 @@ class InventoryServiceImplTest {
                 .build();
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // createInventory
-    // ──────────────────────────────────────────────────────────────
-
     @Nested
     @DisplayName("createInventory")
     class CreateInventory {
@@ -141,7 +137,7 @@ class InventoryServiceImplTest {
                     .productId(200L)
                     .warehouseId(1L)
                     .quantityOnHand(30)
-                    .build(); // reorderLevel and reorderQuantity null
+                    .build(); 
 
             when(inventoryRepository.existsByProductIdAndWarehouse_WarehouseId(200L, 1L))
                     .thenReturn(false);
@@ -153,8 +149,8 @@ class InventoryServiceImplTest {
                     .productId(200L)
                     .warehouse(warehouse)
                     .quantityOnHand(30)
-                    .reorderLevel(10)  // default
-                    .reorderQuantity(50) // default
+                    .reorderLevel(10)  
+                    .reorderQuantity(50) 
                     .lowStockAlertSent(false)
                     .isDeleted(false)
                     .updatedAt(LocalDateTime.now())
@@ -169,10 +165,6 @@ class InventoryServiceImplTest {
             assertThat(result.getReorderQuantity()).isEqualTo(50);
         }
     }
-
-    // ──────────────────────────────────────────────────────────────
-    // getAllInventory
-    // ──────────────────────────────────────────────────────────────
 
     @Nested
     @DisplayName("getAllInventory")
@@ -202,10 +194,6 @@ class InventoryServiceImplTest {
         }
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // getInventoryById
-    // ──────────────────────────────────────────────────────────────
-
     @Nested
     @DisplayName("getInventoryById")
     class GetInventoryById {
@@ -233,10 +221,6 @@ class InventoryServiceImplTest {
         }
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // getInventoryByProductId / getInventoryByWarehouseId
-    // ──────────────────────────────────────────────────────────────
-
     @Test
     @DisplayName("should return inventory by product ID")
     void shouldReturnInventoryByProductId() {
@@ -260,10 +244,6 @@ class InventoryServiceImplTest {
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getWarehouse().getWarehouseId()).isEqualTo(1L);
     }
-
-    // ──────────────────────────────────────────────────────────────
-    // updateInventory
-    // ──────────────────────────────────────────────────────────────
 
     @Nested
     @DisplayName("updateInventory")
@@ -315,10 +295,6 @@ class InventoryServiceImplTest {
         }
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // updateStock
-    // ──────────────────────────────────────────────────────────────
-
     @Nested
     @DisplayName("updateStock")
     class UpdateStock {
@@ -336,7 +312,7 @@ class InventoryServiceImplTest {
                     .inventoryId(1L)
                     .productId(100L)
                     .warehouse(warehouse)
-                    .quantityOnHand(70) // 50 + 20
+                    .quantityOnHand(70) 
                     .reorderLevel(10)
                     .reorderQuantity(50)
                     .lowStockAlertSent(false)
@@ -368,7 +344,7 @@ class InventoryServiceImplTest {
                     .inventoryId(1L)
                     .productId(100L)
                     .warehouse(warehouse)
-                    .quantityOnHand(40) // 50 - 10
+                    .quantityOnHand(40) 
                     .reorderLevel(10)
                     .reorderQuantity(50)
                     .lowStockAlertSent(false)
@@ -395,7 +371,7 @@ class InventoryServiceImplTest {
                     .build();
 
             when(inventoryRepository.findByInventoryIdAndIsDeletedFalse(1L))
-                    .thenReturn(Optional.of(inventory)); // has 50
+                    .thenReturn(Optional.of(inventory)); 
 
             assertThatThrownBy(() -> inventoryService.updateStock(1L, req))
                     .isInstanceOf(BusinessException.class)
@@ -451,8 +427,7 @@ class InventoryServiceImplTest {
         @Test
         @DisplayName("should flag low stock alert when stock falls to reorder level")
         void shouldFlagLowStockAlert() {
-            // inventory has qty=50, reorderLevel=10
-            // decrease by 42 → qty becomes 8 which is <= 10 (low stock)
+            
             StockUpdateRequest req = StockUpdateRequest.builder()
                     .quantity(42)
                     .operation("DECREASE")
@@ -465,7 +440,7 @@ class InventoryServiceImplTest {
                     .quantityOnHand(8)
                     .reorderLevel(10)
                     .reorderQuantity(50)
-                    .lowStockAlertSent(false) // not yet sent
+                    .lowStockAlertSent(false) 
                     .isDeleted(false)
                     .updatedAt(LocalDateTime.now())
                     .build();
@@ -477,14 +452,9 @@ class InventoryServiceImplTest {
 
             inventoryService.updateStock(1L, req);
 
-            // save should be called for stock update + low stock flag
             verify(inventoryRepository, atLeast(2)).save(any(Inventory.class));
         }
     }
-
-    // ──────────────────────────────────────────────────────────────
-    // getLowStockAlerts
-    // ──────────────────────────────────────────────────────────────
 
     @Nested
     @DisplayName("getLowStockAlerts")
@@ -526,10 +496,6 @@ class InventoryServiceImplTest {
         }
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // deleteInventory
-    // ──────────────────────────────────────────────────────────────
-
     @Nested
     @DisplayName("deleteInventory")
     class DeleteInventory {
@@ -559,10 +525,6 @@ class InventoryServiceImplTest {
                     .isInstanceOf(ResourceNotFoundException.class);
         }
     }
-
-    // ──────────────────────────────────────────────────────────────
-    // Entity: isLowStock
-    // ──────────────────────────────────────────────────────────────
 
     @Nested
     @DisplayName("Inventory.isLowStock()")

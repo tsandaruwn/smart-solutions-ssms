@@ -18,11 +18,10 @@ public class SecurityConfig {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
-                // Public endpoints - can be accessed without authentication
+                
                 .requestMatchers(HttpMethod.GET, "/api/v1/suppliers/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
                 
-                // Secured endpoints - require authentication (can be configured later)
                 .requestMatchers(HttpMethod.POST, "/api/v1/suppliers/**").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/v1/suppliers/**").permitAll()
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/suppliers/**").permitAll()

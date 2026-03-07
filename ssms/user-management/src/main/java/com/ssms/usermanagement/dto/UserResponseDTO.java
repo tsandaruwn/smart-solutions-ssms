@@ -2,10 +2,6 @@ package com.ssms.usermanagement.dto;
 
 import java.time.LocalDateTime;
 
-/**
- * DTO for user response
- * Does not expose sensitive information like password
- */
 public class UserResponseDTO {
 
     private Integer userId;
@@ -22,11 +18,9 @@ public class UserResponseDTO {
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
 
-    // Empty constructor
     public UserResponseDTO() {
     }
 
-    // Constructor with all fields
     public UserResponseDTO(Integer userId, String username, String email, String firstName, String lastName, 
                           String phone, Integer roleId, String roleName, Boolean isActive, 
                           LocalDateTime lastLogin, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
@@ -45,7 +39,6 @@ public class UserResponseDTO {
         this.deletedAt = deletedAt;
     }
 
-    // Getters and Setters
     public Integer getUserId() {
         return userId;
     }

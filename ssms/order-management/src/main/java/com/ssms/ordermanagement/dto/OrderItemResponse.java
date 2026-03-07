@@ -8,9 +8,6 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
-/**
- * Response DTO for OrderItem data.
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,9 +21,6 @@ public class OrderItemResponse {
     private BigDecimal discountPercent;
     private BigDecimal lineTotal;
 
-    /**
-     * Map an OrderItem entity to OrderItemResponse DTO.
-     */
     public static OrderItemResponse fromEntity(OrderItem item) {
         return OrderItemResponse.builder()
                 .orderItemId(item.getOrderItemId())

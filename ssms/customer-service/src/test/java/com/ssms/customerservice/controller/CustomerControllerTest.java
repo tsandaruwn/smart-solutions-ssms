@@ -73,7 +73,6 @@ class CustomerControllerTest {
                 .build();
     }
 
-    // ── POST /api/v1/customers ────────────────────────────────────────────────
     @Nested
     @DisplayName("POST /api/v1/customers")
     class CreateCustomer {
@@ -124,7 +123,6 @@ class CustomerControllerTest {
         }
     }
 
-    // ── GET /api/v1/customers/{id} ────────────────────────────────────────────
     @Nested
     @DisplayName("GET /api/v1/customers/{id}")
     class GetCustomerById {
@@ -153,7 +151,6 @@ class CustomerControllerTest {
         }
     }
 
-    // ── GET /api/v1/customers/email/{email} ───────────────────────────────────
     @Nested
     @DisplayName("GET /api/v1/customers/email/{email}")
     class GetCustomerByEmail {
@@ -170,7 +167,6 @@ class CustomerControllerTest {
         }
     }
 
-    // ── GET /api/v1/customers ─────────────────────────────────────────────────
     @Nested
     @DisplayName("GET /api/v1/customers")
     class GetAllCustomers {
@@ -204,7 +200,6 @@ class CustomerControllerTest {
         }
     }
 
-    // ── PUT /api/v1/customers/{id} ────────────────────────────────────────────
     @Nested
     @DisplayName("PUT /api/v1/customers/{id}")
     class UpdateCustomer {
@@ -248,7 +243,6 @@ class CustomerControllerTest {
         }
     }
 
-    // ── DELETE /api/v1/customers/{id} ─────────────────────────────────────────
     @Nested
     @DisplayName("DELETE /api/v1/customers/{id}")
     class DeleteCustomer {
@@ -274,7 +268,6 @@ class CustomerControllerTest {
         }
     }
 
-    // ── GET /api/v1/customers/{id}/orders ─────────────────────────────────────
     @Nested
     @DisplayName("GET /api/v1/customers/{id}/orders")
     class GetOrderHistory {

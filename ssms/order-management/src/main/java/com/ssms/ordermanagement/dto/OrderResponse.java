@@ -12,9 +12,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Response DTO for Order data.
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -36,9 +33,6 @@ public class OrderResponse {
     private LocalDateTime updatedAt;
     private List<OrderItemResponse> items;
 
-    /**
-     * Map an Order entity to OrderResponse DTO.
-     */
     public static OrderResponse fromEntity(Order order) {
         return OrderResponse.builder()
                 .orderId(order.getOrderId())

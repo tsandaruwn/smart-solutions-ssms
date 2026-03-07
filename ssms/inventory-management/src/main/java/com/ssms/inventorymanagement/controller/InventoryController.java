@@ -20,20 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * REST controller exposing inventory management endpoints.
- *
- * <p>Covers all five system requirements:
- * <ul>
- *   <li>Track stock quantities per product</li>
- *   <li>Update inventory on order placement ({@code DECREASE} operation)</li>
- *   <li>Generate low-stock alerts</li>
- *   <li>Manage warehouse stock records (full CRUD)</li>
- *   <li>Allow inventory record deletion (soft delete)</li>
- * </ul>
- *
- * <p>Base path: {@code /api/v1/inventory}
- */
 @RestController
 @RequestMapping(AppConstants.INVENTORY_PATH)
 @RequiredArgsConstructor
@@ -42,16 +28,6 @@ public class InventoryController {
 
     private final InventoryService inventoryService;
 
-    // ─────────────────────────────────────────────────────────────────────
-    // POST /api/v1/inventory
-    // ─────────────────────────────────────────────────────────────────────
-
-    /**
-     * Creates a new inventory record.
-     *
-     * @param request validated inventory data
-     * @return 201 Created with the persisted record
-     */
     @PostMapping
     @Operation(
             summary     = "Create an inventory record",
@@ -70,15 +46,6 @@ public class InventoryController {
         return ResponseUtil.success(HttpStatus.CREATED, ResponseMessages.INVENTORY_CREATED, response);
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    // GET /api/v1/inventory
-    // ─────────────────────────────────────────────────────────────────────
-
-    /**
-     * Returns all non-deleted inventory records.
-     *
-     * @return 200 OK with the full inventory list
-     */
     @GetMapping
     @Operation(
             summary     = "Get all inventory records",
@@ -89,16 +56,6 @@ public class InventoryController {
         return ResponseUtil.success(HttpStatus.OK, ResponseMessages.INVENTORY_LIST_RETRIEVED, response);
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    // GET /api/v1/inventory/{id}
-    // ─────────────────────────────────────────────────────────────────────
-
-    /**
-     * Returns a single inventory record by its primary key.
-     *
-     * @param id the inventory record ID
-     * @return 200 OK or 404 if not found
-     */
     @GetMapping("/{id}")
     @Operation(
             summary     = "Get an inventory record by ID",
@@ -112,16 +69,6 @@ public class InventoryController {
         return ResponseUtil.success(HttpStatus.OK, ResponseMessages.INVENTORY_RETRIEVED, response);
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    // GET /api/v1/inventory/product/{productId}
-    // ─────────────────────────────────────────────────────────────────────
-
-    /**
-     * Returns all inventory records for a given product across all warehouses.
-     *
-     * @param productId the product ID (cross-service reference)
-     * @return 200 OK with matching records
-     */
     @GetMapping("/product/{productId}")
     @Operation(
             summary     = "Get inventory by product",
@@ -135,16 +82,6 @@ public class InventoryController {
         return ResponseUtil.success(HttpStatus.OK, ResponseMessages.INVENTORY_LIST_RETRIEVED, response);
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    // GET /api/v1/inventory/warehouse/{warehouseId}
-    // ─────────────────────────────────────────────────────────────────────
-
-    /**
-     * Returns all inventory records inside a specific warehouse.
-     *
-     * @param warehouseId the warehouse ID
-     * @return 200 OK with matching records
-     */
     @GetMapping("/warehouse/{warehouseId}")
     @Operation(
             summary     = "Get inventory by warehouse",
@@ -158,18 +95,6 @@ public class InventoryController {
         return ResponseUtil.success(HttpStatus.OK, ResponseMessages.INVENTORY_LIST_RETRIEVED, response);
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    // PUT /api/v1/inventory/{id}
-    // ─────────────────────────────────────────────────────────────────────
-
-    /**
-     * Updates the reorder thresholds and metadata of an inventory record.
-     * Use {@code PATCH /{id}/stock} to adjust the physical quantity.
-     *
-     * @param id      inventory record ID
-     * @param request updated values
-     * @return 200 OK with the updated record
-     */
     @PutMapping("/{id}")
     @Operation(
             summary     = "Update inventory record metadata",
@@ -185,24 +110,6 @@ public class InventoryController {
         return ResponseUtil.success(HttpStatus.OK, ResponseMessages.INVENTORY_UPDATED, response);
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    // PATCH /api/v1/inventory/{id}/stock
-    // ─────────────────────────────────────────────────────────────────────
-
-    /**
-     * Adjusts the stock quantity of an existing inventory record.
-     *
-     * <p>Supported operations:
-     * <ul>
-     *   <li>{@code INCREASE} — triggered by a restock / delivery</li>
-     *   <li>{@code DECREASE} — triggered by an order placement</li>
-     *   <li>{@code SET}      — direct override from a physical count</li>
-     * </ul>
-     *
-     * @param id      inventory record ID
-     * @param request contains the quantity and operation type
-     * @return 200 OK with the updated record
-     */
     @PatchMapping("/{id}/stock")
     @Operation(
             summary     = "Update stock quantity",
@@ -223,15 +130,6 @@ public class InventoryController {
         return ResponseUtil.success(HttpStatus.OK, ResponseMessages.INVENTORY_STOCK_UPDATED, response);
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    // GET /api/v1/inventory/alerts/low-stock
-    // ─────────────────────────────────────────────────────────────────────
-
-    /**
-     * Returns all inventory records that are at or below their reorder level.
-     *
-     * @return 200 OK with the list of low-stock items
-     */
     @GetMapping("/alerts/low-stock")
     @Operation(
             summary     = "Get low-stock alerts",
@@ -242,16 +140,6 @@ public class InventoryController {
         return ResponseUtil.success(HttpStatus.OK, ResponseMessages.INVENTORY_LOW_STOCK, response);
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    // GET /api/v1/inventory/alerts/low-stock/warehouse/{warehouseId}
-    // ─────────────────────────────────────────────────────────────────────
-
-    /**
-     * Returns low-stock items filtered by warehouse.
-     *
-     * @param warehouseId the warehouse to filter by
-     * @return 200 OK with matching low-stock records
-     */
     @GetMapping("/alerts/low-stock/warehouse/{warehouseId}")
     @Operation(
             summary     = "Get low-stock alerts by warehouse",
@@ -265,16 +153,6 @@ public class InventoryController {
         return ResponseUtil.success(HttpStatus.OK, ResponseMessages.INVENTORY_LOW_STOCK, response);
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    // DELETE /api/v1/inventory/{id}
-    // ─────────────────────────────────────────────────────────────────────
-
-    /**
-     * Soft-deletes an inventory record (sets is_deleted = true).
-     *
-     * @param id the inventory record ID
-     * @return 200 OK with confirmation
-     */
     @DeleteMapping("/{id}")
     @Operation(
             summary     = "Delete an inventory record",
@@ -292,4 +170,3 @@ public class InventoryController {
         return ResponseUtil.success(HttpStatus.OK, ResponseMessages.INVENTORY_DELETED);
     }
 }
-

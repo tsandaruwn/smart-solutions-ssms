@@ -1,8 +1,5 @@
 package com.ssms.usermanagement.dto;
 
-/**
- * DTO for Permission response
- */
 public class PermissionResponseDTO {
 
     private Integer permissionId;
@@ -10,11 +7,9 @@ public class PermissionResponseDTO {
     private String module;
     private String action;
 
-    // Empty constructor
     public PermissionResponseDTO() {
     }
 
-    // Constructor with all fields
     public PermissionResponseDTO(Integer permissionId, String permissionName, String module, String action) {
         this.permissionId = permissionId;
         this.permissionName = permissionName;
@@ -22,7 +17,6 @@ public class PermissionResponseDTO {
         this.action = action;
     }
 
-    // Getters and Setters
     public Integer getPermissionId() {
         return permissionId;
     }

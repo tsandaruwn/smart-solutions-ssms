@@ -56,12 +56,10 @@ export default function SuppliersPage() {
   const [showOnlyActive, setShowOnlyActive] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Supplier form state
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<SupplierRequest>(emptySupplierForm);
 
-  // Product form state
   const [expandedSupplier, setExpandedSupplier] = useState<number | null>(null);
   const [showProductForm, setShowProductForm] = useState(false);
   const [editingProductId, setEditingProductId] = useState<number | null>(null);
@@ -101,7 +99,6 @@ export default function SuppliersPage() {
     return { total: suppliers.length, active, inactive: suppliers.length - active };
   }, [suppliers]);
 
-  // Supplier CRUD
   const openCreateForm = () => {
     setEditingId(null);
     setForm(emptySupplierForm);
@@ -172,7 +169,6 @@ export default function SuppliersPage() {
     }
   };
 
-  // Product CRUD
   const openProductForm = (supplierId: number) => {
     setEditingProductId(null);
     setProductForm({ ...emptyProductForm, supplierId });
@@ -232,7 +228,7 @@ export default function SuppliersPage() {
 
   return (
     <div>
-      {/* Header */}
+      {}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h2 className="fw-bold text-navy mb-1">Suppliers</h2>
@@ -244,7 +240,7 @@ export default function SuppliersPage() {
         </button>
       </div>
 
-      {/* Stats */}
+      {}
       <div className="row g-3 mb-4">
         <div className="col-md-4">
           <StatCard title="Total Suppliers" value={stats.total} icon={Truck} color="navy" />
@@ -257,11 +253,11 @@ export default function SuppliersPage() {
         </div>
       </div>
 
-      {/* Messages */}
+      {}
       {success && <div className="alert alert-success mb-3">{success}</div>}
       {error && <ErrorMessage message={error} onRetry={loadSuppliers} />}
 
-      {/* Search & Filters */}
+      {}
       <div className="card card-brand mb-4">
         <div className="card-body py-3">
           <div className="d-flex gap-2 align-items-center">
@@ -302,7 +298,7 @@ export default function SuppliersPage() {
         </div>
       </div>
 
-      {/* Suppliers List */}
+      {}
       {loading ? (
         <LoadingSpinner />
       ) : (
@@ -403,7 +399,7 @@ export default function SuppliersPage() {
                     </div>
                   </div>
 
-                  {/* Expanded Products */}
+                  {}
                   {expandedSupplier === s.supplierId && (
                     <div className="mt-3 pt-3" style={{ borderTop: "1px solid var(--border)" }}>
                       <div className="d-flex justify-content-between align-items-center mb-2">
@@ -495,7 +491,7 @@ export default function SuppliersPage() {
         </div>
       )}
 
-      {/* Supplier Modal */}
+      {}
       {showForm && (
         <>
           <div className="modal-backdrop-custom" onClick={() => setShowForm(false)} />
@@ -610,7 +606,7 @@ export default function SuppliersPage() {
         </>
       )}
 
-      {/* Product Modal */}
+      {}
       {showProductForm && (
         <>
           <div className="modal-backdrop-custom" onClick={() => setShowProductForm(false)} />

@@ -25,4 +25,3 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
            "LOWER(c.email) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     Page<Customer> searchCustomers(@Param("keyword") String keyword, Pageable pageable);
 }
-

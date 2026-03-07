@@ -16,7 +16,6 @@ public class PaymentMethodRequest {
 
     private Boolean isActive;
 
-    // Getters and Setters
     public String getMethodName() {
         return methodName;
     }

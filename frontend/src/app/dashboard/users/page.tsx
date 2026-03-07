@@ -1,10 +1,3 @@
-// ====================================
-// USER MANAGEMENT DASHBOARD
-// Created by: [Your Name]
-// Purpose: Complete user management system with CRUD operations
-// Color Palette: Navy(#1A3263), Slate(#547792), Orange(#FAB95B), Cream(#E8E2DB)
-// ====================================
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -24,7 +17,6 @@ export default function UserManagementPage() {
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
-  // Fetch users and roles
   const fetchData = async () => {
     setLoading(true);
     setError(null);
@@ -47,7 +39,6 @@ export default function UserManagementPage() {
     fetchData();
   }, []);
 
-  // Search filter
   useEffect(() => {
     if (searchTerm) {
       const filtered = users.filter(
@@ -96,7 +87,6 @@ export default function UserManagementPage() {
     await fetchData();
   };
 
-  // Statistics
   const activeUsers = users.filter((u) => u.isActive).length;
   const inactiveUsers = users.filter((u) => !u.isActive).length;
   const adminUsers = users.filter((u) => u.roleName === "ADMIN").length;
@@ -112,7 +102,7 @@ export default function UserManagementPage() {
 
   return (
     <div style={styles.container}>
-      {/* Header */}
+      {}
       <div style={styles.header}>
         <div style={styles.headerLeft}>
           <div style={styles.headerIcon}>
@@ -129,7 +119,7 @@ export default function UserManagementPage() {
         </button>
       </div>
 
-      {/* Statistics Cards */}
+      {}
       <div style={styles.statsGrid}>
         <div style={styles.statCard}>
           <div style={styles.statHeader}>
@@ -161,7 +151,7 @@ export default function UserManagementPage() {
         </div>
       </div>
 
-      {/* Search and Controls */}
+      {}
       <div style={styles.controls}>
         <div style={styles.searchBox}>
           <Search size={20} color="#547792" />
@@ -179,7 +169,7 @@ export default function UserManagementPage() {
         </button>
       </div>
 
-      {/* Error Display */}
+      {}
       {error && (
         <div style={styles.errorBox}>
           <AlertCircle size={20} />
@@ -187,14 +177,14 @@ export default function UserManagementPage() {
         </div>
       )}
 
-      {/* User Table */}
+      {}
       <UserTable
         users={filteredUsers}
         onEdit={handleEditUser}
         onDelete={handleDeleteUser}
       />
 
-      {/* User Modal */}
+      {}
       {showModal && (
         <UserModal
           user={selectedUser}
@@ -204,7 +194,7 @@ export default function UserManagementPage() {
         />
       )}
 
-      {/* Developer Signature */}
+      {}
       <div style={styles.signature}>
         <p>👤 User Management Module - Developed by [Your Name]</p>
       </div>

@@ -159,7 +159,7 @@ export default function CustomersPage() {
 
   return (
     <div>
-      {/* Header */}
+      {}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h2 className="fw-bold text-navy mb-1">Customers</h2>
@@ -171,14 +171,14 @@ export default function CustomersPage() {
         </button>
       </div>
 
-      {/* Stats */}
+      {}
       <div className="row g-3 mb-4">
         <div className="col-md-4">
           <StatCard title="Total Customers" value={totalElements} icon={Users} color="navy" />
         </div>
       </div>
 
-      {/* Messages */}
+      {}
       {success && (
         <div className="alert alert-success d-flex align-items-center gap-2 mb-3">
           {success}
@@ -186,7 +186,7 @@ export default function CustomersPage() {
       )}
       {error && <ErrorMessage message={error} onRetry={() => loadCustomers(currentPage)} />}
 
-      {/* Search */}
+      {}
       <div className="card card-brand mb-4">
         <div className="card-body py-3">
           <div className="d-flex gap-2">
@@ -224,7 +224,7 @@ export default function CustomersPage() {
         </div>
       </div>
 
-      {/* Table */}
+      {}
       {loading ? (
         <LoadingSpinner />
       ) : (
@@ -342,7 +342,7 @@ export default function CustomersPage() {
             </table>
           </div>
 
-          {/* Pagination */}
+          {}
           {totalPages > 1 && (
             <div className="card-footer d-flex justify-content-between align-items-center">
               <span className="text-steel" style={{ fontSize: ".875rem" }}>
@@ -380,7 +380,7 @@ export default function CustomersPage() {
         </div>
       )}
 
-      {/* Create / Edit Modal */}
+      {}
       {showForm && (
         <>
           <div className="modal-backdrop-custom" onClick={() => setShowForm(false)} />

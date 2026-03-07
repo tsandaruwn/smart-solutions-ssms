@@ -27,17 +27,10 @@ public class CampaignPerformanceService {
     private final CampaignPerformanceRepository performanceRepository;
     private final CampaignRepository campaignRepository;
 
-    // ─── RECORD / UPSERT ─────────────────────────────────────────
-
-    /**
-     * Record a daily performance snapshot.
-     * If a snapshot for the same campaign+date already exists, it is updated.
-     */
     @Transactional
     public PerformanceResponse recordPerformance(Integer campaignId, RecordPerformanceRequest request) {
         Campaign campaign = findCampaignOrThrow(campaignId);
 
-        // Check for duplicate (upsert semantics: update if exists)
         CampaignPerformance perf = performanceRepository
                 .findByCampaignCampaignIdAndRecordedDate(campaignId, request.getRecordedDate())
                 .orElse(CampaignPerformance.builder()
@@ -62,11 +55,6 @@ public class CampaignPerformanceService {
         return PerformanceResponse.fromEntity(saved);
     }
 
-    // ─── READ ────────────────────────────────────────────────────
-
-    /**
-     * Get all performance snapshots for a campaign.
-     */
     @Transactional(readOnly = true)
     public List<PerformanceResponse> getPerformanceByCampaign(Integer campaignId) {
         findCampaignOrThrow(campaignId);
@@ -77,9 +65,6 @@ public class CampaignPerformanceService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Get performance snapshots for a campaign within a date range.
-     */
     @Transactional(readOnly = true)
     public List<PerformanceResponse> getPerformanceByCampaignAndDateRange(
             Integer campaignId, LocalDate from, LocalDate to) {
@@ -91,14 +76,11 @@ public class CampaignPerformanceService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Get aggregate performance summary for a campaign.
-     */
     @Transactional(readOnly = true)
     public Map<String, Object> getCampaignSummary(Integer campaignId) {
         Campaign campaign = findCampaignOrThrow(campaignId);
         Object[] result = performanceRepository.aggregateByCampaignId(campaignId);
-        // JPA aggregate query returns Object[][] — unwrap the first row
+        
         Object[] row = (result != null && result.length > 0 && result[0] instanceof Object[])
                 ? (Object[]) result[0]
                 : result;
@@ -133,8 +115,6 @@ public class CampaignPerformanceService {
         return summary;
     }
 
-    // ─── DELETE ──────────────────────────────────────────────────
-
     @Transactional
     public void deletePerformanceEntry(Integer perfId) {
         CampaignPerformance perf = performanceRepository.findById(perfId)
@@ -142,8 +122,6 @@ public class CampaignPerformanceService {
         performanceRepository.delete(perf);
         log.info("Performance entry deleted: perfId={}", perfId);
     }
-
-    // ─── Helpers ─────────────────────────────────────────────────
 
     private Campaign findCampaignOrThrow(Integer campaignId) {
         Campaign campaign = campaignRepository.findById(campaignId)

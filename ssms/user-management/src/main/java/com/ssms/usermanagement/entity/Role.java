@@ -6,9 +6,6 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Role Entity - Represents roles in the RBAC system
- */
 @Entity
 @Table(name = "role")
 public class Role {
@@ -35,16 +32,13 @@ public class Role {
     @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RolePermission> rolePermissions = new HashSet<>();
 
-    // Empty constructor
     public Role() {
     }
 
-    // Constructor with role name
     public Role(RoleName roleName) {
         this.roleName = roleName;
     }
 
-    // Constructor with role name and description
     public Role(RoleName roleName, String description) {
         this.roleName = roleName;
         this.description = description;
@@ -55,7 +49,6 @@ public class Role {
         this.createdAt = LocalDateTime.now();
     }
 
-    // Getters and Setters
     public Integer getRoleId() {
         return roleId;
     }
@@ -104,7 +97,6 @@ public class Role {
         this.rolePermissions = rolePermissions;
     }
 
-    // Enum for Role Names
     public enum RoleName {
         ADMIN,
         MANAGER,

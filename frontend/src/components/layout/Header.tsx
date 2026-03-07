@@ -8,10 +8,10 @@ export default function Header() {
 
   return (
     <header className="app-header">
-      {/* Left */}
+      {}
       <h2 className="fw-semibold mb-0 text-navy" style={{ fontSize: "1.1rem" }}>Dashboard</h2>
 
-      {/* Center: Search */}
+      {}
       <div className="d-none d-md-flex flex-grow-1 mx-4" style={{ maxWidth: 420 }}>
         <div className="search-wrapper w-100">
           <Search className="search-icon" size={16} />
@@ -25,9 +25,9 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Right */}
+      {}
       <div className="d-flex align-items-center gap-3">
-        {/* Bell */}
+        {}
         <button className="btn-icon position-relative">
           <Bell size={18} className="text-steel" />
           <span
@@ -36,7 +36,7 @@ export default function Header() {
           />
         </button>
 
-        {/* Profile */}
+        {}
         <div className="d-flex align-items-center gap-2 ps-3 ms-1 border-start border-brand">
           <div className="d-none d-sm-block text-end">
             <p className="mb-0 fw-medium text-navy" style={{ fontSize: ".875rem" }}>Admin User</p>

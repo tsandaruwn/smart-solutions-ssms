@@ -43,7 +43,6 @@ public class PaymentResponse {
         this.refundReason = refundReason;
     }
 
-    // Getters and Setters
     public Long getPaymentId() {
         return paymentId;
     }

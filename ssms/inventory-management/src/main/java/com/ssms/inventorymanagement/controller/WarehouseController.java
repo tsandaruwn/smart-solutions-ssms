@@ -19,11 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * REST controller exposing CRUD endpoints for {@code Warehouse} resources.
- *
- * <p>Base path: {@code /api/v1/warehouses}
- */
 @RestController
 @RequestMapping(AppConstants.WAREHOUSE_PATH)
 @RequiredArgsConstructor
@@ -32,16 +27,6 @@ public class WarehouseController {
 
     private final WarehouseService warehouseService;
 
-    // ─────────────────────────────────────────────────────────────────────
-    // POST /api/v1/warehouses
-    // ─────────────────────────────────────────────────────────────────────
-
-    /**
-     * Creates a new warehouse.
-     *
-     * @param request validated warehouse data from the request body
-     * @return 201 Created with the persisted warehouse
-     */
     @PostMapping
     @Operation(
             summary     = "Create a new warehouse",
@@ -59,15 +44,6 @@ public class WarehouseController {
         return ResponseUtil.success(HttpStatus.CREATED, ResponseMessages.WAREHOUSE_CREATED, response);
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    // GET /api/v1/warehouses
-    // ─────────────────────────────────────────────────────────────────────
-
-    /**
-     * Retrieves all active warehouses.
-     *
-     * @return 200 OK with a list of active warehouses
-     */
     @GetMapping
     @Operation(
             summary     = "Get all active warehouses",
@@ -78,16 +54,6 @@ public class WarehouseController {
         return ResponseUtil.success(HttpStatus.OK, ResponseMessages.WAREHOUSES_RETRIEVED, response);
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    // GET /api/v1/warehouses/{id}
-    // ─────────────────────────────────────────────────────────────────────
-
-    /**
-     * Retrieves a single warehouse by its ID.
-     *
-     * @param id the warehouse primary key
-     * @return 200 OK with the warehouse, or 404 if not found
-     */
     @GetMapping("/{id}")
     @Operation(
             summary     = "Get a warehouse by ID",
@@ -101,17 +67,6 @@ public class WarehouseController {
         return ResponseUtil.success(HttpStatus.OK, ResponseMessages.WAREHOUSE_RETRIEVED, response);
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    // PUT /api/v1/warehouses/{id}
-    // ─────────────────────────────────────────────────────────────────────
-
-    /**
-     * Updates an existing warehouse.
-     *
-     * @param id      the warehouse primary key
-     * @param request validated replacement data
-     * @return 200 OK with the updated warehouse
-     */
     @PutMapping("/{id}")
     @Operation(
             summary     = "Update a warehouse",
@@ -131,16 +86,6 @@ public class WarehouseController {
         return ResponseUtil.success(HttpStatus.OK, ResponseMessages.WAREHOUSE_UPDATED, response);
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    // DELETE /api/v1/warehouses/{id}
-    // ─────────────────────────────────────────────────────────────────────
-
-    /**
-     * Soft-deactivates a warehouse (sets is_active = false).
-     *
-     * @param id the warehouse primary key
-     * @return 200 OK with confirmation message
-     */
     @DeleteMapping("/{id}")
     @Operation(
             summary     = "Deactivate a warehouse",

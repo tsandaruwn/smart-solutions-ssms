@@ -121,7 +121,7 @@ export default function PaymentDetailsPage({ params }: { params: Promise<{ id: s
 
   return (
     <div style={{ padding: "2rem", maxWidth: "1200px", margin: "0 auto" }}>
-      {/* Header */}
+      {}
       <div className="d-flex align-items-center justify-content-between mb-4">
         <div>
           <Link 
@@ -155,7 +155,7 @@ export default function PaymentDetailsPage({ params }: { params: Promise<{ id: s
       </div>
 
       <div className="row g-4">
-        {/* Main Payment Information Card */}
+        {}
         <div className="col-lg-8">
           <div className="bg-surface rounded-3 border-brand p-4 mb-4" style={{ border: "1px solid" }}>
             <h2 className="text-navy mb-4" style={{ fontSize: "1.25rem", fontWeight: 600 }}>
@@ -319,7 +319,7 @@ export default function PaymentDetailsPage({ params }: { params: Promise<{ id: s
             </div>
           </div>
 
-          {/* Gateway Response */}
+          {}
           {payment.gatewayResponse && (
             <div className="bg-surface rounded-3 border-brand p-4 mb-4" style={{ border: "1px solid" }}>
               <div className="d-flex align-items-center gap-2 mb-3">
@@ -343,7 +343,7 @@ export default function PaymentDetailsPage({ params }: { params: Promise<{ id: s
             </div>
           )}
 
-          {/* Refund Information */}
+          {}
           {payment.refundAmount && (
             <div 
               className="rounded-3 p-4 mb-4"
@@ -394,7 +394,7 @@ export default function PaymentDetailsPage({ params }: { params: Promise<{ id: s
           )}
         </div>
 
-        {/* Actions Sidebar */}
+        {}
         <div className="col-lg-4">
           <div className="bg-surface rounded-3 border-brand p-4" style={{ border: "1px solid" }}>
             <h3 className="text-navy mb-4" style={{ fontSize: "1.125rem", fontWeight: 600 }}>
@@ -445,25 +445,7 @@ export default function PaymentDetailsPage({ params }: { params: Promise<{ id: s
                 </>
               )}
               
-              {/* {payment.status === "Success" && !payment.refundAmount && (
-                <Link
-                  href={`/dashboard/payments/${payment.paymentId}/refund`}
-                  className="btn d-flex align-items-center justify-content-center gap-2"
-                  style={{
-                    background: "#f97316",
-                    color: "white",
-                    border: "none",
-                    padding: "12px 20px",
-                    borderRadius: "8px",
-                    fontWeight: 600,
-                    fontSize: ".875rem",
-                    textDecoration: "none"
-                  }}
-                >
-                  <RotateCcw size={18} />
-                  Process Refund
-                </Link>
-              )} */}
+              {}
 
               <div 
                 className="my-2" 
@@ -491,7 +473,7 @@ export default function PaymentDetailsPage({ params }: { params: Promise<{ id: s
               </button>
             </div>
 
-            {/* Quick Stats */}
+            {}
             <div className="mt-4 pt-4" style={{ borderTop: "1px solid var(--border-color)" }}>
               <h4 className="text-navy mb-3" style={{ fontSize: ".875rem", fontWeight: 600 }}>
                 Quick Summary

@@ -11,24 +11,12 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
-/**
- * Springdoc / Swagger UI configuration for the Inventory Management service.
- *
- * <p>Accessible at {@code http://localhost:8084/swagger-ui.html} when the
- * service is running locally.
- */
 @Configuration
 public class OpenApiConfig {
 
     @Value("${server.port:8084}")
     private String serverPort;
 
-    /**
-     * Builds the {@link OpenAPI} bean that Springdoc uses to generate the
-     * API documentation and power the Swagger UI.
-     *
-     * @return a fully configured {@link OpenAPI} descriptor
-     */
     @Bean
     public OpenAPI inventoryManagementOpenAPI() {
 

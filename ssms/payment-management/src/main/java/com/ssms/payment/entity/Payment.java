@@ -53,7 +53,6 @@ public class Payment {
         this.status = PaymentStatus.Pending;
     }
 
-    // Getters and Setters
     public Long getPaymentId() {
         return paymentId;
     }

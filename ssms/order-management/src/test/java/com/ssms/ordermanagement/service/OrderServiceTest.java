@@ -40,7 +40,7 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        // Build a sample Order entity (as returned from DB)
+        
         OrderItem item = OrderItem.builder()
                 .orderItemId(1)
                 .productId(101)
@@ -64,7 +64,6 @@ class OrderServiceTest {
                 .build();
         sampleOrder.addItem(item);
 
-        // Build a CreateOrderRequest
         OrderItemRequest itemReq = OrderItemRequest.builder()
                 .productId(101)
                 .quantity(2)
@@ -82,8 +81,6 @@ class OrderServiceTest {
                 .build();
     }
 
-    // ─── Place Order ────────────────────────────────────────────
-
     @Test
     void testPlaceOrder_Success() {
         when(orderRepository.existsByOrderNumber(anyString())).thenReturn(false);
@@ -96,8 +93,6 @@ class OrderServiceTest {
         assertThat(result.getStatus()).isEqualTo(OrderStatus.PENDING);
         verify(orderRepository, times(1)).save(any(Order.class));
     }
-
-    // ─── Get Order ──────────────────────────────────────────────
 
     @Test
     void testGetOrderById_Success() {
@@ -161,8 +156,6 @@ class OrderServiceTest {
         assertThat(result.get(0).getCustomerId()).isEqualTo(1);
     }
 
-    // ─── Update Status ──────────────────────────────────────────
-
     @Test
     void testUpdateOrderStatus_PendingToShipped() {
         when(orderRepository.findById(1)).thenReturn(Optional.of(sampleOrder));
@@ -207,8 +200,6 @@ class OrderServiceTest {
                 .isInstanceOf(InvalidOrderStateException.class)
                 .hasMessageContaining("Cannot update status of a cancelled order");
     }
-
-    // ─── Cancel Order ───────────────────────────────────────────
 
     @Test
     void testCancelOrder_Success() {
@@ -256,8 +247,6 @@ class OrderServiceTest {
                 .hasMessageContaining("Cannot cancel a shipped order");
     }
 
-    // ─── Filter queries ─────────────────────────────────────────
-
     @Test
     void testGetOrdersByStatus() {
         when(orderRepository.findByStatus(OrderStatus.PENDING))
@@ -291,8 +280,6 @@ class OrderServiceTest {
 
         assertThat(result).hasSize(1);
     }
-
-    // ─── Delete ─────────────────────────────────────────────────
 
     @Test
     void testDeleteOrder() {

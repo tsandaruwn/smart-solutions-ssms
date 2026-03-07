@@ -3,9 +3,6 @@ package com.ssms.usermanagement.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * DTO for Role response
- */
 public class RoleResponseDTO {
 
     private Integer roleId;
@@ -14,11 +11,9 @@ public class RoleResponseDTO {
     private LocalDateTime createdAt;
     private List<String> permissions;
 
-    // Empty constructor
     public RoleResponseDTO() {
     }
 
-    // Constructor with all fields
     public RoleResponseDTO(Integer roleId, String roleName, String description, LocalDateTime createdAt, List<String> permissions) {
         this.roleId = roleId;
         this.roleName = roleName;
@@ -27,7 +22,6 @@ public class RoleResponseDTO {
         this.permissions = permissions;
     }
 
-    // Getters and Setters
     public Integer getRoleId() {
         return roleId;
     }

@@ -30,13 +30,11 @@ export default function BillingPage() {
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
   const [customerId, setCustomerId] = useState<string>("");
 
-  // generate invoice state
   const [genOrderId, setGenOrderId] = useState<string>("");
   const [genLoading, setGenLoading] = useState(false);
   const [genResult, setGenResult] = useState<BillDto | null>(null);
   const [genError, setGenError] = useState<string | null>(null);
 
-  // Dropdown data
   const [customers, setCustomers] = useState<CustomerResponse[]>([]);
   const [orders, setOrders] = useState<OrderResponse[]>([]);
 
@@ -54,7 +52,7 @@ export default function BillingPage() {
     try {
       const result = await billingApi.generateInvoice(orderId);
       setGenResult(result);
-      // auto-reload bills list if customer is already loaded
+      
       if (customerId) fetchBills();
     } catch (err) {
       setGenError(
@@ -130,7 +128,7 @@ export default function BillingPage() {
 
   return (
     <div>
-      {/* Page header */}
+      {}
       <div className="d-flex flex-column flex-sm-row align-items-sm-center justify-content-sm-between gap-3 mb-4">
         <div>
           <h1 className="fw-bold text-navy mb-1" style={{ fontSize: "1.5rem" }}>
@@ -157,7 +155,7 @@ export default function BillingPage() {
         </button>
       </div>
 
-      {/* Customer lookup */}
+      {}
       <div className="card-brand p-3 mb-4" id="gen-panel">
         <p
           className="fw-semibold text-navy mb-1"
@@ -215,7 +213,7 @@ export default function BillingPage() {
         )}
       </div>
 
-      {/* Customer lookup */}
+      {}
       <div className="card-brand p-3 mb-4">
         <p
           className="fw-semibold text-navy mb-2"
@@ -247,7 +245,7 @@ export default function BillingPage() {
         </div>
       </div>
 
-      {/* Warning / error */}
+      {}
       {error && (
         <div className="warning-banner mb-4">
           <span
@@ -273,7 +271,7 @@ export default function BillingPage() {
 
       {!loading && bills.length > 0 && (
         <>
-          {/* Filters */}
+          {}
           <div className="d-flex flex-column flex-sm-row gap-3 mb-4">
             <div className="search-wrapper flex-grow-1">
               <Search className="search-icon" size={16} />
@@ -300,7 +298,7 @@ export default function BillingPage() {
             </div>
           </div>
 
-          {/* Table */}
+          {}
           <div className="card-brand">
             {paginated.length === 0 ? (
               <div className="d-flex flex-column align-items-center justify-content-center py-5 gap-2">
@@ -466,7 +464,7 @@ export default function BillingPage() {
               </div>
             )}
 
-            {/* Pagination */}
+            {}
             {totalPages > 1 && (
               <div
                 className="d-flex align-items-center justify-content-between px-4 py-3"

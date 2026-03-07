@@ -103,7 +103,7 @@ export default function PaymentMethodsPage() {
 
   return (
     <div>
-      {/* Page header */}
+      {}
       <div className="mb-4">
         <Link
           href="/dashboard/payments"
@@ -150,7 +150,7 @@ export default function PaymentMethodsPage() {
         </div>
       )}
 
-      {/* Form */}
+      {}
       {showForm && (
         <div className="card-brand p-4 mb-4">
           <h2 className="fw-semibold text-navy mb-3" style={{ fontSize: "1.125rem" }}>
@@ -235,7 +235,7 @@ export default function PaymentMethodsPage() {
         </div>
       )}
 
-      {/* Methods Table */}
+      {}
       <div className="card-brand">
         {methods.length === 0 ? (
           <div className="d-flex flex-column align-items-center justify-content-center py-5 gap-2">
@@ -358,7 +358,7 @@ export default function PaymentMethodsPage() {
         )}
       </div>
 
-      {/* Summary */}
+      {}
       <div className="row g-3 mt-4">
         <div className="col-md-4">
           <div className="card-brand p-3">

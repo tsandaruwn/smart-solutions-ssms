@@ -64,7 +64,7 @@ export default function DashboardPage() {
 
   return (
     <div>
-      {/* Header */}
+      {}
       <div className="d-flex flex-column flex-sm-row align-items-sm-center justify-content-sm-between gap-3 mb-4">
         <div>
           <h1 className="fw-bold text-navy mb-1" style={{ fontSize: "1.5rem" }}>Dashboard Overview</h1>
@@ -78,7 +78,7 @@ export default function DashboardPage() {
         </Link>
       </div>
 
-      {/* Backend warning */}
+      {}
       {error && (
         <div className="warning-banner mb-4">
           <span className="animate-pulse rounded-circle bg-amber d-inline-block flex-shrink-0" style={{ width: 8, height: 8 }} />
@@ -91,7 +91,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Stat cards */}
+      {}
       <div className="row g-3 mb-4">
         <div className="col-12 col-sm-6 col-lg-3">
           <StatCard title="Total Orders"   value={totalOrders}              subtitle="All time orders"        icon={ShoppingCart} color="navy"  />
@@ -107,9 +107,9 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Main content */}
+      {}
       <div className="row g-4">
-        {/* Recent Orders */}
+        {}
         <div className="col-12 col-lg-8">
           <div className="card-brand">
             <div className="card-brand-header">
@@ -159,7 +159,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Status Distribution */}
+        {}
         <div className="col-12 col-lg-4">
           <div className="card-brand">
             <div className="card-brand-body">

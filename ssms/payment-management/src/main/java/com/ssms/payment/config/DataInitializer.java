@@ -13,7 +13,7 @@ public class DataInitializer {
     @Bean
     CommandLineRunner initPaymentMethods(PaymentMethodRepository paymentMethodRepository) {
         return args -> {
-            // Initialize default payment methods if database is empty
+            
             if (paymentMethodRepository.count() == 0) {
                 
                 PaymentMethod creditCard = new PaymentMethod(

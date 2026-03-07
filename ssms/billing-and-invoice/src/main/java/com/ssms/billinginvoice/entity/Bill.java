@@ -1,4 +1,3 @@
-
 package com.ssms.billinginvoice.entity;
 
 import jakarta.persistence.*;
@@ -15,14 +14,13 @@ public class Bill {
     @Column(unique = true)
     private Long orderId;
 
-    // foreign key linking back to the customer service
     private Long customerId;
 
     private BigDecimal subtotal;
     private BigDecimal tax;
     private BigDecimal totalAmount;
 
-    private String status; // PENDING, PAID
+    private String status; 
 
     private Long deletedByUserId;
 
@@ -30,7 +28,6 @@ public class Bill {
         this.status = "PENDING";
     }
 
-    // getters and setters
     public Long getId() {
         return id;
     }

@@ -61,10 +61,6 @@ class WarehouseControllerTest {
                 .build();
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // POST /api/v1/warehouses
-    // ──────────────────────────────────────────────────────────────
-
     @Nested
     @DisplayName("POST /api/v1/warehouses")
     class CreateWarehouse {
@@ -99,7 +95,7 @@ class WarehouseControllerTest {
         @DisplayName("should return 400 when name is blank")
         void shouldReturn400ForBlankName() throws Exception {
             WarehouseRequest invalid = WarehouseRequest.builder()
-                    .name("") // blank
+                    .name("") 
                     .build();
 
             mockMvc.perform(post(BASE_PATH)
@@ -132,7 +128,7 @@ class WarehouseControllerTest {
         @DisplayName("should return 400 when name exceeds max length")
         void shouldReturn400ForLongName() throws Exception {
             WarehouseRequest invalid = WarehouseRequest.builder()
-                    .name("A".repeat(101)) // exceeds 100 char limit
+                    .name("A".repeat(101)) 
                     .build();
 
             mockMvc.perform(post(BASE_PATH)
@@ -142,10 +138,6 @@ class WarehouseControllerTest {
                     .andExpect(jsonPath("$.success").value(false));
         }
     }
-
-    // ──────────────────────────────────────────────────────────────
-    // GET /api/v1/warehouses
-    // ──────────────────────────────────────────────────────────────
 
     @Nested
     @DisplayName("GET /api/v1/warehouses")
@@ -175,10 +167,6 @@ class WarehouseControllerTest {
                     .andExpect(jsonPath("$.data", hasSize(0)));
         }
     }
-
-    // ──────────────────────────────────────────────────────────────
-    // GET /api/v1/warehouses/{id}
-    // ──────────────────────────────────────────────────────────────
 
     @Nested
     @DisplayName("GET /api/v1/warehouses/{id}")
@@ -210,10 +198,6 @@ class WarehouseControllerTest {
                     .andExpect(jsonPath("$.success").value(false));
         }
     }
-
-    // ──────────────────────────────────────────────────────────────
-    // PUT /api/v1/warehouses/{id}
-    // ──────────────────────────────────────────────────────────────
 
     @Nested
     @DisplayName("PUT /api/v1/warehouses/{id}")
@@ -289,10 +273,6 @@ class WarehouseControllerTest {
                     .andExpect(jsonPath("$.success").value(false));
         }
     }
-
-    // ──────────────────────────────────────────────────────────────
-    // DELETE /api/v1/warehouses/{id}
-    // ──────────────────────────────────────────────────────────────
 
     @Nested
     @DisplayName("DELETE /api/v1/warehouses/{id}")

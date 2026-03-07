@@ -9,24 +9,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * CAMPAIGN entity – represents a marketing campaign.
- *
- * Columns (from ER):
- * campaign_id INT (AUTO_INCREMENT) PK
- * created_by_user_id INT FK → USER
- * name VARCHAR(150) NOT NULL
- * type ENUM(Email, Social Media, ...)
- * description TEXT
- * target_audience TEXT
- * start_date DATE NOT NULL
- * end_date DATE NOT NULL
- * budget DECIMAL(12,2)
- * status ENUM(Draft, Active, Paused, ...)
- * created_at TIMESTAMP
- * updated_at TIMESTAMP
- * deleted_at TIMESTAMP (soft-delete)
- */
 @Entity
 @Table(name = "campaign")
 @Data
@@ -81,8 +63,6 @@ public class Campaign {
     @OneToMany(mappedBy = "campaign", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
     private List<CampaignPerformance> performances = new ArrayList<>();
-
-    // ─── Lifecycle ───────────────────────────────────────────────
 
     @PrePersist
     protected void onCreate() {

@@ -25,27 +25,18 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final SupplierRepository supplierRepository;
 
-    /**
-     * Retrieve all products
-     */
     public List<ProductResponseDTO> getAllProducts() {
         log.info("Fetching all products");
         List<Product> products = productRepository.findAll();
         return ProductMapper.toResponseDTOList(products);
     }
 
-    /**
-     * Retrieve all active products
-     */
     public List<ProductResponseDTO> getAllActiveProducts() {
         log.info("Fetching all active products");
         List<Product> products = productRepository.findAllActiveProducts();
         return ProductMapper.toResponseDTOList(products);
     }
 
-    /**
-     * Retrieve product by ID
-     */
     public ProductResponseDTO getProductById(Long id) {
         log.info("Fetching product with id: {}", id);
         Product product = productRepository.findById(id)
@@ -53,17 +44,12 @@ public class ProductService {
         return ProductMapper.toResponseDTO(product);
     }
 
-    /**
-     * Create a new product
-     */
     public ProductResponseDTO createProduct(ProductRequestDTO requestDTO) {
         log.info("Creating new product: {}", requestDTO.getProductName());
         
-        // Verify supplier exists
         Supplier supplier = supplierRepository.findById(requestDTO.getSupplierId())
                 .orElseThrow(() -> new ResourceNotFoundException("Supplier", "id", requestDTO.getSupplierId()));
         
-        // Check for duplicate product name for the same supplier
         if (productRepository.existsByProductNameAndSupplier_SupplierId(
                 requestDTO.getProductName(), requestDTO.getSupplierId())) {
             throw new DuplicateResourceException("Product", "productName", requestDTO.getProductName());
@@ -76,16 +62,12 @@ public class ProductService {
         return ProductMapper.toResponseDTO(savedProduct);
     }
 
-    /**
-     * Update an existing product
-     */
     public ProductResponseDTO updateProduct(Long id, ProductRequestDTO requestDTO) {
         log.info("Updating product with id: {}", id);
         
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "id", id));
         
-        // Check if product name is being changed and if new name already exists for the supplier
         if (!product.getProductName().equals(requestDTO.getProductName()) 
                 && productRepository.existsByProductNameAndSupplier_SupplierId(
                         requestDTO.getProductName(), product.getSupplier().getSupplierId())) {
@@ -99,9 +81,6 @@ public class ProductService {
         return ProductMapper.toResponseDTO(updatedProduct);
     }
 
-    /**
-     * Soft delete a product
-     */
     public void deleteProduct(Long id) {
         log.info("Deleting product with id: {}", id);
         
@@ -112,9 +91,6 @@ public class ProductService {
         log.info("Product deleted successfully with id: {}", id);
     }
 
-    /**
-     * Search products by name
-     */
     public List<ProductResponseDTO> searchProductsByName(String productName) {
         log.info("Searching products by name: {}", productName);
         List<Product> products = productRepository.findByProductNameContainingIgnoreCase(productName);

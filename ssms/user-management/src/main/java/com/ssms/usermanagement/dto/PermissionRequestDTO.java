@@ -3,9 +3,6 @@ package com.ssms.usermanagement.dto;
 import com.ssms.usermanagement.entity.Permission.Action;
 import jakarta.validation.constraints.NotBlank;
 
-/**
- * DTO for Permission creation/update requests
- */
 public class PermissionRequestDTO {
 
     @NotBlank(message = "Permission name is required")
@@ -15,18 +12,15 @@ public class PermissionRequestDTO {
 
     private Action action;
 
-    // Empty constructor
     public PermissionRequestDTO() {
     }
 
-    // Constructor with all fields
     public PermissionRequestDTO(String permissionName, String module, Action action) {
         this.permissionName = permissionName;
         this.module = module;
         this.action = action;
     }
 
-    // Getters and Setters
     public String getPermissionName() {
         return permissionName;
     }

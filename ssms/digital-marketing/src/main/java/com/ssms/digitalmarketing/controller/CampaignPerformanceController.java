@@ -15,11 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * REST controller for Campaign Performance operations.
- *
- * Base path: /api/campaigns/{campaignId}/performance
- */
 @RestController
 @RequestMapping("/api/campaigns/{campaignId}/performance")
 @RequiredArgsConstructor
@@ -28,12 +23,6 @@ public class CampaignPerformanceController {
 
     private final CampaignPerformanceService performanceService;
 
-    // ─── RECORD ──────────────────────────────────────────────────
-
-    /**
-     * Record (or update) a daily performance snapshot.
-     * POST /api/campaigns/{campaignId}/performance
-     */
     @PostMapping
     public ResponseEntity<Map<String, Object>> recordPerformance(
             @PathVariable Integer campaignId,
@@ -46,22 +35,11 @@ public class CampaignPerformanceController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // ─── READ ────────────────────────────────────────────────────
-
-    /**
-     * Get all performance records for a campaign.
-     * GET /api/campaigns/{campaignId}/performance
-     */
     @GetMapping
     public ResponseEntity<List<PerformanceResponse>> getPerformance(@PathVariable Integer campaignId) {
         return ResponseEntity.ok(performanceService.getPerformanceByCampaign(campaignId));
     }
 
-    /**
-     * Get performance records within a date range.
-     * GET
-     * /api/campaigns/{campaignId}/performance/range?from=YYYY-MM-DD&to=YYYY-MM-DD
-     */
     @GetMapping("/range")
     public ResponseEntity<List<PerformanceResponse>> getPerformanceRange(
             @PathVariable Integer campaignId,
@@ -71,21 +49,11 @@ public class CampaignPerformanceController {
                 performanceService.getPerformanceByCampaignAndDateRange(campaignId, from, to));
     }
 
-    /**
-     * Get aggregate performance summary for a campaign.
-     * GET /api/campaigns/{campaignId}/performance/summary
-     */
     @GetMapping("/summary")
     public ResponseEntity<Map<String, Object>> getSummary(@PathVariable Integer campaignId) {
         return ResponseEntity.ok(performanceService.getCampaignSummary(campaignId));
     }
 
-    // ─── DELETE ──────────────────────────────────────────────────
-
-    /**
-     * Delete a specific performance entry by its ID.
-     * DELETE /api/campaigns/{campaignId}/performance/{perfId}
-     */
     @DeleteMapping("/{perfId}")
     public ResponseEntity<Map<String, Object>> deletePerformanceEntry(
             @PathVariable Integer campaignId,

@@ -48,7 +48,6 @@ export default function EditInvoicePage() {
     if (invoiceId) load();
   }, [invoiceId]);
 
-  // Auto-calc total when subtotal or tax changes
   useEffect(() => {
     const sub = Number(subtotal) || 0;
     const t = Number(tax) || 0;
@@ -140,7 +139,7 @@ export default function EditInvoicePage() {
           </div>
         </div>
 
-        {/* Current values reference */}
+        {}
         <div className="card-brand mb-4" style={{ background: "rgba(242,238,234,.5)" }}>
           <div className="card-brand-body">
             <p className="fw-medium text-muted-brand mb-2" style={{ fontSize: ".8125rem" }}>Current values</p>

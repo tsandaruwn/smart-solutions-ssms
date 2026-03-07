@@ -132,7 +132,7 @@ export default function EditOrderPage() {
       )}
 
       <form onSubmit={handleSubmit}>
-        {/* Customer Info */}
+        {}
         <div className="card-brand mb-4">
           <div className="card-brand-header">
             <h2 className="fw-semibold text-navy mb-0 d-flex align-items-center gap-2" style={{ fontSize: ".9375rem" }}>
@@ -160,7 +160,7 @@ export default function EditOrderPage() {
           </div>
         </div>
 
-        {/* Shipping Info */}
+        {}
         <div className="card-brand mb-4">
           <div className="card-brand-header">
             <h2 className="fw-semibold text-navy mb-0 d-flex align-items-center gap-2" style={{ fontSize: ".9375rem" }}>
@@ -187,7 +187,7 @@ export default function EditOrderPage() {
           </div>
         </div>
 
-        {/* Order Items */}
+        {}
         <div className="card-brand mb-4">
           <div className="card-brand-header">
             <h2 className="fw-semibold text-navy mb-0 d-flex align-items-center gap-2" style={{ fontSize: ".9375rem" }}>
@@ -266,7 +266,7 @@ export default function EditOrderPage() {
           </div>
         </div>
 
-        {/* Notes */}
+        {}
         <div className="card-brand mb-4">
           <div className="card-brand-header">
             <h2 className="fw-semibold text-navy mb-0 d-flex align-items-center gap-2" style={{ fontSize: ".9375rem" }}>
@@ -279,7 +279,7 @@ export default function EditOrderPage() {
           </div>
         </div>
 
-        {/* Actions */}
+        {}
         <div className="d-flex align-items-center justify-content-end gap-3">
           <Link href={`/dashboard/orders/${orderId}`} className="btn-ghost">Cancel</Link>
           <button type="submit" disabled={saving} className="btn-amber">

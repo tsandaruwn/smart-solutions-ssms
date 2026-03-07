@@ -1,9 +1,3 @@
-// ====================================
-// USER MANAGEMENT TYPES
-// Created by: [Your Name]
-// Purpose: Type definitions for user management system
-// ====================================
-
 export interface User {
   userId: number;
   username: string;

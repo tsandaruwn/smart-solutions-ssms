@@ -5,9 +5,6 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-/**
- * RolePermission Entity - Junction table for many-to-many relationship between Role and Permission
- */
 @Entity
 @Table(name = "role_permission")
 public class RolePermission {
@@ -29,20 +26,17 @@ public class RolePermission {
     private LocalDateTime grantedAt;
 
     @Column(name = "granted_by")
-    private Integer grantedBy; // User ID who granted this permission
+    private Integer grantedBy; 
 
-    // Empty constructor
     public RolePermission() {
     }
 
-    // Constructor with role and permission
     public RolePermission(Role role, Permission permission) {
         this.role = role;
         this.permission = permission;
         this.id = new RolePermissionId(role.getRoleId(), permission.getPermissionId());
     }
 
-    // Constructor with all fields
     public RolePermission(Role role, Permission permission, Integer grantedBy) {
         this.role = role;
         this.permission = permission;
@@ -55,7 +49,6 @@ public class RolePermission {
         this.grantedAt = LocalDateTime.now();
     }
 
-    // Getters and Setters
     public RolePermissionId getId() {
         return id;
     }
@@ -96,7 +89,6 @@ public class RolePermission {
         this.grantedBy = grantedBy;
     }
 
-    // Composite Primary Key Class
     @Embeddable
     public static class RolePermissionId implements Serializable {
         
@@ -106,17 +98,14 @@ public class RolePermission {
         @Column(name = "permission_id")
         private Integer permissionId;
 
-        // Empty constructor
         public RolePermissionId() {
         }
 
-        // Constructor with both IDs
         public RolePermissionId(Integer roleId, Integer permissionId) {
             this.roleId = roleId;
             this.permissionId = permissionId;
         }
 
-        // Getters and Setters
         public Integer getRoleId() {
             return roleId;
         }

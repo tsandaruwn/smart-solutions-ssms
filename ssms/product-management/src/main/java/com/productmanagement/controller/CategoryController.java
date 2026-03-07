@@ -29,4 +29,3 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 }
-

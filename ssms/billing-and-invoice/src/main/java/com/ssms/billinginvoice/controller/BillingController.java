@@ -1,4 +1,3 @@
-
 package com.ssms.billinginvoice.controller;
 
 import com.ssms.billinginvoice.dto.BillDto;
@@ -45,7 +44,6 @@ public class BillingController {
         return billingService.recordPayment(invoiceId, payment);
     }
 
-    // CRUD on invoices themselves
     @GetMapping("/invoices/{invoiceId}")
     public Bill getInvoice(@PathVariable Long invoiceId) {
         return billingService.getBill(invoiceId);

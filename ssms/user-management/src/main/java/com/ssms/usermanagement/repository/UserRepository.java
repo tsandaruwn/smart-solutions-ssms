@@ -1,4 +1,3 @@
-
 package com.ssms.usermanagement.repository;
 
 import com.ssms.usermanagement.entity.User;
@@ -15,4 +14,3 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	Optional<User> findByEmail(String email);
 	Optional<User> findByUserId(Integer userId);
 }
-

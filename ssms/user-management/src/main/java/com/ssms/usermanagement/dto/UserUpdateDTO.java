@@ -3,10 +3,6 @@ package com.ssms.usermanagement.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 
-/**
- * DTO for user update requests
- * All fields are optional for partial updates
- */
 public class UserUpdateDTO {
 
     @Size(min = 3, max = 80, message = "Username must be between 3 and 80 characters")
@@ -28,11 +24,9 @@ public class UserUpdateDTO {
 
     private Boolean isActive;
 
-    // Empty constructor
     public UserUpdateDTO() {
     }
 
-    // Getters and Setters
     public String getUsername() {
         return username;
     }

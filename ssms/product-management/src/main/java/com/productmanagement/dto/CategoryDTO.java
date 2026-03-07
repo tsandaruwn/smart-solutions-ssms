@@ -22,4 +22,3 @@ public class CategoryDTO {
 
     private LocalDateTime createdAt;
 }
-

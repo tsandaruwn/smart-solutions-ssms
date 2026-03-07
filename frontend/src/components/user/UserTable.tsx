@@ -1,10 +1,3 @@
-// ====================================
-// USER TABLE COMPONENT
-// Created by: [Your Name]
-// Purpose: Display users in a table with action buttons
-// Color Palette: Navy(#1A3263), Slate(#547792), Orange(#FAB95B), Cream(#E8E2DB)
-// ====================================
-
 import { Edit, Trash2, CheckCircle, XCircle } from "lucide-react";
 import type { User } from "@/types/user";
 

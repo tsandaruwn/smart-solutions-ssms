@@ -10,9 +10,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-/**
- * Response DTO for Campaign.
- */
 @Data
 @Builder
 public class CampaignResponse {
