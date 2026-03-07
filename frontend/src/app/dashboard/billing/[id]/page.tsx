@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   ArrowLeft,
   CreditCard,
@@ -9,6 +10,7 @@ import {
   Trash2,
   CheckCircle,
   Receipt,
+  Edit,
 } from "lucide-react";
 import {
   billingApi,
@@ -205,13 +207,22 @@ export default function InvoiceDetailPage() {
             {/* Action buttons */}
             <div className="d-flex gap-2 mt-3">
               {bill.status !== "PAID" && (
-                <button
-                  onClick={handleMarkPaid}
-                  className="btn-amber d-flex align-items-center gap-2"
-                >
-                  <CheckCircle size={15} />
-                  Mark Paid
-                </button>
+                <>
+                  <button
+                    onClick={handleMarkPaid}
+                    className="btn-amber d-flex align-items-center gap-2"
+                  >
+                    <CheckCircle size={15} />
+                    Mark Paid
+                  </button>
+                  <Link
+                    href={`/dashboard/billing/${invoiceId}/edit`}
+                    className="btn-steel d-flex align-items-center gap-2"
+                  >
+                    <Edit size={15} />
+                    Edit Invoice
+                  </Link>
+                </>
               )}
               {deleteConfirm ? (
                 <div className="d-flex align-items-center gap-2">

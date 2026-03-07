@@ -139,6 +139,42 @@ public class OrderService {
     // ─── UPDATE ─────────────────────────────────────────────────
 
     /**
+     * Update an existing order's editable fields (shipping, notes, items).
+     * Only PENDING orders can be fully edited.
+     */
+    @Transactional
+    public OrderResponse updateOrder(Integer orderId, CreateOrderRequest request) {
+        Order order = findOrderOrThrow(orderId);
+
+        if (order.getStatus() != OrderStatus.PENDING) {
+            throw new InvalidOrderStateException("Only PENDING orders can be edited");
+        }
+
+        order.setShippingAddress(request.getShippingAddress());
+        order.setShippingCity(request.getShippingCity());
+        order.setNotes(request.getNotes());
+
+        // Replace items
+        order.getItems().clear();
+        for (OrderItemRequest itemReq : request.getItems()) {
+            OrderItem item = OrderItem.builder()
+                    .productId(itemReq.getProductId())
+                    .quantity(itemReq.getQuantity())
+                    .unitPriceAtOrder(itemReq.getUnitPriceAtOrder())
+                    .discountPercent(itemReq.getDiscountPercent() != null
+                            ? itemReq.getDiscountPercent() : BigDecimal.ZERO)
+                    .build();
+            order.addItem(item);
+        }
+
+        order.recalculateTotalAmount();
+
+        Order saved = orderRepository.save(order);
+        log.info("Order {} updated", saved.getOrderNumber());
+        return OrderResponse.fromEntity(saved);
+    }
+
+    /**
      * Update order status (Pending → Shipped → Delivered).
      */
     @Transactional

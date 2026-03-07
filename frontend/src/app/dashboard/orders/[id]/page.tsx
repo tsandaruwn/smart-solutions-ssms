@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, MapPin, User, Calendar, Package, Hash, FileText, Truck, CheckCircle, XCircle } from "lucide-react";
+import { ArrowLeft, MapPin, User, Calendar, Package, Hash, FileText, Truck, CheckCircle, XCircle, Edit } from "lucide-react";
 import { orderApi, type OrderResponse, type OrderStatus } from "@/lib/api";
 import { formatCurrency, formatDateTime } from "@/lib/utils";
 import StatusBadge from "@/components/ui/StatusBadge";
@@ -89,6 +89,11 @@ export default function OrderDetailPage() {
           </p>
         </div>
         <div className="d-flex align-items-center gap-2 flex-wrap">
+          {order.status === "PENDING" && (
+            <Link href={`/dashboard/orders/${orderId}/edit`} className="btn-amber d-flex align-items-center gap-2">
+              <Edit size={15} /> Edit Order
+            </Link>
+          )}
           {canShip && (
             <button onClick={() => handleUpdateStatus("SHIPPED")} disabled={actionLoading} className="btn-steel">
               <Truck size={15} /> Mark Shipped

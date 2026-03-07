@@ -11,6 +11,7 @@ import {
   Receipt,
   Plus,
   CheckCircle,
+  Edit,
 } from "lucide-react";
 import { billingApi, orderApi, customerApi, type Bill, type BillDto, type OrderResponse, type CustomerResponse } from "@/lib/api";
 import { formatCurrency } from "@/lib/utils";
@@ -403,6 +404,16 @@ export default function BillingPage() {
                             >
                               <Eye size={15} />
                             </Link>
+                            {bill.status !== "PAID" && (
+                              <Link
+                                href={`/dashboard/billing/${bill.id}/edit`}
+                                className="btn-icon"
+                                title="Edit invoice"
+                                style={{ color: "var(--steel)" }}
+                              >
+                                <Edit size={15} />
+                              </Link>
+                            )}
                             {deleteConfirm === bill.id ? (
                               <div className="d-flex align-items-center gap-1">
                                 <button

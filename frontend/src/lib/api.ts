@@ -140,6 +140,16 @@ export const orderApi = {
     return handleResponse<ApiSuccessResponse>(res);
   },
 
+  // Update an existing order (only PENDING)
+  update: async (orderId: number, order: CreateOrderRequest): Promise<ApiSuccessResponse> => {
+    const res = await fetch(`${BASE_URL}/${orderId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(order),
+    });
+    return handleResponse<ApiSuccessResponse>(res);
+  },
+
   // Update order status
   updateStatus: async (
     orderId: number,

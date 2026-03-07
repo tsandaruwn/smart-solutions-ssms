@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
-import { Plus, Search, Eye, Trash2, ChevronLeft, ChevronRight, Package } from "lucide-react";
+import { Plus, Search, Eye, Trash2, ChevronLeft, ChevronRight, Package, Edit } from "lucide-react";
 import { orderApi, type OrderResponse, type OrderStatus } from "@/lib/api";
 import { formatCurrency, formatDateTime } from "@/lib/utils";
 import StatusBadge from "@/components/ui/StatusBadge";
@@ -172,6 +172,11 @@ export default function OrdersPage() {
                         <Link href={`/dashboard/orders/${order.orderId}`} className="btn-icon" title="View details">
                           <Eye size={15} />
                         </Link>
+                        {order.status === "PENDING" && (
+                          <Link href={`/dashboard/orders/${order.orderId}/edit`} className="btn-icon" title="Edit order" style={{ color: "var(--steel)" }}>
+                            <Edit size={15} />
+                          </Link>
+                        )}
                         {deleteConfirm === order.orderId ? (
                           <div className="d-flex align-items-center gap-1">
                             <button onClick={() => handleDelete(order.orderId)} className="btn btn-danger btn-sm py-0 px-2" style={{ fontSize: ".75rem" }}>Yes</button>

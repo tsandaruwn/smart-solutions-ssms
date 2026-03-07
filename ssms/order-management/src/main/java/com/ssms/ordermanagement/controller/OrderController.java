@@ -117,6 +117,24 @@ public class OrderController {
     // ─── UPDATE ─────────────────────────────────────────────────
 
     /**
+     * Update an existing order (only PENDING orders).
+     * PUT /api/orders/{orderId}
+     */
+    @PutMapping("/{orderId}")
+    public ResponseEntity<Map<String, Object>> updateOrder(
+            @PathVariable Integer orderId,
+            @Valid @RequestBody CreateOrderRequest request) {
+        OrderResponse order = orderService.updateOrder(orderId, request);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "Order updated successfully");
+        response.put("order", order);
+
+        return ResponseEntity.ok(response);
+    }
+
+    /**
      * Update order status (Pending → Shipped → Delivered).
      * PUT /api/orders/{orderId}/status
      */
