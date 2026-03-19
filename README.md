@@ -35,7 +35,7 @@ Each feature is developed as an **independent microservice** with its own struct
 - Supplier Management  
 - Digital Marketing  
 
-Each microservice follows a layered architecture:
+Each microservice follows a layered architecture:-
 
 ---
 
